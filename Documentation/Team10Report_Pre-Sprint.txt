@@ -1,0 +1,14 @@
+=== Weekly Team Report (Team 10: Rhythm) ===
+Week (Before Sprints have Started) (Scrum Master: Indhu Meena Ramanathan)
+10/14	3 hr	Created the Project Charter with problem statement, project goals, deliverables, and stakeholders
+10/17   .75 hr	Edited Project Charter section with deliverables
+
+Next Week (Plan) (Scrum Master: Indhu Meena Ramanathan)
+[Meetings]
+10/21	Discuss and create code repository and product backlog
+
+[Individual Goals]
+Indhu: Create code repository and work on product backlog and discuss about problem statement, background information, and requirements
+Richard: Work on product backlog and discuss about problem statement, background information, and requirements
+Steve: Work on product backlog and discuss about problem statement, background information, and requirements
+Columbus: Work on product backlog and discuss about problem statement, background information, and requirements
