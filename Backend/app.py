@@ -14,9 +14,7 @@
 from flask import Flask, render_template, json, url_for
 
 # Grabbing the connection file
-import sys
-sys.path.insert(0, 'MySQL/')
-import MySQLConnect
+from MySQL import MySQLConnect
 
 ##
  # Creates an instance of the exisiting class/module

@@ -6,7 +6,7 @@ from flask import Flask, render_template, json, url_for
 import pymysql
 
 # Opens mysql.json file to grab mySQL super secret data
-with open("config/mysql.json") as json_file:
+with open("../config/mysql.json") as json_file:
     json_data = json.load(json_file)
 
 ##
