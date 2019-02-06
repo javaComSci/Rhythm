@@ -1,0 +1,6 @@
+SymbolsDataset
+trainingIn.npy
+trainingOut.npy
+testingIn.npy
+testingOut.npy
+SymbolsDatasetParsed
