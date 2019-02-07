@@ -9,9 +9,9 @@ import imageio
 def splitData(symbols):
 
 	translations = {}
-	trainingIn = np.empty((1, 55296))
+	trainingIn = np.empty((1, 3500))
 	trainingOut = np.empty((1, 1))
-	testingIn = np.empty((1, 55296))
+	testingIn = np.empty((1, 3500))
 	testingOut = np.empty((1, 1))
 	count = 0
 
@@ -42,8 +42,8 @@ def splitData(symbols):
 	print("TRANSLATIONS", translations)
 
 	# scale the values
-	trainingIn = trainingIn/255.0
-	testingIn = testingIn/255.0
+	trainingIn = trainingIn/255
+	testingIn = testingIn/255
 
 	print("TRAINING", trainingIn, " TRAINING", trainingOut, " TESTING", testingIn, " TESTING", testingOut, translations)
 	print(trainingIn.shape, trainingOut.shape, testingIn.shape, testingOut.shape)
@@ -59,7 +59,7 @@ def getTrainingAndTestingData():
 			continue
 
 		# all in specific directory are of specific type
-		symbols[dirName] = np.empty((1, 55296))
+		symbols[dirName] = np.empty((1, 3500))
 
 		for file in files:
 			# make sure that it is not a hidden file
@@ -70,17 +70,19 @@ def getTrainingAndTestingData():
 			filePath = os.path.join(dirName, file)
 
 			# change png to numpy array
-			pixelArr = imageio.imread(filePath)
+			pixelArr = cv2.imread(filePath, 0)
+			# print("SHAPE IS ", pixelArr, pixelArr.shape)
 
 			# for displaying the image
-			# img = Image.fromarray(pixelArr, 'RGB')
+			# img = Image.fromarray(pixelArr)
 			# img.show()
+			# return
 
 			# flatten numpy array and reshape
 			pixelArrFlat = pixelArr.flatten()
 			pixelArrFlat = pixelArrFlat.reshape(pixelArrFlat.shape[0], 1).T
 
-			# for each of the symbols, there is an array of dimension (401, 55296) with 401 samples
+			# for each of the symbols, there is an array of dimension (401, 3500) with 401 samples
 			symbols[dirName] = np.append(symbols[dirName], pixelArrFlat, axis = 0)
 		print("SYMBOLS", dirName, symbols[dirName], symbols[dirName].shape, symbols[dirName][0].shape)
 	trainingIn, trainingOut, testingIn, testingOut, translations = splitData(symbols)
@@ -90,6 +92,7 @@ def getTrainingAndTestingData():
 	np.save('trainingOut.npy', trainingOut)
 	np.save('testingIn.npy', testingIn)
 	np.save('testingOut.npy', testingOut)
+	np.save('translations.npy', translations)
 
 if __name__ == '__main__':
 	getTrainingAndTestingData()
