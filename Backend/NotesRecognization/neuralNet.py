@@ -95,7 +95,7 @@ def trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut):
 	model = Sequential()
 
 	# add layers to model - works well with 1 hidden layer with 50 as well
-	model.add(Dense(45, input_dim=3500, activation='relu'))
+	model.add(Dense(50, input_dim=3500, activation='relu'))
 	model.add(Dense(20, activation='relu'))
 	model.add(Dense(3, activation='softmax'))
 
@@ -103,7 +103,7 @@ def trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut):
 	model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 	# train the model
-	model.fit(trainingIn, trainingOut, epochs=25)
+	model.fit(trainingIn, trainingOut, epochs=20)
 
 	# see how it does on test dataset
 	testLoss, testAcc = model.evaluate(testingIn, testingOut)
@@ -116,8 +116,16 @@ def trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut):
 	for i in range(predictions.shape[0]):
 		overallPredictions[i] = np.argmax(predictions[i])
 		print(overallPredictions[i], testingOut[i])
-		testingIn = testingIn.reshape(50, 70)
-		print("TESTING IN")
+
+		testing = trainingIn[4050]
+		testing = testing * 255
+
+		print("TESTING IN SIZE", testing, testing.shape)
+		testing = testing.reshape(70, 50)
+		print("TESTING IN", testing)
+		img = Image.fromarray(testing)
+		img.show()
+		return
 
 	print("PREDICTIONS", overallPredictions)
 
