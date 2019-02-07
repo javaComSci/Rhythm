@@ -10,7 +10,7 @@ export default class ProfileScreen extends React.Component {
         return (
             <View style={styles.container}>
                 <View>
-                    <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> hey its ur profile screen </Text>
+                    <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> hey its ur composition screen </Text>
                 </View>
                 <ScrollView>
                     <Text>hello</Text>
