@@ -4,3 +4,4 @@ trainingOut.npy
 testingIn.npy
 testingOut.npy
 SymbolsDatasetParsed
+SymbolsDatasetParsedSmall
