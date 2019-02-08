@@ -14,13 +14,21 @@ with open("config/mysql.json") as json_file:
  # Connect using mysql -u root -p (Must have mysql downloaded)
  ##
 db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
+cursor = db.cursor()
 
 def update():
-    print('yesdfea');
-
+    print('update');
 
 def insert():
-    print('yesdfea');
-
+    print('insert');
 
 def delete():
+    print('delete');
+
+def find():
+    print('delete');
+    # sql = "INSERT INTO Users (email) VALUES (6)";
+    # cursor.execute(sql)
+    # results = cursor.fetchall()
+    return;
+    # return render_template('index.html', results=results)

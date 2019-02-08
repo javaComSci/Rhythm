@@ -11,10 +11,10 @@
  ##
 
 # Importing Flask dependencies
-from flask import Flask, render_template, json, url_for
+from flask import Flask, render_template, json, url_for, request
 
 # Grabbing the connection file
-from MySQL import MySQLConnect
+from user import user
 
 ##
  # Creates an instance of the exisiting class/module
@@ -22,24 +22,12 @@ from MySQL import MySQLConnect
  ##
 app = Flask(__name__)
 
-##
- # Create a new route with the @app.route tag
- # (def)ine a function, home, that will be mapped to '/' route
- ##
-@app.route("/")
-def home():
-    return "This language is really fun..!"
-
-# Something like this can work if we need to send a html file over
-  # return render_template('home.html')
-
-##
- # Create a new route with the @app.route tag
- # (def)ine a function, nothello, that will be mapped to '/PythonSucks' route
- ##
-@app.route("/testRoute")
-def nothello():
-    return ":(((())))"
+@app.route('/register', methods=['POST'])
+def register():
+    if request.method == 'POST':
+        return user.registerRoute()
+    else:
+        return '\n\nShould see this: app.py\n\n'
 
 ##
  # This runs the server with debug=on so we can see outputs in the terminal.
