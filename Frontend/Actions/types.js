@@ -1,0 +1,1 @@
+export const ADD_COMPOSITION = 'ADD_COMPOSITION'

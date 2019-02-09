@@ -11,25 +11,22 @@ export default class ProfileScreen extends React.Component {
             <View style={styles.container}>
                 <View>
                     <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> COMPOSITIONS </Text>
-                    <View
-                        style={{
-                            borderBottomColor: 'black',
-                            borderBottomWidth: 1,
-                        }}
-                    />
+                    <View style={styles.lineBreak} />
                 </View>
                 <ScrollView>
                     <FlatList
                         data={[
+                            // to be filled with data from Async local storage
                             { key: "composition 1" },
                             { key: "composition 2" }
                         ]}
-                        renderItem={({ item }) => <View style={styles.compositionContainer}><TouchableOpacity style={styles.compositionItem}><Text style={{fontSize: 40}}>{item.key}</Text></TouchableOpacity><View
-                            style={{
-                                borderBottomColor: 'black',
-                                borderBottomWidth: 1,
-                            }}
-                        /></View>}
+                        renderItem={({ item }) =>
+                            <View style={styles.compositionContainer}>
+                                <TouchableOpacity style={styles.compositionItem}>
+                                    <Text style={{ fontSize: 40 }}>{item.key}</Text>
+                                </TouchableOpacity>
+                                <View style={styles.lineBreak} />
+                            </View>}
                     />
                 </ScrollView>
                 <View>
@@ -49,6 +46,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffeceb',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    lineBreak: {
+        borderBottomColor: 'black',
+        borderBottomWidth: 1,
     },
     compositionContainer: {
         margin: 40
