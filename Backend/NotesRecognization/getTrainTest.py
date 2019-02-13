@@ -4,6 +4,7 @@ import cv2
 from PIL import Image
 import re
 import imageio
+import random
 
 # split the data into training and testing
 def splitData(symbols):
@@ -49,6 +50,28 @@ def splitData(symbols):
 	print(trainingIn.shape, trainingOut.shape, testingIn.shape, testingOut.shape)
 	return trainingIn, trainingOut, testingIn, testingOut, translations
 
+# modify the image to have horizontal lines through them
+def modifyImg(pixelArr):
+	# choose one of the rows and see if it has black pixels, if yes, then add horizontal line through, else call again
+	randRow = random.randint(0, pixelArr.shape[0])
+
+	# find the first occurence of black pixel
+	minPixelInd = np.nanargmin(pixelArr[randRow])
+	minPixel = pixelArr[randRow][minPixelInd]
+
+	# didn't pick a row with a black pixel
+	if minPixel != 0:
+		return modifyImg(pixelArr)
+
+	# from 0 to 70
+	startInd = random.randint(0, pixelArr.shape[1] - 1)
+	endInd = random.randint(startInd, pixelArr.shape[1] - 1)
+
+	for i in range(startInd, endInd):
+		pixelArr[randRow][i] = 0
+
+	return pixelArr
+
 # will go though the dataset to separate the data into training and testing sets
 def getTrainingAndTestingData():
 	symbols = {}
@@ -71,12 +94,19 @@ def getTrainingAndTestingData():
 
 			# change png to numpy array
 			pixelArr = cv2.imread(filePath, 0)
-			# print("SHAPE IS ", pixelArr, pixelArr.shape)
 
-			# for displaying the image
-			# img = Image.fromarray(pixelArr)
-			# img.show()
-			# return
+
+			# randomly set approximately 10% of the images to have lines through them
+			randInt = random.randint(0, 10)
+			print("RANDINT", randInt)
+			if randInt == 5:
+				pixelArr = modifyImg(pixelArr)
+				# for displaying the image
+				img = Image.fromarray(pixelArr)
+				img.show()
+				return
+
+			print("SHAPE IS ", pixelArr, pixelArr.shape)
 
 			# flatten numpy array and reshape
 			pixelArrFlat = pixelArr.flatten()
