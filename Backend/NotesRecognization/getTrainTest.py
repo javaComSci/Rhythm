@@ -93,8 +93,15 @@ def getTrainingAndTestingData():
 			# parse file path
 			filePath = os.path.join(dirName, file)
 
-			# change png to numpy array
-			pixelArr = cv2.imread(filePath, 0)
+			# repixel for the size
+			pixelArr = Image.open(filePath)
+			pixelArr = pixelArr.convert('L')
+			pixelArr = pixelArr.resize((50, 70))
+			pixelArr = np.array(pixelArr)
+			img = Image.fromarray(pixelArr)
+			# img.show()
+			# return
+
 
 			# randomly set approximately 10% of the images to have lines through them
 

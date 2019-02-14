@@ -101,12 +101,12 @@ def trainClefNN(trainingIn, trainingOut, testingIn, testingOut):
 	clefTestingOut[clefTestingOut == 6] = 1
 	clefTestingOut[clefTestingOut == 8] = 2
 
-	testing = clefTrainingIn[800]
-	testing = testing * 255
-	testing = testing.reshape(70, 50)
-	img = Image.fromarray(testing)
-	img.show()
-	return
+	# testing = clefTrainingIn[370]
+	# testing = testing * 255
+	# testing = testing.reshape(70, 50)
+	# img = Image.fromarray(testing)
+	# img.show()
+	# return
 
 	# print("TRAINING", cclefIndiciesTraining, gclefIndiciesTraining, fclefIndiciesTraining, clefTrainingIn, clefTrainingIn.shape, clefTrainingOut, clefTrainingOut.shape)
 	# print("TESTING", clefTestingIn.shape, clefTestingIn, clefTestingOut, clefTestingOut.shape)
