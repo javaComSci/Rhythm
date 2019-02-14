@@ -53,7 +53,7 @@ def splitData(symbols):
 # modify the image to have horizontal lines through them
 def modifyImg(pixelArr):
 	# choose one of the rows and see if it has black pixels, if yes, then add horizontal line through, else call again
-	randRow = random.randint(0, pixelArr.shape[0])
+	randRow = random.randint(0, pixelArr.shape[0]-1)
 
 	# find the first occurence of black pixel
 	minPixelInd = np.nanargmin(pixelArr[randRow])
@@ -63,7 +63,7 @@ def modifyImg(pixelArr):
 	if minPixel != 0:
 		return modifyImg(pixelArr)
 
-	# from 0 to 70
+	# from 0 to 50 the number of columns
 	startInd = random.randint(0, pixelArr.shape[1] - 1)
 	endInd = random.randint(startInd, pixelArr.shape[1] - 1)
 
@@ -76,6 +76,7 @@ def modifyImg(pixelArr):
 def getTrainingAndTestingData():
 	symbols = {}
 	symbolsDir = './SymbolsDatasetParsedSmall'
+	modImageCount = 0
 	# data has already been parsed into images, need to group and change into pixels for training
 	for (dirName, subdirList, files) in os.walk(symbolsDir):
 		if dirName == './SymbolsDatasetParsedSmall':
@@ -95,18 +96,25 @@ def getTrainingAndTestingData():
 			# change png to numpy array
 			pixelArr = cv2.imread(filePath, 0)
 
-
 			# randomly set approximately 10% of the images to have lines through them
+
 			randInt = random.randint(0, 10)
-			print("RANDINT", randInt)
 			if randInt == 5:
 				pixelArr = modifyImg(pixelArr)
-				# for displaying the image
-				img = Image.fromarray(pixelArr)
-				img.show()
-				return
 
-			print("SHAPE IS ", pixelArr, pixelArr.shape)
+				modImageCount += 1
+
+				# just save the images with lines in them
+				img = Image.fromarray(pixelArr)
+				pathName = './ModifiedSymbols/' + str(modImageCount) + '.png'
+				img.save(pathName)
+
+				# for displaying the image
+				# img = Image.fromarray(pixelArr)
+				# img.show()
+				# return
+
+			# print("SHAPE IS ", pixelArr, pixelArr.shape)
 
 			# flatten numpy array and reshape
 			pixelArrFlat = pixelArr.flatten()
@@ -118,11 +126,18 @@ def getTrainingAndTestingData():
 	trainingIn, trainingOut, testingIn, testingOut, translations = splitData(symbols)
 
 	# write data to file
-	np.save('trainingIn.npy', trainingIn)
-	np.save('trainingOut.npy', trainingOut)
-	np.save('testingIn.npy', testingIn)
-	np.save('testingOut.npy', testingOut)
-	np.save('translations.npy', translations)
+	# np.save('trainingIn.npy', trainingIn)
+	# np.save('trainingOut.npy', trainingOut)
+	# np.save('testingIn.npy', testingIn)
+	# np.save('testingOut.npy', testingOut)
+	# np.save('translations.npy', translations)
+
+
+	np.save('trainingInWithLines.npy', trainingIn)
+	np.save('trainingOutWithLines.npy', trainingOut)
+	np.save('testingInWithLines.npy', testingIn)
+	np.save('testingOutWithLines.npy', testingOut)
+	np.save('translationsWithLines.npy', translations)
 
 if __name__ == '__main__':
 	getTrainingAndTestingData()

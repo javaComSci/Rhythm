@@ -5,6 +5,7 @@ from keras.models import Sequential
 import cv2
 from PIL import Image
 from keras.layers import Dense
+import math
 
 translations = np.load('translations.npy')
 translations = translations.item()
@@ -34,10 +35,17 @@ print("TRANLSATIONS", translations)
 
 # get the data from where it was stored
 def getData():
-	trainingIn = np.load('trainingIn.npy')
-	trainingOut = np.load('trainingOut.npy')
-	testingIn = np.load('testingIn.npy')
-	testingOut = np.load('testingOut.npy')
+	# data without lines
+	# trainingIn = np.load('trainingIn.npy')
+	# trainingOut = np.load('trainingOut.npy')
+	# testingIn = np.load('testingIn.npy')
+	# testingOut = np.load('testingOut.npy')
+
+	# data with lines
+	trainingIn = np.load('trainingInWithLines.npy')
+	trainingOut = np.load('trainingOutWithLines.npy')
+	testingIn = np.load('testingInWithLines.npy')
+	testingOut = np.load('testingOutWithLines.npy')
 
 	# print("TRAINING IN")
 	# for i in testingIn[0]:
@@ -46,6 +54,9 @@ def getData():
 	return trainingIn, trainingOut, testingIn, testingOut
 
 def trainClefNN(trainingIn, trainingOut, testingIn, testingOut):
+	for t in range(0, len(trainingOut)):
+		output = trainingOut[t][0]
+
 	return
 
 def trainNoteNN(trainingIn, trainingOut, testingIn, testingOut):
@@ -60,7 +71,48 @@ def trainExtraNN(trainingIn, trainingOut, testingIn, testingOut):
 def trainRestNN(trainingIn, trainingOut, testingIn, testingOut):
 	return
 
+def hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, modelsInfo):
+	# modelInfo is an array of models with layer info for each model
+	# layers info is in form of [[[numNeurons,activationFunction],....]], 
+	# stores the best model after hyperparamter tuning
+	bestModel = None
+	bestTestLoss = math.inf
+
+	# go through all models to be trained with
+	for modelInfo in modelsInfo:
+		# create model sequential
+		model = Sequential()
+
+		# add first layer
+		model.add(Dense(modelInfo[0][0], input_dim=3500, activation=modelInfo[0][1]))
+
+		# each layer is given activation function and number of neurons
+		for i in range(1, len(modelInfo)):
+			model.add(Dense(modelInfo[i][0], activation=modelInfo[i][1]))
+
+		# compile the model with optimizer
+		model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+		model.summary()
+
+		# train the model
+		model.fit(trainingIn, trainingOut, epochs=15)
+
+		# see how it does on test dataset
+		testLoss, testAcc = model.evaluate(testingIn, testingOut)
+		print('Test Accuracy', testAcc, )
+
+		if testLoss < bestTestLoss:
+			bestTestLoss = testLoss
+			bestModel = model
+
+	print("BEST MODEL IS ")
+	model.summary()
+	return bestModel
+
+
 def trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut):
+
 	# modify the labels for clefs, notes, and times for training data
 	for t in range(0, len(trainingOut)):
 		output = trainingOut[t][0]
@@ -90,24 +142,14 @@ def trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut):
 		else:
 			# for note
 			testingOut[t][0] = 2
-	
-	# create model sequential
-	model = Sequential()
 
-	# add layers to model - works well with 1 hidden layer with 50 as well
-	model.add(Dense(50, input_dim=3500, activation='relu'))
-	model.add(Dense(20, activation='relu'))
-	model.add(Dense(3, activation='softmax'))
+	layersForTraining = [ [[50, 'relu'], [20, 'relu'], [3, 'softmax'] ],
+	[ [30, 'relu'], [10, 'relu'], [3, 'softmax'] ],
+	[ [50, 'relu'], [10, 'relu']],
+	[ [40, 'sigmoid'], [3, 'softmax']],
+	]
 
-	# compile the model with optimizer
-	model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-
-	# train the model
-	model.fit(trainingIn, trainingOut, epochs=20)
-
-	# see how it does on test dataset
-	testLoss, testAcc = model.evaluate(testingIn, testingOut)
-	print('Test Accuracy', testAcc)
+	model = hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, layersForTraining)
 
 	# predictions on unseen data
 	predictions = model.predict(testingIn)
