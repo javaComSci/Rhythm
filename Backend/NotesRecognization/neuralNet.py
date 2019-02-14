@@ -212,7 +212,7 @@ def hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, modelsI
 def trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut):
 
 	print("TRANING INPUT", trainingOut.shape, trainingIn.shape)
-	return
+	# return
 	# modify the labels for clefs, notes, and times for training data
 	for t in range(0, len(trainingOut)):
 		output = trainingOut[t][0]
@@ -322,4 +322,4 @@ if __name__ == '__main__':
 
 	trainingIn, trainingOut, testingIn, testingOut = getData()
 	# trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut)
-	trainClefNN(trainingIn, trainingOut, testingIn, testingOut)
+	# trainClefNN(trainingIn, trainingOut, testingIn, testingOut)
