@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 
 import { AppNavigator, middleware } from './navigators/AppNavigation'
-import AppReducer from './reducers/AppReducer'
+import AppReducer from './Reducers/AppReducer'
 
 
 class RhythmApp extends React.Component {
