@@ -1,6 +1,11 @@
 import React from 'react';
-import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { TouchableOpacity, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+var styles = require('../style')
+
+
+/* Profile Screen */
+// Provides basic info regarding user's email, allows option to change given email
 
 export default class ProfileScreen extends React.Component {
     static navigationOptions = {
@@ -15,25 +20,12 @@ export default class ProfileScreen extends React.Component {
                 <ScrollView>
                     <Text>hello</Text>
                 </ScrollView>
-                <View>
-                    <Button
-                        title="Back"
-                        onPress={() => this.props.navigation.navigate('Home')}
-                    />
+                <View style={styles.footer}>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Home')} style={styles.navButton}>
+                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Home </Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         );
     }
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#ffeceb',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    header: {
-        height: 56 // standard for iOS devices
-    }
-});

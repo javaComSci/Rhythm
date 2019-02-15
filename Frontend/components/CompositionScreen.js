@@ -1,15 +1,16 @@
 import React from 'react';
 import { FlatList, TouchableOpacity, Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+var styles = require('../style');
 
-export default class ProfileScreen extends React.Component {
+export default class CompositionScreen extends React.Component {
     static navigationOptions = {
         title: 'Welcome', header: null
     };
     render() {
         return (
             <View style={styles.container}>
-                <View>
+                <View style={styles}>
                     <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> COMPOSITIONS </Text>
                     <View style={styles.lineBreak} />
                 </View>
@@ -23,41 +24,18 @@ export default class ProfileScreen extends React.Component {
                         renderItem={({ item }) =>
                             <View style={styles.compositionContainer}>
                                 <TouchableOpacity style={styles.compositionItem}>
-                                    <Text style={{ fontSize: 40 }}>{item.key}</Text>
+                                    <Text style={{ color: '#f19393', fontSize: 40 }}>{item.key}</Text>
                                 </TouchableOpacity>
                                 <View style={styles.lineBreak} />
                             </View>}
                     />
                 </ScrollView>
-                <View>
-                    <Button
-                        title="Back"
-                        onPress={() => this.props.navigation.navigate('Home')}
-                    />
+                <View style={styles.footer}>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Home')} style={styles.navButton}>
+                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Home </Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         );
     }
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#ffeceb',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    lineBreak: {
-        borderBottomColor: 'black',
-        borderBottomWidth: 1,
-    },
-    compositionContainer: {
-        margin: 40
-    },
-    compositionItem: {
-        height: 50,
-    },
-    header: {
-        height: 56 // standard for iOS devices
-    }
-});

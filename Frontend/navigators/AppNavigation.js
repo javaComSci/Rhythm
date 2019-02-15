@@ -7,9 +7,9 @@ import {
   createReactNavigationReduxMiddleware,
 } from 'react-navigation-redux-helpers';
 
-import HomeScreen from '../HomeScreen';
-import ProfileScreen from '../ProfileScreen';
-import CompositionScreen from '../CompositionScreen';
+import HomeScreen from '../components/HomeScreen';
+import ProfileScreen from '../components/ProfileScreen';
+import CompositionScreen from '../components/CompositionScreen';
 
 const middleware = createReactNavigationReduxMiddleware(
   'root',
