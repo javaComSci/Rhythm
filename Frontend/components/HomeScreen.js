@@ -1,5 +1,6 @@
 import React from 'react';
 import { AsyncStorage, TouchableOpacity, ScrollView, StyleSheet, Text, View } from 'react-native';
+import RegisterScreen from './RegisterScreen';
 
 var styles = require('../style')
 
@@ -35,11 +36,58 @@ _retrieveData = async () => {
     }
 }
 
+_isLoggedIn = async () => {
+    try {
+        const value = await AsyncStorage.getItem("registere");
+        console.log("value: ", value);
+        if (value != null) {
+            console.log('email:', value);
+            return true;
+        } else {
+            console.log("no");
+            return false;
+        }
+    } catch (error) {
+        console.log("err: ", error);
+    }
+}
+
 export default class HomeScreen extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoading: false,
+            userEmail: null,
+        };
+    }
+
+    componentDidMount() {
+        this.setState({ isLoading: true });
+        AsyncStorage.getItem("registered")
+            .then(result => this.setState({
+                isLoading: false, // set isLoading to false until item is retrieved
+                userEmail: result ? result : "none", // if result was null, set email to none
+            }))
+            .then(() => {
+                // if no email has been stored, go to register screen
+                if (this.state.userEmail === "none") {
+                    this.props.navigation.navigate("Register");
+                }
+            })
+            .catch(error => this.setState({
+                isLoading: false,
+                userEmail: result,
+            }))
+    }
     static navigationOptions = {
         title: '', header: null // setting header to null to remove the default header from react-navigation
     };
     render() {
+        if (this.state.isLoading) {
+            return <View><Text>Loading...</Text></View>
+        }
+        else if (!this.state.userEmail)
+            return <View><Text>Loading...</Text></View>
         return (
             <View style={styles.container}>
                 <ScrollView>
@@ -47,16 +95,6 @@ export default class HomeScreen extends React.Component {
                         <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 75 }}> Rhythm </Text>
                     </View>
                 </ScrollView>
-                <View style={styles.footer}>
-                    <TouchableOpacity onPress={() => _storeData()} style={styles.navButton}>
-                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> save data </Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.footer}>
-                    <TouchableOpacity onPress={() => _retrieveData()} style={styles.navButton}>
-                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> read data </Text>
-                    </TouchableOpacity>
-                </View>
                 <View style={styles.footer}>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('Composition')} style={styles.navButton}>
                         <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Compositions </Text>

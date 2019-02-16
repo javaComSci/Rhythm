@@ -21,7 +21,10 @@ export default class ProfileScreen extends React.Component {
                     <Text>hello</Text>
                 </ScrollView>
                 <View style={styles.footer}>
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Home')} style={styles.navButton}>
+                    <TouchableOpacity
+                        onPress={() => this.props.navigation.navigate('Home')}
+                        style={styles.navButton}
+                    >
                         <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Home </Text>
                     </TouchableOpacity>
                 </View>
