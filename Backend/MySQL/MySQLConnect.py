@@ -19,11 +19,15 @@ cursor = db.cursor()
 def update(table, query, value):
     print('update');
 
-def find(table, query, value):
+##
+ # This will find everything in a specific table and matching the id with the user_id and
+ # value[0] and value[1]
+ ##
+def find(table, id, value):
     print('find');
 
 ##
- # This will delete everything in the specific table matchinging the id to user_id AND
+ # This will delete everything in the specific table matching the id to user_id AND
  # value[0] to value[1]
  #
  # @table what table you are looking at
