@@ -2,10 +2,11 @@ import cv2
 import numpy as np
 
 class sheet_object:
-	def __init__(self,tup):
+	def __init__(self,tup,object_number):
 		#list of pixel locations
 		self.pixel_list = []
 		self.pixel_list.append(tup)
+		self.object_number = object_number
 
 		#Top and bottom right corners
 		self.R1 = self.R2 = tup[0]
@@ -28,6 +29,19 @@ class sheet_object:
 			self.C1 = tup[1]
 		if tup[1] > self.C2:
 			self.C2 = tup[1]
+
+	#Update bounds of object
+	def update_bounds(self):
+		#for every pixel in list, check to see if bounds have changed
+		for p in self.pixel_list:
+			if p[0] < self.R1:
+				self.R1 = p[0]
+			if p[0] > self.R2:
+				self.R2 = p[0]
+			if p[1] < self.C1:
+				self.C1 = p[1]
+			if p[1] > self.C2:
+				self.C2 = p[1]
 
 
 
@@ -108,7 +122,7 @@ def locate_vertical_dividers(image):
 
 			#If the pixel sum is greater than 10% of the image length, consider it a run
 			# and add it to a list of rows to be removed
-			if pixel_sum / (image.shape[0] * 1.00) >= 0.1:
+			if pixel_sum / (image.shape[0] * 1.00) >= 0.075:
 				if col not in dividers:
 					dividers.append(col)
 
@@ -183,7 +197,7 @@ def locate_objects(image):
 			if image[row][col] == 0:
 				#Look for surrounding pixels to see if urrent pixel is part of
 				# an already discovered object
-				ob_num = scan_pixel(image,mask,row,col)
+				ob_num = scan_unidentified_pixel(image,mask,row,col)
 
 				if ob_num == -1:
 					#If object wasnt found, create new object
@@ -193,7 +207,7 @@ def locate_objects(image):
 
 					#Create new sheet object
 					tup = (row,col)
-					new_obj = sheet_object(tup)
+					new_obj = sheet_object(tup,object_count)
 
 					#Add sheet object to the list of sheet objects
 					sheet_object_list.append(new_obj)
@@ -208,6 +222,8 @@ def locate_objects(image):
 					tup = (row,col)
 					sheet_object_list[int(ob_num-1)].add_pixel(tup)
 
+	merge_touching_objects(mask, sheet_object_list)
+
 	#Return mask with objects labels and list of each individual object
 	return mask, sheet_object_list
 
@@ -216,14 +232,15 @@ def locate_objects(image):
 #row - row of unlabeled pixel
 #col - column of unlabeled pixel
 #	Scans around unlabeled pixel to attempt to determine pixel object label
-def scan_pixel(image,mask,row,col):
+def scan_unidentified_pixel(image,mask,row,col):
 	#Initialize the row and column you will start/end scanning from
-	startRow = max(row-3,0)
-	startCol = max(col-3,0)
-	endCol = min(image.shape[1], col+5)
+	startRow = max(row-1,0)
+	startCol = max(col-1,0)
+	endRow = min(image.shape[0],row+1)
+	endCol = min(image.shape[1], col+1)
 
 	#For all pixels in scan range around unlabeled pixel
-	for i in range(startRow, row+1):
+	for i in range(startRow, endRow):
 		for j in range(startCol, endCol):
 			#If pixel is not the unlabeled pixel, and it is labeled in the mask
 			if (i != row or j != col) and mask[i][j] != 0:
@@ -232,6 +249,52 @@ def scan_pixel(image,mask,row,col):
 
 	#If no mask values were found, return -1, indicating this is a new object
 	return -1
+
+def scan_identified_pixel(mask,row,col):
+	startRow = max(row-1,0)
+	startCol = max(col-1,0)
+	endRow = min(mask.shape[0], row+1)
+	endCol = min(mask.shape[1], col+1)
+
+	o1 = mask[row][col]
+
+	for i in range(startRow, endRow):
+		for j in range(startCol, endCol):
+			if mask[i][j] != 0 and mask[i][j] != o1:
+				return o1, mask[i][j]
+
+	return o1, o1
+
+def merge_sheet_objects(o1_label,o2_label,mask,SOL):
+	ob1 = locate_sheet_object_index(o1_label,SOL)
+	ob2 = locate_sheet_object_index(o2_label,SOL)
+
+	SOL[ob1].pixel_list = SOL[ob1].pixel_list + SOL[ob2].pixel_list
+
+	SOL[ob1].update_bounds()
+
+	update_mask(mask,SOL[ob2],SOL[ob1].object_number)
+
+	del SOL[ob2]
+
+def update_mask(mask, sheet_object, new_label):
+	for p in sheet_object.pixel_list:
+		mask[p[0]][p[1]] = new_label
+
+def locate_sheet_object_index(label, SOL):
+	for i in range(len(SOL)):
+		if SOL[i].object_number == label:
+			return i
+
+	return -1
+
+def merge_touching_objects(mask,SOL):
+	for row in range(mask.shape[0]):
+		for col in range(mask.shape[1]):
+			if mask[row][col] != 0:
+				o1,o2 = scan_identified_pixel(mask,row,col)
+				if o1 != o2:
+					merge_sheet_objects(o1,o2,mask,SOL)
 
 #SOL - List of sheet list objects
 #ob_size - size of objects that must be met to meet true-object criteria
@@ -260,26 +323,27 @@ def print_objects(SOL,ob_size=35,path=""):
 
 			#increment naming id
 			idd += 1
+	
 
 
 
 if __name__ == "__main__":
-	im_gray = cv2.imread("DATA/test4.jpg", cv2.IMREAD_GRAYSCALE)
+	im_gray = cv2.imread("DATA/test6.jpg", cv2.IMREAD_GRAYSCALE)
 	(thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 	print "Completed 'image load'"
 
 	runs = locate_run_blocks(im_bw)
 	remove_runs_and_fill(im_bw, runs)
-	print "Completed 'run' segmenting"
+	print "Completed 'run segmenting'"
 
 	dividers = locate_vertical_dividers(im_bw)
 	remove_vertical_dividers_and_fill(im_bw, dividers)
-	print "Completed 'divider' segmenting"
+	print "Completed 'divider segmenting'"
 
 	mask, SOL = locate_objects(im_bw)
 	print "Completed 'object location'"
 
-	print_objects(SOL,path="test")
+	print_objects(SOL,ob_size=45,path="test")
 	print "Completed 'print objects'"
 
 	cv2.imshow('image',mask)
