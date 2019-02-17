@@ -16,19 +16,23 @@ with open("config/mysql.json") as json_file:
 db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
 cursor = db.cursor()
 
-def update():
+def update(table, query, value):
     print('update');
 
-def insert():
+def find(table, query, value):
     print('insert');
 
-def delete():
-    print('delete');
-
-def find():
-    print('delete');
-    # sql = "INSERT INTO Users (email) VALUES (6)";
-    # cursor.execute(sql)
-    # results = cursor.fetchall()
+def delete(table, query, value):
+    sql = "DELETE FROM {} WHERE {} = '{}';".format(table,query,value);
+    print("MYSQL COMMAND: {}".format(sql));
+    cursor.execute(sql)
+    db.commit()
     return;
-    # return render_template('index.html', results=results)
+    #DELETE FROM user WHERE email = 'Test';
+
+def insert(table, query, value):
+    sql = "INSERT INTO {}({}) VALUES ({});".format(table,query,value);
+    print("MYSQL COMMAND: {}".format(sql));
+    cursor.execute(sql)
+    db.commit()
+    return;
