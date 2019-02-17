@@ -63,7 +63,7 @@ export default class HomeScreen extends React.Component {
 
     componentDidMount() {
         this.setState({ isLoading: true });
-        AsyncStorage.getItem("registered")
+        AsyncStorage.getItem("email")
             .then(result => this.setState({
                 isLoading: false, // set isLoading to false until item is retrieved
                 userEmail: result ? result : "none", // if result was null, set email to none

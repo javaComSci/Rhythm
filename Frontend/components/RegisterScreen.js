@@ -1,5 +1,7 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { AsyncStorage, TextInput, FlatList, TouchableOpacity, Button, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { addEmail } from '../actions/addEmail'
 
 var styles = require('../style');
 
@@ -29,11 +31,40 @@ function save(email) {
 /* Register Screen */
 // Screen shown to user to register an email, *and enter a code sent to their e-mail* ** => to-do
 
-export default class RegisterScreen extends React.Component {
+class RegisterScreen extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            email: '',
+            submit: false,
+        }
+    }
     static navigationOptions = {
         title: 'Welcome', header: null
     };
+
+    setEmail = function (email) {
+        this.setState({ submit: true });
+        AsyncStorage.setItem('email', email)
+            .then(res => this.setState({
+                email: email,
+                submit: true,
+            }))
+            .then(() => {
+                this.props.addEmail(email);
+                if (this.state.email !== '') {
+                    this.props.navigation.navigate('Home');
+                }
+            })
+            .catch(err => {
+                console.log("ERROR: ", err);
+            });
+    }
+
     render() {
+        if (this.state.submit && this.state.email === '') {
+            return <View><Text>Loading...</Text></View>
+        }
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
@@ -59,16 +90,15 @@ export default class RegisterScreen extends React.Component {
                                 borderWidth: 1,
                                 fontWeight: 'bold',
                             }}
-                            onChangeText={text => this.setState({ text })}
-                            value={""}
+                            onChangeText={text => this.setState({ email: text })}
+                            value={this.state.email}
                         />
                     </View>
                 </ScrollView>
                 <View style={styles.footer}>
                     <TouchableOpacity
                         onPress={() => {
-                            save("test@email.com")
-                            this.props.navigation.navigate('Home')
+                            this.setEmail(this.state.email)
                         }}
                         style={styles.navButton}>
                         <Text
@@ -82,3 +112,17 @@ export default class RegisterScreen extends React.Component {
         );
     }
 };
+
+function mapStateToProps(state) {
+    return {
+        isRegistered: state.email
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        addEmail: email => dispatch(addEmail(email))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(RegisterScreen);

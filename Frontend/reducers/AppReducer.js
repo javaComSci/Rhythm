@@ -12,6 +12,10 @@ function nav(state = initialNavState, action) {
     let nextState;
     console.log(action); //debug
     switch (action.type) {
+        case 'ADD_EMAIL':
+            return {
+                ...state, isRegistered: action.email
+            };
         /*
         case 'NameOfAction':
             nextState = RootNavigator.router.getStateForAction(
@@ -28,8 +32,21 @@ function nav(state = initialNavState, action) {
     return nextState || state;
 }
 
+const initalRegisterState = { isRegistered: false };
+
+function auth(state = initalRegisterState, action) {
+    switch (action.type) {
+        case 'Register':
+            console.log("thing called");
+            return { ...state, isRegistered: true };
+        default:
+            return state;
+    }
+}
+
 const AppReducer = combineReducers({
     nav,
+    auth
 });
 
 export default AppReducer;
