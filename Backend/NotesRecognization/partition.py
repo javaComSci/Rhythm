@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+#allows creating individual objects found on a piece of sheet music
 class sheet_object:
 	def __init__(self,tup,object_number):
 		#list of pixel locations
@@ -43,9 +44,8 @@ class sheet_object:
 			if p[1] > self.C2:
 				self.C2 = p[1]
 
-
-
-#image - 2d numpy array
+# @image - 2d numpy array
+# @return - list of rows that contain run blocks
 #	return a list of rows that have runs in them
 def locate_run_blocks(image):
 	runs = []
@@ -81,8 +81,9 @@ def locate_run_blocks(image):
 
 	return runs
 
-#image - 2d numpy array
-#runs - list of row locations for rns
+# @image - 2d numpy array
+# @runs - list of row locations for runs
+# @return - void
 #	Removes runs from image while attempting to skip over neighboring objects
 def remove_runs_and_fill(image, runs):
 	#For every row in runs, remove each black pixel in row if pixel above isnt black
@@ -91,7 +92,8 @@ def remove_runs_and_fill(image, runs):
 			if row > 0 and image[row-1][col] == 255:
 				image[row][col] = 255
 
-#image - 2d numpy array
+# @image - 2d numpy array
+# @return - list of columns that contain vertical dividers
 #	returns a list of the columns that contain vertical dividers in the image
 def locate_vertical_dividers(image):
 	dividers = []
@@ -122,14 +124,15 @@ def locate_vertical_dividers(image):
 
 			#If the pixel sum is greater than 10% of the image length, consider it a run
 			# and add it to a list of rows to be removed
-			if pixel_sum / (image.shape[0] * 1.00) >= 0.075:
+			if pixel_sum / (image.shape[0] * 1.00) >= 0.1:
 				if col not in dividers:
 					dividers.append(col)
 
 	return dividers
 
-#image - 2d numpy array
-#dividers - list of column indices
+# @image - 2d numpy array
+# @dividers - list of column indices
+# @return - void
 #	Removes vertical dividers from image while attempting to ignore neighboring objects
 def remove_vertical_dividers_and_fill(image, dividers):
 	#For every column in dividers, remove column if pixel to left of black pixel isn't black
@@ -179,7 +182,8 @@ def locate_object_recur_DEP(image,mask,row,col,object_count):
 	if col-1 >= 0:
 		locate_object_recur(image,mask,row,col-1,object_count)
 
-#image - image of sheet music, preprocessed into binary with runs and dividers removed
+# @image - image of sheet music, preprocessed into binary with runs and dividers removed
+# @return - 2D mask of all sheet objects and a list of sheet objects
 #	Attempts to locate each individual object in the provided image
 def locate_objects(image):
 
@@ -222,15 +226,20 @@ def locate_objects(image):
 					tup = (row,col)
 					sheet_object_list[int(ob_num-1)].add_pixel(tup)
 
+	#merge touching objects that were mis-labeled in the first object location iteration
 	merge_touching_objects(mask, sheet_object_list)
+
+	#prunes objects that dont meet criteria out of SOL
+	prune_objects(mask, sheet_object_list)
 
 	#Return mask with objects labels and list of each individual object
 	return mask, sheet_object_list
 
-#image - image of binary preprocessed sheet music
-#mask - Contains labels for which pixels correspond to which objects
-#row - row of unlabeled pixel
-#col - column of unlabeled pixel
+# @image - image of binary preprocessed sheet music
+# @mask - Contains labels for which pixels correspond to which objects
+# @row - row of unlabeled pixel
+# @col - column of unlabeled pixel
+# @return - int representing object label
 #	Scans around unlabeled pixel to attempt to determine pixel object label
 def scan_unidentified_pixel(image,mask,row,col):
 	#Initialize the row and column you will start/end scanning from
@@ -250,87 +259,181 @@ def scan_unidentified_pixel(image,mask,row,col):
 	#If no mask values were found, return -1, indicating this is a new object
 	return -1
 
+# @mask - Contains labels for identifying which pixels belong to which objects
+# @row - row of the labeled pixel
+# @col - col of the labeled pixel
+# @return - 2 integers representing what object the given pixel is touching
+#	Scans around an identified pixel to determine if it is touching another object
 def scan_identified_pixel(mask,row,col):
+	#intialize the start and ending rows to be scanned
 	startRow = max(row-1,0)
 	startCol = max(col-1,0)
 	endRow = min(mask.shape[0], row+1)
 	endCol = min(mask.shape[1], col+1)
 
+	#label of current pixel
 	o1 = mask[row][col]
 
+	#check bounds around o1
 	for i in range(startRow, endRow):
 		for j in range(startCol, endCol):
+			#If found a different object label, return both labels
 			if mask[i][j] != 0 and mask[i][j] != o1:
 				return o1, mask[i][j]
 
 	return o1, o1
 
+# @o1_label - label of object in mask
+# @o2_labels - label of object in mask
+# @mask - Contains labels for identifying which pixels belong to which objects
+# @SOL - List of all objects on the music sheet
+# @return - void
+# 	Given the object labels for two objects present in the SOL, merge both objects into one
+#	and update the corresponding mask values and SOL entries
 def merge_sheet_objects(o1_label,o2_label,mask,SOL):
+
+	#Find index for each boject label
 	ob1 = locate_sheet_object_index(o1_label,SOL)
 	ob2 = locate_sheet_object_index(o2_label,SOL)
 
+	#add pixels from SOL[ob2] to SOL[ob1]'s pixel_list
 	SOL[ob1].pixel_list = SOL[ob1].pixel_list + SOL[ob2].pixel_list
 
+	#update the image bounds for SOL[ob1}
 	SOL[ob1].update_bounds()
 
+	#update the mask, replace SL[ob2] pixels with o1_label
 	update_mask(mask,SOL[ob2],SOL[ob1].object_number)
 
+	#remove SOL[ob2] from the list of objects
 	del SOL[ob2]
 
+# @mask - Contains labels for identifying which pixels belong to which objects
+# @sheet_object - A single object found on the music sheet
+# @new_label - The label to replace all values of sheet_object's pixel in the mask
+# @return - void
+#	Replaces all entries of a single sheet object with the labels of another sheet object
 def update_mask(mask, sheet_object, new_label):
+
 	for p in sheet_object.pixel_list:
+
+		#replace pixel value in mask with new label
 		mask[p[0]][p[1]] = new_label
 
+# @label - object label to be located
+# @SOL - List of sheet objects found on the music sheet
+# @return - index in SOL of sheet object with provided label
+#	Finds the index of a given sheet object in the SOL
 def locate_sheet_object_index(label, SOL):
 	for i in range(len(SOL)):
+
+		#if object number matches provided label, return i
 		if SOL[i].object_number == label:
 			return i
 
+	#No such label present in SOL
 	return -1
 
+# @mask - Contains labels for identifying which pixels belong to which objects
+# @SOL - List of sheet objects found on the music sheet
+# @return - void
+#	Finds all touching objects in the mask, and merges them into single objects
 def merge_touching_objects(mask,SOL):
+
+	#for every pixel in mask
 	for row in range(mask.shape[0]):
 		for col in range(mask.shape[1]):
 			if mask[row][col] != 0:
+
+				#scan around mask[row][col] to see if is touching a different object
 				o1,o2 = scan_identified_pixel(mask,row,col)
+				
+				#if o1 != o2, touching objects have been located
 				if o1 != o2:
+
+					#merge touching objects
 					merge_sheet_objects(o1,o2,mask,SOL)
 
-#SOL - List of sheet list objects
-#ob_size - size of objects that must be met to meet true-object criteria
-#path - path that jpgs will be written to
-#	Prints all objects in sheet object list as jpgs
-def print_objects(SOL,ob_size=35,path=""):
-	#Object idd
-	idd = 0
+# @ob - A single sheet object
+# @return - True if width is too small, false otherwise
+#	checks the width of an object, returning true if it is too small
+def check_width(ob):
+	if ob.C2 - ob.C1 <= 3:
+		return True
+	return False
 
+# @ob - A single sheet object
+# @return - True if height is too small, false otherwise
+#	checks the height of an object, returning true if it is too small
+def check_height(ob):
+	if ob.R2 - ob.R1 <= 3:
+		return True
+	return False
+
+# @ob - A single sheet object
+# @return - True if area is too small, false otherwise
+#	checks the area of an object, returning true if it is too small
+def check_area(ob):
+	if len(ob.pixel_list) <= 35:
+		return True
+	return False
+
+# @mask - Contains labels for identifying which pixels belong to which objects
+# @SOL - List of sheet list objects
+# @return - void
+#	prunes out objects that dont meet specific criteria in an image
+def prune_objects(mask, SOL):
+	ob = 0
+	while ob < len(SOL):
+
+		#if the object isn't wide, tall, or sized large enough
+		prune = check_width(SOL[ob]) or check_height(SOL[ob]) or check_area(SOL[ob])
+
+		if prune:
+
+			#update mask with removed object
+			update_mask(mask,SOL[ob],0)
+
+			#delete object from SOL
+			del SOL[ob]
+		else:
+			ob += 1
+
+# @mask - Contains labels for identifying which pixels belong to which objects
+# @SOL - List of sheet list objects
+# @path - path that jpgs will be written to
+# @return - void
+#	Prints all objects in sheet object list as jpgs
+def print_objects(mask,SOL,path=""):
 	#Ensures path is in correct format
 	if path.endswith("/") == False:
 		path = path + "/"
 
+	full_img = np.zeros(mask.shape)
+
 	#for every object in sheet object list
 	for ob in SOL:
-		if len(ob.pixel_list) >= ob_size:
-			#Creates new cropped imag that will be filled with a single object
-			new_img = np.zeros((ob.R2-ob.R1+1,ob.C2-ob.C1+1))
+		#Creates new cropped imag that will be filled with a single object
+		new_img = np.zeros((ob.R2-ob.R1+1,ob.C2-ob.C1+1))
 
-			#For each pixel in the object, place the pixel into new_img
-			for tup in ob.pixel_list:
-				new_img[tup[0] - ob.R1][tup[1] - ob.C1] = 255
+		#For each pixel in the object, place the pixel into new_img
+		for tup in ob.pixel_list:
+			full_img[tup[0]][tup[1]] = 255
+			new_img[tup[0] - ob.R1][tup[1] - ob.C1] = 255
 
-			#Write object to specified path
-			cv2.imwrite("{}ob_{}.jpg".format(path,idd), new_img)
+		#Write object to specified path
+		cv2.imwrite("{}ob_{}.jpg".format(path,ob.object_number), new_img)
 
-			#increment naming id
-			idd += 1
+	#Write full object image to specified path
+	cv2.imwrite("{}FullImage.jpg".format(path), full_img)
 	
 
-
-
 if __name__ == "__main__":
-	im_gray = cv2.imread("DATA/test6.jpg", cv2.IMREAD_GRAYSCALE)
+	im_gray = cv2.imread("DATA/test9.jpg", cv2.IMREAD_GRAYSCALE)
 	(thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 	print "Completed 'image load'"
+
+	im_bw = cv2.resize(im_bw, (1000, 1000)) 
 
 	runs = locate_run_blocks(im_bw)
 	remove_runs_and_fill(im_bw, runs)
@@ -343,8 +446,8 @@ if __name__ == "__main__":
 	mask, SOL = locate_objects(im_bw)
 	print "Completed 'object location'"
 
-	print_objects(SOL,ob_size=45,path="test")
+	print_objects(mask,SOL,path="test")
 	print "Completed 'print objects'"
 
-	cv2.imshow('image',mask)
-	cv2.waitKey(10000)
+	# cv2.imshow('image',mask)
+	# cv2.waitKey(10000)
