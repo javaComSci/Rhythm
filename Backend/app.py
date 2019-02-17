@@ -14,7 +14,11 @@
 from flask import Flask, render_template, json, url_for, request
 
 # Grabbing the connection file
-from user import user
+from user import users
+import user.routes.delete as deletes
+import user.routes.delete as recoverAccounts
+import user.routes.delete as updates
+import user.routes.delete as uploadImages
 
 ##
  # Creates an instance of the exisiting class/module
@@ -25,9 +29,16 @@ app = Flask(__name__)
 @app.route('/register', methods=['POST'])
 def register():
     if request.method == 'POST':
-        return user.registerRoute()
+        return users.registerRoute()
     else:
-        return '\n\nShould see this: app.py\n\n'
+        return '\n\nShould not see this: app.py\n\n'
+
+@app.route('/delete', methods=['POST'])
+def delete():
+    if request.method == 'POST':
+        return deletes.deleteRoute()
+    else:
+        return '\n\nShould not see this: app.py\n\n'
 
 ##
  # This runs the server with debug=on so we can see outputs in the terminal.

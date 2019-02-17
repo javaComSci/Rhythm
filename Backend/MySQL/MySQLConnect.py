@@ -20,16 +20,27 @@ def update(table, query, value):
     print('update');
 
 def find(table, query, value):
-    print('insert');
+    print('find');
 
-def delete(table, query, value):
-    sql = "DELETE FROM {} WHERE {} = '{}';".format(table,query,value);
+##
+ # @table what table you are looking at
+ # @id the ID of the person
+ # @value an array of the condition you want met
+ # @return it will delete everything in the table that has the condition met and the same user_id
+ ##
+def delete(table, id, value):
+    sql = "DELETE FROM {} WHERE {} = '{}' AND user_id = '{}';".format(table, value[0], value[1], id);
     print("MYSQL COMMAND: {}".format(sql));
     cursor.execute(sql)
     db.commit()
     return;
-    #DELETE FROM user WHERE email = 'Test';
 
+##
+ # @table what table you are looking at
+ # @query the varible names you are inserting with
+ # @value the values of the varibles you are importing with
+ # @return This will insert new data into the tables
+ ##
 def insert(table, query, value):
     sql = "INSERT INTO {}({}) VALUES ({});".format(table,query,value);
     print("MYSQL COMMAND: {}".format(sql));
