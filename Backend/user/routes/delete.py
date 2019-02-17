@@ -9,8 +9,5 @@ def deleteRoute():
     content = request.json
     print("delete Route Call")
     print(content)
-    # values= ["'{}'".format(content['email'])];
     MySQLConnect.delete("user", content['_id'], content['delete']);
-    # json_data = json.load(request.data)
-    # print(json_data['username'])
     return 'Deleted'
