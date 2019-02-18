@@ -24,7 +24,14 @@ def update(table, query, value):
  # value[0] and value[1]
  ##
 def find(table, id, value):
-    print('find');
+    sql = "SELECT * FROM user";
+    print("MYSQL COMMAND: {}".format(sql));
+    cursor.execute(sql)
+    db.commit()
+    result = cursor.fetchall()
+    print(result)
+    return;
+
 
 ##
  # This will delete everything in the specific table matching the id to user_id AND

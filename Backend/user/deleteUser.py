@@ -6,5 +6,7 @@ from MySQL import MySQLConnect
  # to account recovery ever, but we will put their account into "ghost" mode.
  ##
 
-# def deleteUsers():
-    # print ("Pizza")
+def deleteUsers():
+    MySQLConnect.find(1,2,3);
+    print ("Pizza")
+    return 'deleteUser';

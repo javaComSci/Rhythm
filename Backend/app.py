@@ -15,7 +15,8 @@ from flask import Flask, render_template, json, url_for, request
 
 # Grabbing the connection file
 from user import users
-from user import deleteUser
+# from user import deleteUser
+import user.deleteUser as deleteUsers
 import user.routes.delete as deletes
 import user.routes.delete as recoverAccounts
 import user.routes.delete as updates
@@ -35,7 +36,7 @@ def register():
     if request.method == 'POST':
         return users.registerRoute()
     else:
-        return '\n\nShould not see this: app.py\n\n'
+        return '\n\nDEBUG: Should not see this: app.py\n\n'
 
 ##
  # Deletes information on a specific user
@@ -45,17 +46,17 @@ def delete():
     if request.method == 'POST':
         return deletes.deleteRoute()
     else:
-        return '\n\nShould not see this: app.py\n\n'
+        return '\n\nDEBUG: Should not see this: app.py\n\n'
 
 ##
  # Deletes a user (This really just puts the user into ghost mode)
  ##
-# @app.route('/deleteUser', methods=['POST'])
-# def delete():
-    # if request.method == 'POST':
-    #     # return deleteUser.deleteUsers()
-    # else:
-    #     return '\n\nShould not see this: app.py\n\n'
+@app.route('/deleteUser', methods=['POST'])
+def deleteUser():
+    if request.method == 'POST':
+        return deleteUsers.deleteUsers()
+    else:
+        return '\n\nDEBUG: Should not see this: app.py\n\n'
 
 ##
  # This runs the server with debug=on so we can see outputs in the terminal.

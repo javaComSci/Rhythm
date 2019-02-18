@@ -8,6 +8,5 @@ from MySQL import MySQLConnect
 def deleteRoute():
     content = request.json
     print("delete Route Call")
-    print(content)
     MySQLConnect.delete("user", content['_id'], content['delete']);
     return 'Deleted'
