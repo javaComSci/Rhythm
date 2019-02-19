@@ -446,7 +446,7 @@ def full_partition(path):
 
 	#convert image to binary
 	(thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-	print "Completed 'image load'"
+	#print "Completed 'image load'"
 
 	#resize image if it is too large
 	if (im_bw.shape[0] > 2000 and im_bw.shape[1] > 2000):
@@ -457,18 +457,18 @@ def full_partition(path):
 
 	#remove runs in the image
 	remove_runs_and_fill(im_bw, runs)
-	print "Completed 'run segmenting'"
+	#print "Completed 'run segmenting'"
 
 	#locate dividers in the image
 	dividers = locate_vertical_dividers(im_bw)
 
 	#remove dividers in the image
 	remove_vertical_dividers_and_fill(im_bw, dividers)
-	print "Completed 'divider segmenting'"
+	#print "Completed 'divider segmenting'"
 
 	#locate objects in the image
 	mask, SOL = locate_objects(im_bw)
-	print "Completed 'object location'"
+	#print "Completed 'object location'"
 
 	return mask, SOL
 
