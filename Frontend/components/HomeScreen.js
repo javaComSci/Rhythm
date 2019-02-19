@@ -1,58 +1,15 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { AsyncStorage, TouchableOpacity, ScrollView, StyleSheet, Text, View } from 'react-native';
 import RegisterScreen from './RegisterScreen';
 
 var styles = require('../style')
 
 /*
-load generated music files from local storage
+todo: load generated music files from local storage
 */
-_storeData = async () => {
-    try {
-        /*
-        AsyncStorage stores data in a dictionary
-        */
-        await AsyncStorage.setItem('testKey', 'testValue')
-    } catch (error) {
-        // error saving data
-        console.log('err');
-    }
-};
 
-_retrieveData = async () => {
-    try {
-        /*
-        Retrieve data from AsyncStorage by key
-        */
-        const value = await AsyncStorage.getItem('testKey');
-        if (value != null) {
-            console.log("value", value);
-        } else {
-            // no item by key
-            console.log("nothing here");
-        }
-    } catch (error) {
-        console.log("error", error);
-    }
-}
-
-_isLoggedIn = async () => {
-    try {
-        const value = await AsyncStorage.getItem("registere");
-        console.log("value: ", value);
-        if (value != null) {
-            console.log('email:', value);
-            return true;
-        } else {
-            console.log("no");
-            return false;
-        }
-    } catch (error) {
-        console.log("err: ", error);
-    }
-}
-
-export default class HomeScreen extends React.Component {
+class HomeScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -62,6 +19,7 @@ export default class HomeScreen extends React.Component {
     }
 
     componentDidMount() {
+        console.log("hi");
         this.setState({ isLoading: true });
         AsyncStorage.getItem("email")
             .then(result => this.setState({
@@ -73,10 +31,17 @@ export default class HomeScreen extends React.Component {
                 if (this.state.userEmail === "none") {
                     this.props.navigation.navigate("Register");
                 }
+                else {
+                    this.props.dispatchAddEmail({ isRegistered: email });
+                    console.log("ADDED PROP")
+                    console.log(this.props);
+                }
+                console.log(this.props);
+
             })
             .catch(error => this.setState({
                 isLoading: false,
-                userEmail: result,
+                userEmail: error,
             }))
     }
     static navigationOptions = {
@@ -109,3 +74,17 @@ export default class HomeScreen extends React.Component {
         );
     }
 };
+
+function mapStateToProps(state) {
+    return {
+        isRegistered: state.email
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        dispatchAddEmail: (email) => dispatch(addEmail(email))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);

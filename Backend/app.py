@@ -15,10 +15,14 @@ from flask import Flask, render_template, json, url_for, request
 
 # Grabbing the connection file
 from user import users
+# from user import deleteUser
+import user.deleteUser as deleteUsers
 import user.routes.delete as deletes
 import user.routes.delete as recoverAccounts
-import user.routes.delete as updates
+import user.routes.update as updates
 import user.routes.delete as uploadImages
+import user.routes.newComposition as newCompositions
+import user.routes.getInfo as getInfos
 
 ##
  # Creates an instance of the exisiting class/module
@@ -26,19 +30,90 @@ import user.routes.delete as uploadImages
  ##
 app = Flask(__name__)
 
+##
+ # Registers a new user
+ # EXAMPLE json
+ # {
+ #     "email": "Steve@IsTheBest.com"
+ # }
+
+ ##
 @app.route('/register', methods=['POST'])
 def register():
     if request.method == 'POST':
         return users.registerRoute()
     else:
-        return '\n\nShould not see this: app.py\n\n'
+        return '\n\nDEBUG: Should not see this: app.py\n\n'
 
+##
+ # Deletes information on a specific user
+ # EXAMPLE json
+ # {
+ #     "table": "composition",
+ #     "id": "1",
+ #     "delete": ["name", "MyFirstCompo"]
+ # }
+ ##
 @app.route('/delete', methods=['POST'])
 def delete():
     if request.method == 'POST':
         return deletes.deleteRoute()
     else:
-        return '\n\nShould not see this: app.py\n\n'
+        return '\n\nDEBUG: Should not see this: app.py\n\n'
+
+##
+ # Deletes a user (This really just puts the user into ghost mode)
+ # NOT FUNCTIONAL
+ ##
+@app.route('/deleteUser', methods=['POST'])
+def deleteUser():
+    if request.method == 'POST':
+        return deleteUsers.deleteUsers()
+    else:
+        return '\n\nDEBUG: Should not see this: app.py\n\n'
+
+##
+ # Call this to create a new composition for a user
+ # EXAMPLE json
+ #  {
+ # 	    "id": "1",    <- User_id
+ # 	    "description": "I Like pancakes",
+ # 	    "name": "MyFirstCompo"
+ #  }
+ ##
+@app.route('/newComposition', methods=['POST'])
+def newComposition():
+    if request.method == 'POST':
+        return newCompositions.newCompo()
+    else:
+        return '\n\nDEBUG: Should not see this: app.py\n\n'
+
+##
+ # Call this to get info on a specific user from a specific table.
+ # This will return a json array of the results
+ # EXAMPLE json
+ # {
+ #     "id": "1",
+ #     "table": "user"
+ # }
+ ##
+@app.route('/getInfo', methods=['POST'])
+def getInfo():
+    if request.method == 'POST':
+        return getInfos.getInfo()
+    else:
+        return '\n\nDEBUG: Should not see this: app.py\n\n'
+
+##
+ # Will update a specfic value in a table for a specific user
+ # NOT FUNCTIONAL
+ ##
+@app.route('/update', methods=['POST'])
+def update():
+    if request.method == 'POST':
+        return updates.update()
+    else:
+        return '\n\nDEBUG: Should not see this: app.py\n\n'
 
 ##
  # This runs the server with debug=on so we can see outputs in the terminal.

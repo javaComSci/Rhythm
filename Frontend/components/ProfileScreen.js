@@ -1,5 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { connect } from 'react-redux';
 
 var styles = require('../style')
 
@@ -7,7 +8,12 @@ var styles = require('../style')
 /* Profile Screen */
 // Provides basic info regarding user's email, allows option to change given email
 
-export default class ProfileScreen extends React.Component {
+class ProfileScreen extends React.Component {
+    constructor(props) {
+        super(props);
+        console.log("props,",props);
+    }
+
     static navigationOptions = {
         title: 'Welcome', header: null
     };
@@ -18,7 +24,7 @@ export default class ProfileScreen extends React.Component {
                     <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> hey its ur profile screen </Text>
                 </View>
                 <ScrollView>
-                    <Text>hello</Text>
+                    <Text>{this.props.isRegistered}</Text>
                 </ScrollView>
                 <View style={styles.footer}>
                     <TouchableOpacity
@@ -32,3 +38,9 @@ export default class ProfileScreen extends React.Component {
         );
     }
 };
+
+const mapStateToProps = state => ({
+    isRegistered: state.auth.isRegistered,
+})
+
+export default connect(mapStateToProps)(ProfileScreen);
