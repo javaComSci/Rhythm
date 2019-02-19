@@ -16,10 +16,10 @@ def registerRoute():
         MySQLConnect.insert("user", ",".join(col), ",".join(values));
     else:
         result = {
-            "ok": False
+            "ok": "false"
         }
         return jsonify(result);
     result = {
-        "ok": True
+        "ok": "true"
     }
     return jsonify(result);

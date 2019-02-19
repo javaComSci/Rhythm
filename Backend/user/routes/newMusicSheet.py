@@ -8,7 +8,7 @@ from MySQL import MySQLConnect
 def newCompo():
     content = request.json
     print("newSheetMusic Call")
-    col = ["composition_id", file, "sheet_id"];
+    col = ["composition_id", "file", "sheet_id"];
     values = ["'{}', '{}', '{}'".format(content['id'], content['description'], content['name'])];
     MySQLConnect.insert("composition", ",".join(col), ",".join(values));
     return 'newCompoAdded'
