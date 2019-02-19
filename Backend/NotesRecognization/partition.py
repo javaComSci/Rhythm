@@ -86,7 +86,6 @@ def locate_run_blocks(image):
 # @return - void
 #	Removes runs from image while attempting to skip over neighboring objects
 def remove_runs_and_fill(image, runs):
-	#For every row in runs, remove each black pixel in row if pixel above isnt black
 	for row in runs:
 		for col in range(image.shape[1]):
 			if row > 0 and image[row-1][col] == 255:
@@ -243,10 +242,10 @@ def locate_objects(image):
 #	Scans around unlabeled pixel to attempt to determine pixel object label
 def scan_unidentified_pixel(image,mask,row,col):
 	#Initialize the row and column you will start/end scanning from
-	startRow = max(row-1,0)
-	startCol = max(col-1,0)
-	endRow = min(image.shape[0],row+1)
-	endCol = min(image.shape[1], col+1)
+	startRow = max(row-2,0)
+	startCol = max(col-2,0)
+	endRow = min(image.shape[0], row+2)
+	endCol = min(image.shape[1], col+3)
 
 	#For all pixels in scan range around unlabeled pixel
 	for i in range(startRow, endRow):
@@ -266,10 +265,10 @@ def scan_unidentified_pixel(image,mask,row,col):
 #	Scans around an identified pixel to determine if it is touching another object
 def scan_identified_pixel(mask,row,col):
 	#intialize the start and ending rows to be scanned
-	startRow = max(row-1,0)
-	startCol = max(col-1,0)
-	endRow = min(mask.shape[0], row+1)
-	endCol = min(mask.shape[1], col+1)
+	startRow = max(row-2,0)
+	startCol = max(col-2,0)
+	endRow = min(mask.shape[0], row+2)
+	endCol = min(mask.shape[1], col+2)
 
 	#label of current pixel
 	o1 = mask[row][col]
@@ -358,7 +357,7 @@ def merge_touching_objects(mask,SOL):
 # @return - True if width is too small, false otherwise
 #	checks the width of an object, returning true if it is too small
 def check_width(ob):
-	if ob.C2 - ob.C1 <= 3:
+	if ob.C2 - ob.C1 <= 5:
 		return True
 	return False
 
@@ -366,7 +365,7 @@ def check_width(ob):
 # @return - True if height is too small, false otherwise
 #	checks the height of an object, returning true if it is too small
 def check_height(ob):
-	if ob.R2 - ob.R1 <= 3:
+	if ob.R2 - ob.R1 <= 5:
 		return True
 	return False
 
@@ -426,28 +425,76 @@ def print_objects(mask,SOL,path=""):
 
 	#Write full object image to specified path
 	cv2.imwrite("{}FullImage.jpg".format(path), full_img)
-	
 
-if __name__ == "__main__":
-	im_gray = cv2.imread("DATA/test9.jpg", cv2.IMREAD_GRAYSCALE)
+# @ob - A single sheet object
+# @return - 2D numpy array of sheet object
+#	Converts a sheet object into it's corresponding numpy array
+def SO_to_array(ob):
+	n_arr = np.ones((ob.R2-ob.R1,ob.C2-ob.C1)) * 255
+	for p in ob.pixel_list:
+		n_arr[p[0]][p[1]] = 0
+
+	return n_arr
+
+# @path - path to music sheet jpg
+# @return - 2d mask array, and a list of the sheet objects
+#	fully performs tha object partion steps, returning the mask of the objects and the 
+#	list of the objects
+def full_partition(path):
+	#load image as grayscale
+	im_gray =  cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+
+	#convert image to binary
 	(thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 	print "Completed 'image load'"
 
-	im_bw = cv2.resize(im_bw, (1000, 1000)) 
+	#resize image if it is too large
+	if (im_bw.shape[0] > 2000 and im_bw.shape[1] > 2000):
+		im_bw = cv2.resize(im_bw, (1500, 1500)) 
 
+	#locate runs in the image
 	runs = locate_run_blocks(im_bw)
+
+	#remove runs in the image
 	remove_runs_and_fill(im_bw, runs)
 	print "Completed 'run segmenting'"
 
+	#locate dividers in the image
 	dividers = locate_vertical_dividers(im_bw)
+
+	#remove dividers in the image
 	remove_vertical_dividers_and_fill(im_bw, dividers)
 	print "Completed 'divider segmenting'"
 
+	#locate objects in the image
 	mask, SOL = locate_objects(im_bw)
 	print "Completed 'object location'"
 
-	print_objects(mask,SOL,path="test")
-	print "Completed 'print objects'"
+	return mask, SOL
 
-	# cv2.imshow('image',mask)
-	# cv2.waitKey(10000)
+if __name__ == "__main__":
+	# im_gray = cv2.imread("DATA/test5.jpg", cv2.IMREAD_GRAYSCALE)
+	# (thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+	# print "Completed 'image load'"
+
+	# if (im_bw.shape[0] > 2000 and im_bw.shape[1] > 2000):
+	# 	im_bw = cv2.resize(im_bw, (1000, 1000)) 
+
+	# runs = locate_run_blocks(im_bw)
+	# remove_runs_and_fill(im_bw, runs)
+	# print "Completed 'run segmenting'"
+
+	# dividers = locate_vertical_dividers(im_bw)
+	# remove_vertical_dividers_and_fill(im_bw, dividers)
+	# print "Completed 'divider segmenting'"
+
+	# mask, SOL = locate_objects(im_bw)
+	# print "Completed 'object location'"
+
+	# print_objects(mask,SOL,path="test")
+	# print "Completed 'print objects'"
+	mask, SOL = full_partition("DATA/test5.jpg")
+	print_objects(mask,SOL,path="test")
+
+
+
