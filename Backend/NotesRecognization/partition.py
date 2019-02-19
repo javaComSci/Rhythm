@@ -430,7 +430,7 @@ def print_objects(mask,SOL,path=""):
 # @return - 2D numpy array of sheet object
 #	Converts a sheet object into it's corresponding numpy array
 def SO_to_array(ob):
-	n_arr = np.ones((ob.R2-ob.R1,ob.C2-ob.C1)) * 255
+	n_arr = np.ones((ob.R2-ob.R1+1,ob.C2-ob.C1+1)) * 255
 	for p in ob.pixel_list:
 		n_arr[p[0] - ob.R1][p[1] - ob.C1] = 0
 
