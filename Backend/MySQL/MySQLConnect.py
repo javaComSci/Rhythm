@@ -16,21 +16,21 @@ with open("config/mysql.json") as json_file:
 db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
 cursor = db.cursor()
 
-def update(table, query, value):
+def update(table, id, query, value):
     print('update');
 
 ##
  # This will find everything in a specific table and matching the id with the user_id and
  # value[0] and value[1]
  ##
-def find(table, id, value):
-    sql = "SELECT * FROM user";
+def find(table, id):
+    sql = "SELECT * FROM {} WHERE user_id = '{}'".format(table, id);
     print("MYSQL COMMAND: {}".format(sql));
     cursor.execute(sql)
     db.commit()
     result = cursor.fetchall()
     print(result)
-    return;
+    return result;
 
 
 ##

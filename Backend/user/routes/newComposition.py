@@ -6,4 +6,9 @@ from MySQL import MySQLConnect
  ##
 
 def newCompo():
-    x = 5;
+    content = request.json
+    print("NewCompo Call")
+    col = ["user_id", "description", "name"];
+    values = ["'{}', '{}', '{}'".format(content['id'], content['description'], content['name'])];
+    MySQLConnect.insert("composition", ",".join(col), ",".join(values));
+    return 'newCompoAdded'
