@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 
 if __name__ == "__main__":
-	file_path = "PATH TO JPG"
+	file_path = "ExamplePredictions/DATA/test1.jpg"
 
 	mask, SOL = partition.full_partition(file_path)
 
@@ -18,4 +18,4 @@ if __name__ == "__main__":
 
 		ob_prediction = neuralNet.predict(flat_arr)
 
-		cv2.imwrite("predictions/ob#{}_label:{}.jpg".format(ob_counter, ob_prediction), n_arr)
+		cv2.imwrite("ExamplePredictions/predictions/ob#{}_label:{}.jpg".format(ob_counter, ob_prediction), n_arr)
