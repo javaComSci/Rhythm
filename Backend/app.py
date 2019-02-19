@@ -22,6 +22,7 @@ import user.routes.delete as recoverAccounts
 import user.routes.update as updates
 import user.routes.delete as uploadImages
 import user.routes.newComposition as newCompositions
+import user.routes.newMusicSheet as newMusicSheets
 import user.routes.getInfo as getInfos
 
 ##
@@ -85,6 +86,13 @@ def deleteUser():
 def newComposition():
     if request.method == 'POST':
         return newCompositions.newCompo()
+    else:
+        return '\n\nDEBUG: Should not see this: app.py\n\n'
+
+@app.route('/newMusicSheet', methods=['POST'])
+def newMusicSheet():
+    if request.method == 'POST':
+        return newMusicSheets.newCompo()
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 

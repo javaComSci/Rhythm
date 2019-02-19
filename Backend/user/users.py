@@ -6,6 +6,7 @@ from MySQL import MySQLConnect
  # and then calls the insert in MySQLConnect.py
  ##
 def registerRoute():
+
     content = request.json
     print("RegisterRoute Call")
     col = ["email"];
@@ -14,5 +15,11 @@ def registerRoute():
     if len(check) == 0:
         MySQLConnect.insert("user", ",".join(col), ",".join(values));
     else:
-        return jsonify('false');
-    return jsonify('true');
+        result = {
+            "ok": False
+        }
+        return jsonify(result);
+    result = {
+        "ok": True
+    }
+    return jsonify(result);
