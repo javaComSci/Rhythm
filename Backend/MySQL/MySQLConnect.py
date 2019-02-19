@@ -16,19 +16,50 @@ with open("config/mysql.json") as json_file:
 db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
 cursor = db.cursor()
 
-def update():
+def update(table, id, query, value):
     print('update');
 
-def insert():
-    print('insert');
+##
+ # This will find everything in a specific table and matching the id with the user_id and
+ # value[0] and value[1]
+ ##
+def find(table, id):
+    sql = "SELECT * FROM {} WHERE user_id = '{}'".format(table, id);
+    print("MYSQL COMMAND: {}".format(sql));
+    cursor.execute(sql)
+    db.commit()
+    result = cursor.fetchall()
+    print(result)
+    return result;
 
-def delete():
-    print('delete');
 
-def find():
-    print('delete');
-    # sql = "INSERT INTO Users (email) VALUES (6)";
-    # cursor.execute(sql)
-    # results = cursor.fetchall()
+##
+ # This will delete everything in the specific table matching the id to user_id AND
+ # value[0] to value[1]
+ #
+ # @table what table you are looking at
+ # @id the ID of the person
+ # @value an array of the condition you want met
+ # @return void
+ ##
+def delete(table, id, value):
+    sql = "DELETE FROM {} WHERE {} = '{}' AND user_id = '{}';".format(table, value[0], value[1], id);
+    print("MYSQL COMMAND: {}".format(sql));
+    cursor.execute(sql)
+    db.commit()
     return;
-    # return render_template('index.html', results=results)
+
+##
+ # This will insert new information into the specific table
+ #
+ # @table what table you are looking at
+ # @query the varible names you are inserting with
+ # @value the values of the varibles you are inserting
+ # @return void
+ ##
+def insert(table, query, value):
+    sql = "INSERT INTO {}({}) VALUES ({});".format(table,query,value);
+    print("MYSQL COMMAND: {}".format(sql));
+    cursor.execute(sql)
+    db.commit()
+    return;
