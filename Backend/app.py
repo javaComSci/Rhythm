@@ -22,6 +22,7 @@ import user.routes.delete as recoverAccounts
 import user.routes.update as updates
 import user.routes.delete as uploadImages
 import user.routes.newComposition as newCompositions
+import user.routes.newMusicSheet as newMusicSheets
 import user.routes.getInfo as getInfos
 
 ##
@@ -88,6 +89,13 @@ def newComposition():
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
+@app.route('/newMusicSheet', methods=['POST'])
+def newMusicSheet():
+    if request.method == 'POST':
+        return newMusicSheets.newCompo()
+    else:
+        return '\n\nDEBUG: Should not see this: app.py\n\n'
+
 ##
  # Call this to get info on a specific user from a specific table.
  # This will return a json array of the results
@@ -97,9 +105,9 @@ def newComposition():
  #     "table": "user"
  # }
  ##
-@app.route('/getInfo', methods=['GET'])
+@app.route('/getInfo', methods=['POST'])
 def getInfo():
-    if request.method == 'GET':
+    if request.method == 'POST':
         return getInfos.getInfo()
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'

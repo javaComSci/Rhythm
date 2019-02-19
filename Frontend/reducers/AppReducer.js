@@ -36,7 +36,7 @@ const initalRegisterState = { isRegistered: false };
 
 function auth(state = initalRegisterState, action) {
     switch (action.type) {
-        case 'Register':
+        case 'ADD_EMAIL':
             console.log("thing called");
             return { ...state, isRegistered: true };
         default:

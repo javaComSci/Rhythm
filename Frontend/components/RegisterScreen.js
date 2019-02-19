@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { AsyncStorage, TextInput, FlatList, TouchableOpacity, Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { addEmail } from '../actions/addEmail'
-
+import Connection from '../utils/connect'
 var styles = require('../style');
 
 _storeData = async (email) => {
@@ -45,20 +45,23 @@ class RegisterScreen extends React.Component {
 
     setEmail = function (email) {
         this.setState({ submit: true });
-        AsyncStorage.setItem('email', email)
-            .then(res => this.setState({
-                email: email,
-                submit: true,
-            }))
-            .then(() => {
-                this.props.addEmail(email);
-                if (this.state.email !== '') {
-                    this.props.navigation.navigate('Home');
-                }
-            })
-            .catch(err => {
-                console.log("ERROR: ", err);
-            });
+        Connection.connect("register", "POST", { "email": email }, (result) => {
+            console.log("res:", result);
+            AsyncStorage.setItem('email', email)
+                .then(res => this.setState({
+                    email: email,
+                    submit: true,
+                }))
+                .then(() => {
+                    this.props.addEmail(email);
+                    if (this.state.email !== '') {
+                        this.props.navigation.navigate('Home');
+                    }
+                })
+                .catch(err => {
+                    console.log("ERROR: ", err);
+                });
+        });
     }
 
     render() {
