@@ -8,6 +8,7 @@ from keras.layers import Dense, Dropout
 from keras.models import load_model
 import math
 import os
+from clefNeuralNet import predictClef
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 translations = np.load('translations.npy')
@@ -208,7 +209,6 @@ def hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, modelsI
 	bestModel.summary()
 	return bestModel
 
-
 def trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut):
 
 	print("TRANING INPUT", trainingOut.shape, trainingIn.shape)
@@ -221,12 +221,9 @@ def trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut):
 		if translation == 'C-Clef' or translation == 'G-Clef' or translation == 'F-Clef':
 			# for clef
 			trainingOut[t][0] = 0
-		elif translation == '4-4-Time' or translation == '2-2-Time':
-			# for time
-			trainingOut[t][0] = 1
 		else:
 			# for note
-			trainingOut[t][0] = 2
+			trainingOut[t][0] = 1
 
 	# modify the labels for clefs, notes, and times for testing data
 	for t in range(0, len(testingOut)):
@@ -236,12 +233,9 @@ def trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut):
 		if translation == 'C-Clef' or translation == 'G-Clef' or translation == 'F-Clef':
 			# for clef
 			testingOut[t][0] = 0
-		elif translation == '4-4-Time' or translation == '2-2-Time':
-			# for time
-			testingOut[t][0] = 1
 		else:
 			# for note
-			testingOut[t][0] = 2
+			testingOut[t][0] = 1
 
 	layersForTraining = [ [[50, 'relu'], [20, 'relu'], [3, 'softmax'] ],
 	[ [20, 'relu'], [15, 'tanh'], [3, 'softmax'] ],
@@ -251,36 +245,36 @@ def trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut):
 	[ [300, 'relu'], [3, 'softmax'] ],
 	]
 
-
 	model = hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, layersForTraining)
+
+	print("CALLING HYPERPARAMETER TUNING")
 
 	model.save('general_model.h5')
 
 	model = load_model('general_model.h5')
 
-	# predictions on unseen data
-	predictions = model.predict(testingIn)
-	overallPredictions = -np.ones((len(testingOut),1))
+	# # predictions on unseen data
+	# predictions = model.predict(testingIn)
+	# overallPredictions = -np.ones((len(testingOut),1))
 
-	for i in range(predictions.shape[0]):
-		overallPredictions[i] = np.argmax(predictions[i])
-		print(overallPredictions[i], testingOut[i])
+	# print("ALL THE PREDICTIONS", overallPredictions)
 
-		testing = trainingIn[4050]
-		testing = testing * 255
+	# for i in range(predictions.shape[0]):
+	# 	overallPredictions[i] = np.argmax(predictions[i])
+	# 	print(overallPredictions[i], testingOut[i])
 
-		print("TESTING IN SIZE", testing, testing.shape)
-		testing = testing.reshape(70, 50)
-		print("TESTING IN", testing)
-		img = Image.fromarray(testing)
-		img.show()
-		return
+	# 	testing = trainingIn[1000]
+	# 	testing = testing * 255
 
-	print("PREDICTIONS", overallPredictions)
+	# 	print("TESTING IN SIZE", testing, testing.shape)
+	# 	testing = testing.reshape(70, 50)
+	# 	print("TESTING IN", testing)
+	# 	img = Image.fromarray(testing)
+	# 	img.show()
+	# 	return
 
-def predictClef(symbol):
-	# which clef
-	return
+	# print("PREDICTIONS", overallPredictions)
+
 
 def predictRest(symbol):
 	return
@@ -288,7 +282,7 @@ def predictRest(symbol):
 def predictExtra(symbol):
 	return
 
-def predictRealNote(symbol):
+def predictRealNote(testingInput):
 	return
 
 def predictNote(symbol):
@@ -302,20 +296,85 @@ def predictNote(symbol):
 	elif res == 'extra':
 		return predictExtra(symbol)
 
-def predictTime(symbol):
-	# time
-	return
+def checkPredictions(testingInput, testingOut):
+	for t in range(0, len(testingOut)):
+		output = testingOut[t][0]
+		translation = translations[output]
 
-def predict(symbol):
-	res = None
+		if translation == 'C-Clef' or translation == 'G-Clef' or translation == 'F-Clef':
+			# for clef
+			testingOut[t][0] = 0
+		else:
+			# for note
+			testingOut[t][0] = 1
+
+	generalPredictions, clefPredictions = predict(testingInput)
+
+	incorrectGeneral = 0
+	correctGeneral = 0
+
+	for i in range(generalPredictions.shape[0]):
+		if generalPredictions[i] != testingOut[i]:
+			incorrectGeneral += 1
+		else:
+			correctGeneral += 1
+
+	incorrectClef = 0
+	correctClef = 0
+
+	for i in range(clefPredictions.shape[0]):
+		if clefPredictions[i] != testingOut[i]:
+			incorrectClef += 1
+		else:
+			correctClef += 1
+
+	print("General incorrect", incorrectGeneral, "General Correct", correctGeneral)
+	print("Clef incorrect", incorrectClef, "Clef Correct", correctClef)
+
+
+def predict(testingInput):
+	model = load_model('general_model.h5')
+
+	# actual values for which one of the different types it could be
+	generalPredictions = model.predict(testingIn)
+
+	# actual value of the predictions
+	overallPredictions = -np.ones((testingIn.shape[0],1))
+
+	clefPredictions = []
+
+	for i in range(generalPredictions.shape[0]):
+		overallPredictions[i] = np.argmax(generalPredictions[i])
+
+		# send to respective neural network
+		if overallPredictions[i] == 0:
+			clefPrediction = predictClef(testingInput)
+			clefPredictions.append(clefPrediction)
+		else:
+			notePrediction = predictNote(testingInput)
+
+	print("THE SHAPE OF THE GENERAL PREDICTIONS IS", overallPredictions.shape)
+
+	# convert to numpy array
+	clefPredictions = np.asarray(clefPredictions)
+	return overallPredictions, clefPredictions
+
+
+		# testing = trainingIn[1000]
+		# testing = testing * 255
+
+		# print("TESTING IN SIZE", testing, testing.shape)
+		# testing = testing.reshape(70, 50)
+		# print("TESTING IN", testing)
+		# img = Image.fromarray(testing)
+		# img.show()
+		# return
 
 	# general classes - clef, note, or time
-	if res == 'clef':
-		return predictClef(symbol)
-	elif res == 'note':
-		return predictNote(symbol)
-	elif res == 'time':
-		return predictTime(symbol)
+	# if res == 'clef':
+	# 	return predictClef(symbol)
+	# elif res == 'note':
+	# 	return predictNote(symbol)
 
 
 if __name__ == '__main__':
@@ -323,3 +382,4 @@ if __name__ == '__main__':
 	trainingIn, trainingOut, testingIn, testingOut = getData()
 	# trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut)
 	# trainClefNN(trainingIn, trainingOut, testingIn, testingOut)
+	checkPredictions(testingIn, testingOut)
