@@ -7,5 +7,5 @@ from MySQL import MySQLConnect
 def update():
     content = request.json
     print("update Route Call")
-    # results = MySQLConnect.find(content['table'], content['id'], );
+    # results = MySQLConnect.update(content['table'], content['id'], );
     return 'updated'

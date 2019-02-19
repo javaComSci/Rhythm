@@ -97,9 +97,9 @@ def newComposition():
  #     "table": "user"
  # }
  ##
-@app.route('/getInfo', methods=['GET'])
+@app.route('/getInfo', methods=['POST'])
 def getInfo():
-    if request.method == 'GET':
+    if request.method == 'POST':
         return getInfos.getInfo()
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'

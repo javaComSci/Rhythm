@@ -17,11 +17,12 @@ db = pymysql.connect(json_data['server'], json_data['username'], json_data['pass
 cursor = db.cursor()
 
 def update(table, id, query, value):
+    print("MYSQL COMMAND: {}".format(sql));
     print('update');
 
 ##
- # This will find everything in a specific table and matching the id with the user_id and
- # value[0] and value[1]
+ # This will find everything in a specific table and matching the id with the user_id
+ #
  ##
 def find(table, id):
     sql = "SELECT * FROM {} WHERE user_id = '{}'".format(table, id);
@@ -32,6 +33,18 @@ def find(table, id):
     print(result)
     return result;
 
+##
+ # This will find everything in a specific table and matching the id with the user_id
+ #
+ ##
+def findUser(table, value):
+    sql = "SELECT * FROM {} WHERE email = '{}'".format(table, value);
+    print("MYSQL COMMAND: {}".format(sql));
+    cursor.execute(sql)
+    db.commit()
+    result = cursor.fetchall()
+    print(result)
+    return result;
 
 ##
  # This will delete everything in the specific table matching the id to user_id AND
