@@ -26,7 +26,9 @@ export default class CompositionScreen extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            "compositions": []
+            "compositions": [],
+            newCompo: false, 
+            text: "",
         }
     }
     static navigationOptions = {
@@ -64,12 +66,64 @@ export default class CompositionScreen extends React.Component {
     componentDidMount() {
     }
 
+    makeCompositionCall() {
+        fetch('http://18.237.79.152:5000/newComposition', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'id': 1,
+                'description': 'I like pancakes',
+                'name': this.state.text,
+            }),
+        }).then((res) => {
+            res.text().then(function (res) {
+                var dummyList = [] // temp list to hold compositions before being added to state
+                JSON.parse(res).forEach(element => {
+                    dummyList.push(new Composition(element[1], element[2], element[0]));
+                });
+                that.setState({ "compositions": dummyList, newCompo: false })
+            })
+                .catch((err) => {
+                    console.log("err", err)
+                })
+        }).catch((res) => {
+            console.log("err", res)
+        });
+    }
+
+    doneComposition() {
+        makeCompositionCall();
+    }
+
+    createComposition() {
+        this.setState({
+            newCompo: true,
+        }); 
+    }
+
     render() {
+        if(this.state.newCompo == true) {
+            return (
+                <View style={styles.container}>
+                    <View style={styles}>
+                        <TextInput style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+                            onChangeText={(text) => this.setState({text})}
+                            value={this.state.text} />
+                        <Button onPress={()=>doneComposition()} title="Create Composition"/>
+                    </View>
+                </View>
+            );
+        }
+
         return (
             <View style={styles.container}>
                 <View style={styles}>
                     <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> COMPOSITIONS </Text>
                     <View style={styles.lineBreak} />
+                    <Button onPress={()=>createComposition()} title="+"/>
                 </View>
                 <ScrollView>
                     <FlatList
