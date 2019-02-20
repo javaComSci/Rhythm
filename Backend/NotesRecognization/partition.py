@@ -438,11 +438,11 @@ def print_objects(mask,SOL,path=""):
 # @return - 2D numpy array of sheet object
 #	Converts a sheet object into it's corresponding numpy array
 def SO_to_array(ob):
-	n_arr = np.ones((70,50)) * 255
+	n_arr = np.ones((70,50))
 	for p in ob.pixel_list:
-		if p[0] - ob.R1 + 30< 70 and p[1] - ob.C1 + 20< 50:
-			n_arr[p[0] - ob.R1+30][p[1] - ob.C1+20] = 0
-	
+		if (p[0] - ob.R1 < 70 and p[1] - ob.C1 < 50) and (ob.R2 - ob.R1 < 70 and ob.C2 - ob.C1 < 50):
+			n_arr[p[0] - ob.R1 + int((70 - (ob.R2 - ob.R1))/2.00)][p[1] - ob.C1 + int((50 - (ob.C2 - ob.C1))/2.00)] = 0
+			#n_arr[int((ob.R2 - ob.R1)/2.0) + p[0] - 70][int((ob.C2 - ob.C1)/2.0) + p[1] - 50] = 0
 	return n_arr
 
 # @path - path to music sheet jpg

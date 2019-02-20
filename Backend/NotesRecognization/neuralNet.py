@@ -7,6 +7,7 @@ from PIL import Image
 from keras.layers import Dense, Dropout
 from keras.models import load_model
 import math
+import partition
 import os
 from clefNeuralNet import predictClef
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
@@ -169,7 +170,7 @@ def testClefNN(testingIn, testingOut):
 
 	for i in range(predictions.shape[0]):
 		overallPredictions[i] = np.argmax(predictions[i])
-		print("Prediction:", overallPredictions[i], "True Label", clefTestingOut[i])
+		# print("Prediction:", overallPredictions[i], "True Label", clefTestingOut[i])
 
 		# showing the incorrect image
 		# if overallPredictions[i] != clefTestingOut[i]:
@@ -181,12 +182,13 @@ def testClefNN(testingIn, testingOut):
 		# 	break
 
 		# show the example of the image and the value wanted
-		# if i % 99 == 0:
-		# 	testing = clefTestingIn[i]
-		# 	testing = testing * 255
-		# 	testing = testing.reshape(70, 50)
-		# 	img = Image.fromarray(testing)
-		# 	img.show()
+		if i % 99 == 0 and overallPredictions[i] == clefTestingOut[i]:
+			print("Prediction:", overallPredictions[i], "True Label", clefTestingOut[i])
+			testing = clefTestingIn[i]
+			testing = testing * 255
+			testing = testing.reshape(70, 50)
+			img = Image.fromarray(testing)
+			img.show()
 			
 
 	print("Accuracy on clef testing data:", (np.sum(overallPredictions == clefTestingOut)+0.0)/len(clefTestingOut))
@@ -425,7 +427,7 @@ def checkPredictions(testingInput, testingOut):
 	incorrect = 0
 	correct = 0
 
-	for t in range(0, testingInput.shape[0], 100):
+	for t in range(0, testingInput.shape[0], 175):
 
 		test = testingInput[t].reshape((1, 3500))
 		prediction = predict(test)
@@ -475,7 +477,7 @@ def predict(testingIn):
 			notePrediction = predictNote(testingIn)
 			stringPredictions.append('NOTE')
 
-	return stringPredictions
+	return stringPredictions, testingIn
 
 
 
@@ -485,5 +487,5 @@ if __name__ == '__main__':
 	# trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testGeneralNN(testingIn, testingOut)
 	# trainClefNN(trainingIn, trainingOut, testingIn, testingOut)
-	# testClefNN(testingIn, testingOut)
-	checkPredictions(testingIn, testingOut)
+	testClefNN(testingIn, testingOut)
+	# checkPredictions(testingIn, testingOut)
