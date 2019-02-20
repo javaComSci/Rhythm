@@ -2,7 +2,7 @@ import React from 'react';
 import { AppRegistry } from 'react-native';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
-import CameraExample from './components/SheetCamera'
+import SheetCamera from './components/SheetCamera'
 import { AppNavigator, middleware } from './navigators/AppNavigation'
 import AppReducer from './reducers/AppReducer'
 
