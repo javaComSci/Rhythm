@@ -427,17 +427,24 @@ def checkPredictions(testingInput, testingOut):
 	incorrect = 0
 	correct = 0
 
-	for t in range(0, testingInput.shape[0], 175):
+	for t in range(0, testingInput.shape[0], 500):
+
+		print("PREDICTION: ", prediction[0][0], "ACTUAL:", stringOutputs[t])
 
 		test = testingInput[t].reshape((1, 3500))
 		prediction = predict(test)
 
-		print("PREDICTION: ", prediction[0], "ACTUAL:", stringOutputs[t])
+		testing = testingInput[t]
+		testing = testing * 255
+		testing = testing.reshape(70, 50)
+		img = Image.fromarray(testing)
+		img.show()
 
-		if prediction[0] == stringOutputs[t]:
+		if prediction[0][0] == stringOutputs[t]:
 			correct += 1
 		else:
 			incorrect += 1
+
 
 	print("Accuracy: ", (correct + 0.0)/(correct + incorrect))
 
@@ -487,5 +494,5 @@ if __name__ == '__main__':
 	# trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testGeneralNN(testingIn, testingOut)
 	# trainClefNN(trainingIn, trainingOut, testingIn, testingOut)
-	testClefNN(testingIn, testingOut)
-	# checkPredictions(testingIn, testingOut)
+	# testClefNN(testingIn, testingOut)
+	checkPredictions(testingIn, testingOut)
