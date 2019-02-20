@@ -440,8 +440,8 @@ def print_objects(mask,SOL,path=""):
 def SO_to_array(ob):
 	n_arr = np.ones((70,50)) * 255
 	for p in ob.pixel_list:
-		if p[0] - ob.R1 < 70 and p[1] - ob.C1 < 50:
-			n_arr[p[0] - ob.R1][p[1] - ob.C1] = 0
+		if p[0] - ob.R1 + 30< 70 and p[1] - ob.C1 + 20< 50:
+			n_arr[p[0] - ob.R1+30][p[1] - ob.C1+20] = 0
 	
 	return n_arr
 

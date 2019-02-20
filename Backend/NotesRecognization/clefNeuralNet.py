@@ -6,27 +6,17 @@ from keras.models import load_model
 
 model = load_model("clef_model.h5")
 
-translations = np.load('translations.npy')
-translations = translations.item()
-print("TRANLSATIONS", translations)
-
 def predictClef(testingInput):
 	# which clef
 	predictions = model.predict(testingInput)
 
 	# actual value of the predictions
-
-	# overallPredictions = -np.ones((testingInput.shape[0],1))
 	overallPredictions = []
 
-	for i in range(predictions.shape[0]):
+	for i in range(predictions.shape[0]):		
 		currentPrediction = np.argmax(predictions[i])
-		# overallPredictions[i] = translations[currentPrediction]
-		if currentPrediction == 0:
-			overallPredictions.append(1)
-		elif currentPrediction == 0:
-			overallPredictions.append(6)
-		else:
-			overallPredictions.append(8)
-			
+		print("AAA", predictions, predictions.shape)
+		print("ALL THE PREDICTIONS", predictions[i], predictions[i].shape)
+		overallPredictions.append(currentPrediction)
+
 	return overallPredictions
