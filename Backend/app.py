@@ -135,13 +135,17 @@ def update():
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
-
-
+# {
+# 	"email": "dellamoresteven@gmail.com"
+# }
 # UPDATE user SET verf_code=NULL WHERE email='Hhh';
 @app.route('/recoverEmail', methods=['POST'])
 def recoverEmail():
     return AccountRecoverys.AccountRecovery(mail);
 
+# {
+# 	"code": 92477971865
+# }
 @app.route('/checkKey', methods=['POST'])
 def checkKey():
     if request.method == 'POST':
