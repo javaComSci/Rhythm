@@ -16,8 +16,8 @@ with open("config/mysql.json") as json_file:
 db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
 cursor = db.cursor()
 
-def update(table, query, value, where):
-    sql = "UPDATE {} SET {}={} WHERE {}='{}'".format(table, query, value, where[0], where[1]);
+def update(table, update, where):
+    sql = "UPDATE {} SET {}='{}' WHERE {}='{}'".format(table, update[0], update[1], where[0], where[1]);
     cursor.execute(sql)
     db.commit()
     print("MYSQL COMMAND: {}".format(sql));

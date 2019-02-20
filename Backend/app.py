@@ -126,7 +126,11 @@ def getInfo():
 
 ##
  # Will update a specfic value in a table for a specific user
- # NOT FUNCTIONAL
+ #{
+# 	"table": "composition",
+# 	"update": ["description", "Chucken"],
+# 	"where": ["composition_id", 2]
+# }
  ##
 @app.route('/update', methods=['POST'])
 def update():

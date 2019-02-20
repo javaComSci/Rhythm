@@ -13,7 +13,8 @@ def AccountRecovery(mail):
     msg.body = "Your code is {}".format(x)
     mail.send(msg)
     value = ["email", content['email']]
-    MySQLConnect.update("user", "verf_code", x, value)
+    verCode = ["verf_code", x]
+    MySQLConnect.update("user", verCode, value)
     return 'sent'
 
 def checkKey():
@@ -30,6 +31,7 @@ def checkKey():
             "id": check[0][0]
         }
         value = ["user_id", check[0][0]]
-        MySQLConnect.update("user", "verf_code", 'NULL', value)
+        verCode = ["verf_code", "-1"]
+        MySQLConnect.update("user", verCode, value)
     return jsonify(result);
     return "true"
