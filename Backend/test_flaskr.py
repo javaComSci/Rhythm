@@ -19,23 +19,31 @@
 
 #     os.close(db_fd)
 #     os.unlink(flaskr.app.config['DATABASE'])
-from flask import Flask, url_for
 
-app = Flask(__name__)
+from app import myapp
+import unittest
 
-def has_no_empty_params(rule):
-    defaults = rule.defaults if rule.defaults is not None else ()
-    arguments = rule.arguments if rule.arguments is not None else ()
-    return len(defaults) >= len(arguments)
+# python -m unittest test_app
 
+class TestMyApp(unittest.TestCase):
+    def setUp(self):
+        self.app = myapp.test_client()
 
-@app.route("/register")
-def site_map():
-    links = []
-    for rule in app.url_map.iter_rules():
-        # Filter out rules we can't navigate to in a browser
-        # and rules that require parameters
-        if "POST" in rule.methods and has_no_empty_params(rule):
-            url = url_for(rule.endpoint, **(rule.defaults or {}))
-            links.append((url, rule.endpoint))
-    # links is now a list of url, endpoint tuples
+    def test_main(self):
+        rv = self.app.get('/')
+        assert rv.status == '200 OK'
+        assert b'Main' in rv.data
+        #assert False
+
+    def test_add(self):
+        rv = self.app.get('/add/2/3')
+        self.assertEqual(rv.status, '200 OK')
+        self.assertEqual(rv.data, '5')
+
+        rv = self.app.get('/add/0/10')
+        self.assertEqual(rv.status, '200 OK')
+        self.assertEqual(rv.data, '10')
+
+    def test_404(self):
+        rv = self.app.get('/other')
+        self.assertEqual(rv.status, '404 NOT FOUND')
