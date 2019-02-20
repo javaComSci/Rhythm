@@ -23,14 +23,26 @@ import user.routes.update as updates
 import user.routes.delete as uploadImages
 import user.routes.newComposition as newCompositions
 import user.routes.newMusicSheet as newMusicSheets
+import user.routes.AccountRecovery as AccountRecoverys
 import user.routes.getInfo as getInfos
-
+from flask_mail import Mail, Message
 ##
  # Creates an instance of the exisiting class/module
  # __name__ is the name of the module I beleive
  ##
 app = Flask(__name__)
 
+mail_settings = {
+    "MAIL_SERVER": 'smtp.gmail.com',
+    "MAIL_PORT": 465,
+    "MAIL_USE_TLS": False,
+    "MAIL_USE_SSL": True,
+    "MAIL_USERNAME": 'rhythmrecovery@gmail.com',
+    "MAIL_PASSWORD": 'ouch09038888'
+}
+
+app.config.update(mail_settings)
+mail = Mail(app)
 ##
  # Registers a new user
  # EXAMPLE json
@@ -92,7 +104,7 @@ def newComposition():
 @app.route('/newMusicSheet', methods=['POST'])
 def newMusicSheet():
     if request.method == 'POST':
-        return newMusicSheets.newCompo()
+        return newMusicSheets.newMusicSheets()
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
@@ -120,6 +132,20 @@ def getInfo():
 def update():
     if request.method == 'POST':
         return updates.update()
+    else:
+        return '\n\nDEBUG: Should not see this: app.py\n\n'
+
+
+
+# UPDATE user SET verf_code=NULL WHERE email='Hhh';
+@app.route('/recoverEmail', methods=['POST'])
+def recoverEmail():
+    return AccountRecoverys.AccountRecovery(mail);
+
+@app.route('/checkKey', methods=['POST'])
+def checkKey():
+    if request.method == 'POST':
+        return AccountRecoverys.checkKey()
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 

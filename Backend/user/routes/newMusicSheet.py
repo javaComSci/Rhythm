@@ -5,10 +5,10 @@ from MySQL import MySQLConnect
  # When a composition is made this will init all the data of that new composition
  ##
 
-def newCompo():
+def newMusicSheets():
     content = request.json
     print("newSheetMusic Call")
-    col = ["composition_id", "file", "sheet_id"];
-    values = ["'{}', '{}', '{}'".format(content['id'], content['description'], content['name'])];
-    MySQLConnect.insert("composition", ",".join(col), ",".join(values));
-    return 'newCompoAdded'
+    col = ["composition_id", "file"];
+    values = ["'{}', '{}'".format(content['comp_id'], content['file'])];
+    MySQLConnect.insert("sheet_music", ",".join(col), ",".join(values));
+    return 'newMusicSheets'
