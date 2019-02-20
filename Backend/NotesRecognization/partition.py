@@ -410,8 +410,8 @@ def prune_objects(mask, SOL):
 # @SOL - List of sheet list objects
 # @path - path that jpgs will be written to
 # @return - void
-#	#Prints all objects in sheet object list as jpgs
-def #print_objects(mask,SOL,path=""):
+#	Prints all objects in sheet object list as jpgs
+def print_objects(mask,SOL,path=""):
 	#Ensures path is in correct format
 	if path.endswith("/") == False:
 		path = path + "/"
@@ -483,26 +483,26 @@ def full_partition(path):
 if __name__ == "__main__":
 	# im_gray = cv2.imread("DATA/test5.jpg", cv2.IMREAD_GRAYSCALE)
 	# (thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-	# #print "Completed 'image load'"
+	# print "Completed 'image load'"
 
 	# if (im_bw.shape[0] > 2000 and im_bw.shape[1] > 2000):
 	# 	im_bw = cv2.resize(im_bw, (1000, 1000)) 
 
 	# runs = locate_run_blocks(im_bw)
 	# remove_runs_and_fill(im_bw, runs)
-	# #print "Completed 'run segmenting'"
+	# print "Completed 'run segmenting'"
 
 	# dividers = locate_vertical_dividers(im_bw)
 	# remove_vertical_dividers_and_fill(im_bw, dividers)
-	# #print "Completed 'divider segmenting'"
+	# print "Completed 'divider segmenting'"
 
 	# mask, SOL = locate_objects(im_bw)
-	# #print "Completed 'object location'"
+	# print "Completed 'object location'"
 
-	# #print_objects(mask,SOL,path="test")
-	# #print "Completed '#print objects'"
+	# print_objects(mask,SOL,path="test")
+	# print "Completed 'print objects'"
 	mask, SOL = full_partition("DATA/test14.jpg")
-	#print_objects(mask,SOL,path="test")
+	print_objects(mask,SOL,path="test")
 
 
 
