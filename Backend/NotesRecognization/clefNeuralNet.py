@@ -22,6 +22,11 @@ def predictClef(testingInput):
 	for i in range(predictions.shape[0]):
 		currentPrediction = np.argmax(predictions[i])
 		# overallPredictions[i] = translations[currentPrediction]
-		overallPredictions.append(translations[currentPrediction])
-
+		if currentPrediction == 0:
+			overallPredictions.append(1)
+		elif currentPrediction == 0:
+			overallPredictions.append(6)
+		else:
+			overallPredictions.append(8)
+			
 	return overallPredictions
