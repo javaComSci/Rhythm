@@ -440,7 +440,7 @@ def print_objects(mask,SOL,path=""):
 def SO_to_array(ob):
 	n_arr = np.ones((ob.R2-ob.R1+1,ob.C2-ob.C1+1)) * 255
 	for p in ob.pixel_list:
-		n_arr[p[0]][p[1]] = 0
+		n_arr[p[0] - ob.R1][p[1] - ob.C1] = 0
 
 	return n_arr
 
