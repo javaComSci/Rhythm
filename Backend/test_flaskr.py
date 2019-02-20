@@ -20,30 +20,24 @@
 #     os.close(db_fd)
 #     os.unlink(flaskr.app.config['DATABASE'])
 
-from app import myapp
+import json
 import unittest
 
-# python -m unittest test_app
+from app import app
+# set our application to testing mode
+app.testing = True
 
-class TestMyApp(unittest.TestCase):
-    def setUp(self):
-        self.app = myapp.test_client()
+
+class TestApi(unittest.TestCase):
 
     def test_main(self):
-        rv = self.app.get('/')
-        assert rv.status == '200 OK'
-        assert b'Main' in rv.data
-        #assert False
+        with app.test_client() as client:
+            response=client.post('/register', 
+                       data=json.dumps(dict(email='asdf')),
+                       content_type='application/json')
+            # check result from server with expected data
 
-    def test_add(self):
-        rv = self.app.get('/add/2/3')
-        self.assertEqual(rv.status, '200 OK')
-        self.assertEqual(rv.data, '5')
-
-        rv = self.app.get('/add/0/10')
-        self.assertEqual(rv.status, '200 OK')
-        self.assertEqual(rv.data, '10')
-
-    def test_404(self):
-        rv = self.app.get('/other')
-        self.assertEqual(rv.status, '404 NOT FOUND')
+            self.assertEqual(
+                response.data,
+                json.dumps(response)
+            )
