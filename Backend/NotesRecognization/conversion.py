@@ -14,8 +14,12 @@ if __name__ == "__main__":
 		n_arr = partition.SO_to_array(ob)
 
 		resize_arr = cv2.resize(n_arr, (50, 70))
-		flat_arr = np.flatten(n_arr)
+		flat_arr = resize_arr.flatten().reshape((1,3500))
+
+		print("DIMS", flat_arr.shape)
 
 		ob_prediction = neuralNet.predict(flat_arr)
 
 		cv2.imwrite("ExamplePredictions/predictions/ob#{}_label:{}.jpg".format(ob_counter, ob_prediction), n_arr)
+		ob_counter += 1
+	print("Number of objects", ob_counter)
