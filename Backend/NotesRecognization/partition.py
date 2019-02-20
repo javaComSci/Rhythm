@@ -438,10 +438,11 @@ def print_objects(mask,SOL,path=""):
 # @return - 2D numpy array of sheet object
 #	Converts a sheet object into it's corresponding numpy array
 def SO_to_array(ob):
-	n_arr = np.ones((ob.R2-ob.R1+1,ob.C2-ob.C1+1)) * 255
+	n_arr = np.ones((70,50)) * 255
 	for p in ob.pixel_list:
-		n_arr[p[0] - ob.R1][p[1] - ob.C1] = 0
-
+		if p[0] - ob.R1 < 70 and p[1] - ob.C1 < 50:
+			n_arr[p[0] - ob.R1][p[1] - ob.C1] = 0
+	
 	return n_arr
 
 # @path - path to music sheet jpg
@@ -501,7 +502,7 @@ if __name__ == "__main__":
 
 	# print_objects(mask,SOL,path="test")
 	# print "Completed 'print objects'"
-	mask, SOL = full_partition("DATA/test14.jpg")
+	mask, SOL = full_partition("DATA/test15.jpg")
 	print_objects(mask,SOL,path="test")
 
 
