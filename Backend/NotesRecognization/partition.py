@@ -377,6 +377,14 @@ def check_area(ob):
 		return True
 	return False
 
+# @ob - A single sheet object
+# @return - True if area is too many pixels in image are of the object, false otherwise
+#	checks the pixel area of an object, returning true if it is too large
+def check_object_area(ob):
+	if len(ob.pixel_list) / (1.00 * (ob.R2 - ob.R1) * (ob.C2 - ob.C1)) >= 0.8:
+		return True
+	return False
+
 # @mask - Contains labels for identifying which pixels belong to which objects
 # @SOL - List of sheet list objects
 # @return - void
@@ -386,7 +394,7 @@ def prune_objects(mask, SOL):
 	while ob < len(SOL):
 
 		#if the object isn't wide, tall, or sized large enough
-		prune = check_width(SOL[ob]) or check_height(SOL[ob]) or check_area(SOL[ob])
+		prune = check_width(SOL[ob]) or check_height(SOL[ob]) or check_area(SOL[ob]) or check_object_area(SOL[ob])
 
 		if prune:
 
@@ -402,8 +410,8 @@ def prune_objects(mask, SOL):
 # @SOL - List of sheet list objects
 # @path - path that jpgs will be written to
 # @return - void
-#	Prints all objects in sheet object list as jpgs
-def print_objects(mask,SOL,path=""):
+#	#Prints all objects in sheet object list as jpgs
+def #print_objects(mask,SOL,path=""):
 	#Ensures path is in correct format
 	if path.endswith("/") == False:
 		path = path + "/"
@@ -430,9 +438,9 @@ def print_objects(mask,SOL,path=""):
 # @return - 2D numpy array of sheet object
 #	Converts a sheet object into it's corresponding numpy array
 def SO_to_array(ob):
-	n_arr = np.ones((ob.R2-ob.R1+1,ob.C2-ob.C1+1)) * 255
+	n_arr = np.ones((ob.R2-ob.R1,ob.C2-ob.C1)) * 255
 	for p in ob.pixel_list:
-		n_arr[p[0] - ob.R1][p[1] - ob.C1] = 0
+		n_arr[p[0]][p[1]] = 0
 
 	return n_arr
 
@@ -475,26 +483,26 @@ def full_partition(path):
 if __name__ == "__main__":
 	# im_gray = cv2.imread("DATA/test5.jpg", cv2.IMREAD_GRAYSCALE)
 	# (thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-	# print "Completed 'image load'"
+	# #print "Completed 'image load'"
 
 	# if (im_bw.shape[0] > 2000 and im_bw.shape[1] > 2000):
 	# 	im_bw = cv2.resize(im_bw, (1000, 1000)) 
 
 	# runs = locate_run_blocks(im_bw)
 	# remove_runs_and_fill(im_bw, runs)
-	# print "Completed 'run segmenting'"
+	# #print "Completed 'run segmenting'"
 
 	# dividers = locate_vertical_dividers(im_bw)
 	# remove_vertical_dividers_and_fill(im_bw, dividers)
-	# print "Completed 'divider segmenting'"
+	# #print "Completed 'divider segmenting'"
 
 	# mask, SOL = locate_objects(im_bw)
-	# print "Completed 'object location'"
+	# #print "Completed 'object location'"
 
-	# print_objects(mask,SOL,path="test")
-	# print "Completed 'print objects'"
-	mask, SOL = full_partition("DATA/test5.jpg")
-	print_objects(mask,SOL,path="test")
+	# #print_objects(mask,SOL,path="test")
+	# #print "Completed '#print objects'"
+	mask, SOL = full_partition("DATA/test14.jpg")
+	#print_objects(mask,SOL,path="test")
 
 
 
