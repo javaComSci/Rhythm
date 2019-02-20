@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { AsyncStorage, TouchableOpacity, ScrollView, StyleSheet, Text, View } from 'react-native';
 import RegisterScreen from './RegisterScreen';
-
+import { addEmail } from '../actions/addEmail'
 var styles = require('../style')
 
 /*
@@ -20,30 +20,26 @@ class HomeScreen extends React.Component {
     }
 
     componentDidMount() {
-        console.log("hi");
-        this.setState({ isLoading: true });
+        const that = this;
         AsyncStorage.getItem("email")
-            .then(result => this.setState({
-                isLoading: false, // set isLoading to false until item is retrieved
-                userEmail: result ? result : "none", // if result was null, set email to none
-            }))
-            .then(() => {
-                // if no email has been stored, go to register screen
-                if (this.state.userEmail === "none") {
-                    this.props.navigation.navigate("Register");
+            .then(result => {
+                this.setState({
+                    isLoading: false, // set isLoading to false until item is retrieved
+                    userEmail: result ? result : "none", // if result was null, set email to none
+                })
+                if (this.state.userEmail === 'none') {
+                    this.props.navigation.navigate("register");
                 }
                 else {
-                    this.props.dispatchAddEmail({ isRegistered: email });
-                    console.log("ADDED PROP")
-                    console.log(this.props);
+                    that.props.dispatchAddEmail(result);
                 }
-                console.log(this.props);
-
             })
-            .catch(error => this.setState({
-                isLoading: false,
-                userEmail: error,
-            }))
+            .catch(error => {
+                this.setState({
+                    isLoading: false,
+                    userEmail: error,
+                })
+            })
     }
     static navigationOptions = {
         title: '', header: null // setting header to null to remove the default header from react-navigation
@@ -84,7 +80,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        dispatchAddEmail: (email) => dispatch(addEmail(email))
+        dispatchAddEmail: email => dispatch(addEmail(email))
     }
 }
 

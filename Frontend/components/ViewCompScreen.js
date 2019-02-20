@@ -24,7 +24,7 @@ class ViewCompScreen extends React.Component {
                     <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> hey its ur view specific composition screen </Text>
                 </View>
                 <ScrollView>
-                    <Text>{this.props.isRegistered}</Text>
+                    <Text>INNER CONTENT HERE</Text>
                 </ScrollView>
                 <View style={styles.footer}>
                     <TouchableOpacity
@@ -43,4 +43,4 @@ const mapStateToProps = state => ({
     isRegistered: state.auth.isRegistered,
 })
 
-export default connect(mapStateToProps)(ProfileScreen);
+export default connect(mapStateToProps)(ViewCompScreen);

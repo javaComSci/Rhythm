@@ -13,6 +13,7 @@ function nav(state = initialNavState, action) {
     console.log(action); //debug
     switch (action.type) {
         case 'ADD_EMAIL':
+            console.log("ADD EMAIL ROUTE ACHIEVED")
             return {
                 ...state, isRegistered: action.email
             };
@@ -37,8 +38,7 @@ const initalRegisterState = { isRegistered: false };
 function auth(state = initalRegisterState, action) {
     switch (action.type) {
         case 'ADD_EMAIL':
-            console.log("thing called");
-            return { ...state, isRegistered: true };
+            return { ...state, isRegistered: action.email }; //duplicate
         default:
             return state;
     }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, TouchableOpacity, Button, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { TextInput, FlatList, TouchableOpacity, Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 var styles = require('../style');
 /*
@@ -27,7 +27,7 @@ export default class CompositionScreen extends React.Component {
         super(props)
         this.state = {
             "compositions": [],
-            newCompo: false, 
+            newCompo: false,
             text: "",
         }
     }
@@ -35,7 +35,7 @@ export default class CompositionScreen extends React.Component {
         title: 'Welcome', header: null
     };
 
-    componentWillMount() {
+    getInfo = function () {
         const that = this; // a reference to the previous value of "this" is required as there is a context change going into the promise of the fetch
         fetch('http://18.237.79.152:5000/getInfo', {
             method: 'POST',
@@ -49,6 +49,7 @@ export default class CompositionScreen extends React.Component {
             }),
         }).then((res) => {
             res.text().then(function (res) {
+                console.log("RES", res)
                 var dummyList = [] // temp list to hold compositions before being added to state
                 JSON.parse(res).forEach(element => {
                     dummyList.push(new Composition(element[1], element[2], element[0]));
@@ -61,6 +62,10 @@ export default class CompositionScreen extends React.Component {
         }).catch((res) => {
             console.log("err", res)
         });
+    }
+
+    componentWillMount() {
+        this.getInfo()
     }
 
     componentDidMount() {
@@ -79,40 +84,37 @@ export default class CompositionScreen extends React.Component {
                 'name': this.state.text,
             }),
         }).then((res) => {
-            res.text().then(function (res) {
-                var dummyList = [] // temp list to hold compositions before being added to state
-                JSON.parse(res).forEach(element => {
-                    dummyList.push(new Composition(element[1], element[2], element[0]));
-                });
-                that.setState({ "compositions": dummyList, newCompo: false })
-            })
-                .catch((err) => {
-                    console.log("err", err)
-                })
+            this.getInfo()
+            this.state.newCompo = false;
         }).catch((res) => {
             console.log("err", res)
         });
     }
 
     doneComposition() {
-        makeCompositionCall();
+        this.makeCompositionCall();
     }
 
     createComposition() {
         this.setState({
             newCompo: true,
-        }); 
+        });
     }
 
     render() {
-        if(this.state.newCompo == true) {
+        if (this.state.newCompo == true) {
             return (
                 <View style={styles.container}>
-                    <View style={styles}>
-                        <TextInput style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-                            onChangeText={(text) => this.setState({text})}
-                            value={this.state.text} />
-                        <Button onPress={()=>doneComposition()} title="Create Composition"/>
+                    <View></View>
+                    <ScrollView>
+                    </ScrollView>
+                    <View>
+                        <View style={styles}>
+                            <TextInput style={{ height: 50, borderColor: 'gray', borderWidth: 1 }}
+                                onChangeText={(text) => this.setState({ text })}
+                                value={this.state.text} />
+                            <Button onPress={() => this.doneComposition()} title="Create Composition" />
+                        </View>
                     </View>
                 </View>
             );
@@ -123,7 +125,7 @@ export default class CompositionScreen extends React.Component {
                 <View style={styles}>
                     <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> COMPOSITIONS </Text>
                     <View style={styles.lineBreak} />
-                    <Button onPress={()=>createComposition()} title="+"/>
+                    <Button onPress={() => this.createComposition()} title="+" />
                 </View>
                 <ScrollView>
                     <FlatList
@@ -131,7 +133,7 @@ export default class CompositionScreen extends React.Component {
                         extraData={this.state}
                         renderItem={({ item }) =>
                             <View style={styles.compositionContainer}>
-                                <TouchableOpacity style={styles.compositionItem}>
+                                <TouchableOpacity onPress={() => this.props.navigation.navigate('ViewCompScreen')} style={styles.compositionItem}>
                                     <Text style={{ color: '#f19393', fontSize: 40 }}>{item.getTitle()}</Text>
                                 </TouchableOpacity>
                                 <View style={styles.lineBreak} />

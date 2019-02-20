@@ -93,6 +93,11 @@ class RegisterScreen extends React.Component {
 
     setEmail = function (email) {
         const that = this;
+        if (email == '') {
+            Alert.alert("Please enter an email address");
+            return;
+        }
+        console.log("FLKSWFJGLKJDGLKJSDFLGKJ")
         fetch('http://18.237.79.152:5000/register', {
             method: 'POST',
             headers: {
@@ -105,7 +110,7 @@ class RegisterScreen extends React.Component {
         }).then(res => {
             res.text().then(function (res) {
                 if (JSON.parse(res).ok == 'true') {
-                    AsyncStorage.setItem('email', email)
+                    AsyncStorage.setItem("email", email)
                         .then(data => that.setState({
                             email: email,
                             submit: true,
@@ -119,6 +124,9 @@ class RegisterScreen extends React.Component {
                         .catch(err => {
                             console.log("ERROR: ", err);
                         });
+                }
+                else {
+                    Alert.alert("Email already in use.  Select recover account to get a code")
                 }
             })
         })

@@ -11,8 +11,10 @@ var styles = require('../style')
 class ProfileScreen extends React.Component {
     constructor(props) {
         super(props);
-        console.log("props,",props);
+        console.log("props,", props);
+        console.log("store", this.props.store)
     }
+
 
     static navigationOptions = {
         title: 'Welcome', header: null
@@ -21,10 +23,10 @@ class ProfileScreen extends React.Component {
         return (
             <View style={styles.container}>
                 <View>
-                    <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> hey its ur profile screen </Text>
+                    <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 75 }}> Profile </Text>
                 </View>
                 <ScrollView>
-                    <Text>{this.props.isRegistered}</Text>
+                    <Text style={{ color: '#f19393', fontSize: 40 }}>Email: {this.props.isRegistered}</Text>
                 </ScrollView>
                 <View style={styles.footer}>
                     <TouchableOpacity
