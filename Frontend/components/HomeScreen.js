@@ -7,6 +7,7 @@ var styles = require('../style')
 
 /*
 todo: load generated music files from local storage
+todo:
 */
 
 class HomeScreen extends React.Component {
