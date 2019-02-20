@@ -439,10 +439,27 @@ def print_objects(mask,SOL,path=""):
 #	Converts a sheet object into it's corresponding numpy array
 def SO_to_array(ob):
 	n_arr = np.ones((70,50))
+
+	flag = False
+	if (ob.R2 - ob.R1 >= 70 or ob.C2 - ob.C1 >= 50):
+		flag = True
+		n_arr = np.ones(((ob.R2 - ob.R1 + 1),(ob.C2 - ob.C1 + 1)))
+
 	for p in ob.pixel_list:
-		if (p[0] - ob.R1 < 70 and p[1] - ob.C1 < 50) and (ob.R2 - ob.R1 < 70 and ob.C2 - ob.C1 < 50):
-			n_arr[p[0] - ob.R1 + int((70 - (ob.R2 - ob.R1))/2.00)][p[1] - ob.C1 + int((50 - (ob.C2 - ob.C1))/2.00)] = 0
+		Rcenter = int((70 - (ob.R2 - ob.R1))/2.00)
+		Ccenter = int((50 - (ob.C2 - ob.C1))/2.00)
+
+		if flag or Rcenter < 0:
+			Rcenter = 0
+
+		if flag or Ccenter < 0:
+			Ccenter = 0
+
+		n_arr[p[0] - ob.R1 + Rcenter][p[1] - ob.C1 + Ccenter] = 0
 			#n_arr[int((ob.R2 - ob.R1)/2.0) + p[0] - 70][int((ob.C2 - ob.C1)/2.0) + p[1] - 50] = 0
+	if flag:
+		n_arr = cv2.resize(n_arr, (70, 50)) 
+
 	return n_arr
 
 # @path - path to music sheet jpg
@@ -502,8 +519,12 @@ if __name__ == "__main__":
 
 	# print_objects(mask,SOL,path="test")
 	# print "Completed 'print objects'"
-	mask, SOL = full_partition("DATA/test15.jpg")
-	print_objects(mask,SOL,path="test")
+	mask, SOL = full_partition("DATA/test14.jpg")
+	obby = 1
+	for ob in SOL:
+		cv2.imwrite("{}/{}.jpg".format("test",obby), SO_to_array(ob)*255)
+		obby += 1
+	#print_objects(mask,SOL,path="test")
 
 
 
