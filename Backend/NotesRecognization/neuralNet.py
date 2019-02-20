@@ -332,7 +332,7 @@ def checkPredictions(testingInput, testingOut):
 	print("Clef incorrect", incorrectClef, "Clef Correct", correctClef)
 
 
-def predict(testingInput):
+def predict(testingIn):
 	model = load_model('general_model.h5')
 
 	# actual values for which one of the different types it could be
@@ -343,21 +343,28 @@ def predict(testingInput):
 
 	clefPredictions = []
 
+	isclef = False
+
 	for i in range(generalPredictions.shape[0]):
 		overallPredictions[i] = np.argmax(generalPredictions[i])
 
 		# send to respective neural network
 		if overallPredictions[i] == 0:
-			clefPrediction = predictClef(testingInput)
+			clefPrediction = predictClef(testingIn)
 			clefPredictions.append(clefPrediction)
+			isclef = True
+			print("IT WAS A CLEF")
 		else:
-			notePrediction = predictNote(testingInput)
-
-	print("THE SHAPE OF THE GENERAL PREDICTIONS IS", overallPredictions.shape)
+			notePrediction = predictNote(testingIn)
 
 	# convert to numpy array
-	clefPredictions = np.asarray(clefPredictions)
-	return overallPredictions, clefPredictions
+	# clefPredictions = np.asarray(clefPredictions)
+
+	if isclef:
+		print("OVERALL PREDICTION", overallPredictions[i], "THE CLEF PREDICTION IS ", clefPredictions[0])
+		return clefPredictions[0]
+	else:
+		return overallPredictions[0]
 
 
 		# testing = trainingIn[1000]
