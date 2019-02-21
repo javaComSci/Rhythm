@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Alert, AsyncStorage, TextInput, FlatList, TouchableOpacity, Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { addEmail } from '../actions/addEmail'
+import { addUser } from '../actions/addUserID'
 import Connection from '../utils/connect'
 var styles = require('../style');
 
@@ -20,13 +21,49 @@ class RegisterScreen extends React.Component {
             submit: false,
             awaitingCode: false,
             verfCode: '',
+            pendingEmail: '',
+            id: 524,
         }
     }
     static navigationOptions = {
         title: 'Welcome', header: null
     };
 
+    saveEmailLocal = async (email, that) => {
+        AsyncStorage.setItem("email", email)
+            .then(data => that.setState({
+                email: email,
+                submit: true,
+            }))
+            .then(() => {
+                that.props.addEmail(email);
+                console.log("here")
+                if (email !== '') {
+                    that.props.navigation.navigate('Home');
+                }
+            })
+            .catch(err => {
+                console.log("ERROR: ", err);
+            });
+    }
+
+    saveIDLocal = async (id, that) => {
+        AsyncStorage.setItem("id", id.toString())
+            .then(data => that.setState({
+                id: id.toString(),
+                submit: true,
+            }))
+            .then(() => {
+                that.props.addUser(id.toString());
+                console.log("here2")
+            })
+            .catch(err => {
+                console.log("ERROR: ", err);
+            });
+    }
+
     verifyAccount = function (code) {
+        const that = this;
         if (code == '') {
             Alert.alert("Please enter a verification code")
             return
@@ -42,15 +79,15 @@ class RegisterScreen extends React.Component {
             })
         }).then(res => {
             res.text().then(function (data) {
-                console.log(data)
+                console.log("pada",data)
                 if (JSON.parse(data).id == -1) {
                     Alert.alert("Invalid verification code")
                 }
                 else {
-                    console.log("User id:", JSON.parse(data).id)
-                    // do something
-                    // todo
-                    // store this or something
+                    console.log("added")
+                    that.props.addUser(JSON.parse(data).id)
+                    that.saveIDLocal(JSON.parse(data).id, that);
+                    that.saveEmailLocal(that.state.pendingEmail, that)
                 }
             })
         }).catch(err => {
@@ -76,10 +113,11 @@ class RegisterScreen extends React.Component {
             })
         }).then(res => {
             res.text().then(function (data) {
-                console.log("data:", data)
+                console.log("DATA:", data)
                 if (data == 'sent') {
                     that.setState({
-                        awaitingCode: true
+                        awaitingCode: true,
+                        pendingEmail: email,
                     })
                 }
                 else {
@@ -108,21 +146,9 @@ class RegisterScreen extends React.Component {
             }),
         }).then(res => {
             res.text().then(function (res) {
+                console.log("RESULT FROM SETEMAIL", res);
                 if (JSON.parse(res).ok == 'true') {
-                    AsyncStorage.setItem("email", email)
-                        .then(data => that.setState({
-                            email: email,
-                            submit: true,
-                        }))
-                        .then(() => {
-                            that.props.addEmail(email);
-                            if (that.state.email !== '') {
-                                that.props.navigation.navigate('Home');
-                            }
-                        })
-                        .catch(err => {
-                            console.log("ERROR: ", err);
-                        });
+                    that.saveEmailLocal(email, that);
                 }
                 else {
                     Alert.alert("Email already in use.  Select recover account to get a code")
@@ -248,13 +274,15 @@ class RegisterScreen extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        isRegistered: state.email
+        isRegistered: state.email,
+        id: state.id
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        addEmail: email => dispatch(addEmail(email))
+        addEmail: email => dispatch(addEmail(email)),
+        addUser: id => dispatch(addUser(id))
     }
 }
 

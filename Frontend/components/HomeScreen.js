@@ -4,6 +4,7 @@ import { Alert, AsyncStorage, TouchableOpacity, ScrollView, StyleSheet, Text, Vi
 import RegisterScreen from './RegisterScreen';
 import { ImagePicker, Permissions } from 'expo';
 import { addEmail } from '../actions/addEmail'
+import { addUser } from '../actions/addUserID';
 var styles = require('../style')
 
 /*
@@ -95,6 +96,16 @@ class HomeScreen extends React.Component {
                     userEmail: error,
                 })
             })
+        AsyncStorage.getItem("id")
+            .then(result => {
+                console.log("id res", result);
+                this.setState({
+                    id: result
+                })
+                if (result) {
+                    that.props.dispatchAddUser(result);
+                }
+            })
     }
     static navigationOptions = {
         title: '', header: null // setting header to null to remove the default header from react-navigation
@@ -139,13 +150,15 @@ class HomeScreen extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        isRegistered: state.email
+        isRegistered: state.email,
+        id: state.id,
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        dispatchAddEmail: email => dispatch(addEmail(email))
+        dispatchAddEmail: email => dispatch(addEmail(email)),
+        dispatchAddUser: id => dispatch(addUser(id)),
     }
 }
 
