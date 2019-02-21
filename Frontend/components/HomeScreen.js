@@ -20,6 +20,12 @@ class HomeScreen extends React.Component {
         };
     }
 
+    clearCache = function () {
+        console.log("clearing storage");
+        AsyncStorage.clear();
+        console.log("cleared");
+    }
+
     takeAndUploadPhotoAsync = async () => {
         // Display the camera to the user and wait for them to take a photo or to cancel
         // the action
@@ -69,12 +75,13 @@ class HomeScreen extends React.Component {
         const that = this;
         AsyncStorage.getItem("email")
             .then(result => {
+                console.log("storage result", result);
                 this.setState({
                     isLoading: false, // set isLoading to false until item is retrieved
                     userEmail: result ? result : "none", // if result was null, set email to none
                 })
                 if (this.state.userEmail === 'none') {
-                    this.props.navigation.navigate("register");
+                    this.props.navigation.navigate("Register");
                 }
                 else {
                     that.props.dispatchAddEmail(result);
@@ -116,6 +123,11 @@ class HomeScreen extends React.Component {
                 <View style={styles.footer}>
                     <TouchableOpacity onPress={() => this.takeAndUploadPhotoAsync()} style={styles.navButton}>
                         <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Camera </Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.footer}>
+                    <TouchableOpacity onPress={() => this.clearCache()} style={styles.navButton}>
+                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Clear Cache </Text>
                     </TouchableOpacity>
                 </View>
             </View>
