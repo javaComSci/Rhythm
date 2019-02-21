@@ -56,7 +56,7 @@ class ViewCompScreen extends React.Component {
             },
             body: JSON.stringify({
                 'table': 'sheet_music',
-                'id': 38,
+                'id': this.props.navigation.getParam('compositionID'),
             }),
         }).then((res) => {
             res.text().then(function (res) {
@@ -91,7 +91,7 @@ class ViewCompScreen extends React.Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                'comp_id': 38,
+                'comp_id': this.props.navigation.getParam('compositionID'),
                 'name': this.state.text,
             }),
         }).then((res) => {
