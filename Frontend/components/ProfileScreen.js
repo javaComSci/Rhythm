@@ -14,7 +14,7 @@ class ProfileScreen extends React.Component {
         console.log("props,", props);
         console.log("store", this.props.store)
         this.state = {
-            edit: false, 
+            edit: false,
             emailText: "",
             email: "",
             name: "",
@@ -64,14 +64,14 @@ class ProfileScreen extends React.Component {
         this.getInfo()
     }
 
-    editProfile(){
+    editProfile() {
         this.setState({
-            edit: true, 
+            edit: true,
         });
     }
 
-    makeEditCall(){
-        if(this.state.nameText == '' && this.state.emailText != '') {
+    makeEditCall() {
+        if (this.state.nameText == '' && this.state.emailText != '') {
             // only email, no name
             updateInfo = ['email']
             updateInfo.push(this.state.emailText);
@@ -81,34 +81,34 @@ class ProfileScreen extends React.Component {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
                 },
-                    body: JSON.stringify({
-                        'table': 'user',
-                        'update': updateInfo,
-                        'where': ['user_id', 1],
-                    }),
-                }).then((res) => {
-                    this.setState({
-                        edit: false,
-                        email: this.state.emailText,
-                    });
-                }).catch((res) => {
-                    console.log("err", res)
+                body: JSON.stringify({
+                    'table': 'user',
+                    'update': updateInfo,
+                    'where': ['user_id', 1],
+                }),
+            }).then((res) => {
+                this.setState({
+                    edit: false,
+                    email: this.state.emailText,
                 });
+            }).catch((res) => {
+                console.log("err", res)
+            });
         } else if (this.state.nameText != '' && this.state.emailText == '') {
             // only name, no email
             updateInfo = ['name'];
             updateInfo.push(this.state.nameText);
             fetch('http://18.237.79.152:5000/update', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                'table': 'user',
-                'update': updateInfo,
-                'where': ['user_id', 1],
-            }),
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'table': 'user',
+                    'update': updateInfo,
+                    'where': ['user_id', 1],
+                }),
             }).then((res) => {
                 this.setState({
                     edit: false,
@@ -123,16 +123,16 @@ class ProfileScreen extends React.Component {
             updateInfo.push('name');
             updateInfo.push(this.state.nameText);
             fetch('http://18.237.79.152:5000/updateMulti', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                'table': 'user',
-                'update': updateInfo,
-                'where': ['user_id', 1],
-            }),
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'table': 'user',
+                    'update': updateInfo,
+                    'where': ['user_id', 1],
+                }),
             }).then((res) => {
                 this.setState({
                     edit: false,
@@ -142,7 +142,7 @@ class ProfileScreen extends React.Component {
             }).catch((res) => {
                 console.log("err", res)
             });
-        } 
+        }
     }
 
     doneEdit() {
@@ -151,11 +151,11 @@ class ProfileScreen extends React.Component {
     }
 
     render() {
-        if(this.state.edit == true) {
+        if (this.state.edit == true) {
             return (
-                 <View style={styles.container}>
+                <View style={styles.container}>
                     <View>
-                        <KeyboardAvoidingView behavior="padding" style={styles.textHolder} enabled>
+                        <View style={styles.textHolder}>
                             <TextInput style={{ marginTop: '70%', height: 40, width: '90%', borderColor: '#f19393', borderWidth: 1, fontWeight: 'bold', }}
                                 placeholder="Name"
                                 onChangeText={(nameText) => this.setState({ nameText })}
@@ -164,10 +164,10 @@ class ProfileScreen extends React.Component {
                                 placeholder="Email"
                                 onChangeText={(emailText) => this.setState({ emailText })}
                                 value={this.state.emailText} />
-                        </KeyboardAvoidingView>
+                        </View>
                         <Button style={{ Color: '#f19393', fontWeight: 'bold', }} onPress={() => this.doneEdit()} title="Done"> </Button>
                     </View>
-                </View>
+                </View >
             );
         }
 
@@ -178,7 +178,7 @@ class ProfileScreen extends React.Component {
                 </View>
                 <ScrollView>
                     <Text style={{ color: '#f19393', fontSize: 40 }}>Name: {this.state.name} </Text>
-                    <Text style={{ color: '#f19393', fontSize: 40 }}>Email: {this.state.email} </Text>
+                    <Text style={{ color: '#f19393', fontSize: 20 }}>Email: {this.state.email} </Text>
                 </ScrollView>
                 <Button onPress={() => this.editProfile()} title="Edit Profile"> </Button>
                 <View style={styles.footer}>

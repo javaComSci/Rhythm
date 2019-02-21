@@ -23,6 +23,7 @@ class HomeScreen extends React.Component {
 
     clearCache = function () {
         console.log("clearing storage");
+        // clears local storage for debugging purposes
         AsyncStorage.clear().then(() => {
             this.props.navigation.navigate("Register");
         });
@@ -58,12 +59,14 @@ class HomeScreen extends React.Component {
         let formData = new FormData();
         // Assume "photo" is the name of the form field the server expects
         formData.append('photo', { uri: localUri, name: filename, type });
-
-        fetch("http://18.237.79.152:5000/uploadPhoto", {
+        console.log('photo file name', filename)
+        fetch("http://18.237.79.152:5000/uploadImage", {
             method: 'POST',
-            body: formData,
+            //body: formData,
+            body: { "name": filename, "comp_id": 1 },
             header: {
-                'content-type': 'multipart/form-data',
+                //'content-type': 'multipart/form-data',
+                'content-type': 'application/json',
             },
         }).then(result => {
             result.text().then(res => {
@@ -96,6 +99,7 @@ class HomeScreen extends React.Component {
                     userEmail: error,
                 })
             })
+        // store userID locally
         AsyncStorage.getItem("id")
             .then(result => {
                 console.log("id res", result);
@@ -103,6 +107,7 @@ class HomeScreen extends React.Component {
                     id: result
                 })
                 if (result) {
+                    // send ID to redux store
                     that.props.dispatchAddUser(result);
                 }
             })
