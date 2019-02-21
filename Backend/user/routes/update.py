@@ -15,3 +15,10 @@ def update():
     print("update Route Call")
     results = MySQLConnect.update(content['table'], content['update'], content['where']);
     return 'updated'
+
+
+def updateMulti():
+    content = request.json
+    print("updateMulti Route Call")
+    results = MySQLConnect.updateMulti(content['table'], content['update'], content['where']);
+    return 'updated'
