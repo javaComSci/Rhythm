@@ -41,6 +41,7 @@ class ViewCompScreen extends React.Component {
 
 const mapStateToProps = state => ({
     isRegistered: state.auth.isRegistered,
+    id: state.auth.id,
 })
 
 export default connect(mapStateToProps)(ViewCompScreen);

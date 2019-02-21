@@ -4,6 +4,7 @@ import { Alert, AsyncStorage, TouchableOpacity, ScrollView, StyleSheet, Text, Vi
 import RegisterScreen from './RegisterScreen';
 import { ImagePicker, Permissions } from 'expo';
 import { addEmail } from '../actions/addEmail'
+import { addUser } from '../actions/addUserID';
 var styles = require('../style')
 
 /*
@@ -18,6 +19,14 @@ class HomeScreen extends React.Component {
             isLoading: false,
             userEmail: null,
         };
+    }
+
+    clearCache = function () {
+        console.log("clearing storage");
+        AsyncStorage.clear().then(() => {
+            this.props.navigation.navigate("Register");
+        });
+        console.log("cleared");
     }
 
     takeAndUploadPhotoAsync = async () => {
@@ -69,12 +78,13 @@ class HomeScreen extends React.Component {
         const that = this;
         AsyncStorage.getItem("email")
             .then(result => {
+                console.log("storage result", result);
                 this.setState({
                     isLoading: false, // set isLoading to false until item is retrieved
                     userEmail: result ? result : "none", // if result was null, set email to none
                 })
                 if (this.state.userEmail === 'none') {
-                    this.props.navigation.navigate("register");
+                    this.props.navigation.navigate("Register");
                 }
                 else {
                     that.props.dispatchAddEmail(result);
@@ -85,6 +95,16 @@ class HomeScreen extends React.Component {
                     isLoading: false,
                     userEmail: error,
                 })
+            })
+        AsyncStorage.getItem("id")
+            .then(result => {
+                console.log("id res", result);
+                this.setState({
+                    id: result
+                })
+                if (result) {
+                    that.props.dispatchAddUser(result);
+                }
             })
     }
     static navigationOptions = {
@@ -118,6 +138,11 @@ class HomeScreen extends React.Component {
                         <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Camera </Text>
                     </TouchableOpacity>
                 </View>
+                <View style={styles.footer}>
+                    <TouchableOpacity onPress={() => this.clearCache()} style={styles.navButton}>
+                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Clear Cache </Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         );
     }
@@ -125,13 +150,15 @@ class HomeScreen extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        isRegistered: state.email
+        isRegistered: state.email,
+        id: state.id,
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        dispatchAddEmail: email => dispatch(addEmail(email))
+        dispatchAddEmail: email => dispatch(addEmail(email)),
+        dispatchAddUser: id => dispatch(addUser(id)),
     }
 }
 

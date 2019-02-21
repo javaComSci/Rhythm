@@ -12,14 +12,18 @@ def registerRoute():
     col = ["email"];
     values= ["'{}'".format(content['email'])];
     check = MySQLConnect.findUser('user', content['email']);
+
     if len(check) == 0:
         MySQLConnect.insert("user", ",".join(col), ",".join(values));
     else:
         result = {
-            "ok": "false"
+            "ok": "false",
+            "id": -1
         }
         return jsonify(result);
+    em = MySQLConnect.findByEmail('user', content['email']);
     result = {
-        "ok": "true"
+        "ok": "true",
+        "id": em[0][0]
     }
     return jsonify(result);

@@ -24,6 +24,16 @@ def update(table, update, where):
     return;
 
 
+def updateMulti(table, update, where):
+    sql = "UPDATE {} SET {}='{}' WHERE {}='{}';".format(table, update[0], update[1], where[0], where[1]);
+    cursor.execute(sql)
+    db.commit()
+    sqll = "UPDATE {} SET {}='{}' WHERE {}='{}';".format(table, update[2], update[3], where[0], where[1]);
+    cursor.execute(sqll)
+    db.commit()
+    print("MYSQL COMMAND: {}".format(sqll));
+    return;
+
 ##
  # This will find everything in a specific table and matching the id with the user_id
  #

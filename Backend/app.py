@@ -18,7 +18,7 @@ from user import users
 # from user import deleteUser
 import user.deleteUser as deleteUsers
 import user.routes.delete as deletes
-import user.routes.delete as recoverAccounts
+import user.routes.uploadImage as uploadImages
 import user.routes.update as updates
 import user.routes.delete as uploadImages
 import user.routes.newComposition as newCompositions
@@ -148,6 +148,13 @@ def getInfoByEmail():
 def update():
     if request.method == 'POST':
         return updates.update()
+    else:
+        return '\n\nDEBUG: Should not see this: app.py\n\n'
+
+@app.route('/updateMulti', methods=['POST'])
+def updateMulti():
+    if request.method == 'POST':
+        return updates.updateMulti()
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
