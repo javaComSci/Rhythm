@@ -31,6 +31,8 @@ export default class CompositionScreen extends React.Component {
             newCompo: false,
             text: "",
             description: "",
+            deleteCompo: false, 
+            deleteText: "",
         }
     }
     static navigationOptions = {
@@ -103,7 +105,50 @@ export default class CompositionScreen extends React.Component {
         });
     }
 
+    deleteComposition() {
+        this.setState({
+            deleteCompo: true, 
+        });
+    }
+
+    doneDeleteComposition() {
+            deleteArr = ['name']
+            deleteArr.push(this.state.deleteText)
+           fetch('http://18.237.79.152:5000/delete', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'table': 'composition',
+                'delete': deleteArr,
+            }),
+        }).then((res) => {
+            this.getInfo()
+            this.state.deleteCompo = false;
+        }).catch((res) => {
+            console.log("err", res)
+        });
+    }
+
     render() {
+        if (this.state.deleteCompo == true) {
+            return (
+                <View style={styles.container}>
+                    <ScrollView>
+                        <KeyboardAvoidingView keyboardVerticalOffset={-500} behavior="padding" style={styles.textHolder} enabled>
+                            <TextInput style={{ marginTop: 200, height: 50, width: '80%', borderColor: 'gray', borderWidth: 1 }}
+                                placeholder="DeleteText"
+                                onChangeText={(deleteText) => this.setState({ deleteText })}
+                                value={this.state.deleteText} />
+                            <Button onPress={() => this.doneDeleteComposition()} title="Delete Composition" />
+                        </KeyboardAvoidingView>
+                    </ScrollView>
+                </View>
+            );
+        }
+
         if (this.state.newCompo == true) {
             return (
                 <View style={styles.container}>
@@ -132,12 +177,15 @@ export default class CompositionScreen extends React.Component {
             );
         }
 
+
+
         return (
             <View style={styles.container}>
                 <View style={styles}>
                     <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> COMPOSITIONS </Text>
                     <View style={styles.lineBreak} />
                     <Button onPress={() => this.createComposition()} title="+" />
+                    <Button onPress={() => this.deleteComposition()} title="-" />
                 </View>
                 <ScrollView>
                     <FlatList
