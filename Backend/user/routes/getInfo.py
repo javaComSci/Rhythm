@@ -10,3 +10,9 @@ def getInfo():
     print("getInfo Route Call")
     results = MySQLConnect.find(content['table'], content['id']);
     return jsonify(results)
+
+def getInfoByEmail():
+    content = request.json
+    print("getInfoByEamil Route Call")
+    results = MySQLConnect.findByEmail(content['table'], content['email']);
+    return jsonify(results)

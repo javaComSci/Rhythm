@@ -43,6 +43,9 @@ mail_settings = {
 
 app.config.update(mail_settings)
 mail = Mail(app)
+
+
+
 ##
  # Registers a new user
  # EXAMPLE json
@@ -88,11 +91,11 @@ def deleteUser():
 ##
  # Call this to create a new composition for a user
  # EXAMPLE json
- #  {
- # 	    "id": "1",    <- User_id
- # 	    "description": "I Like pancakes",
- # 	    "name": "MyFirstCompo"
- #  }
+  # {
+ 	#     "id": "1",    <- User_id
+ 	#     "description": "I Like pancakes",
+ 	#     "name": "MyFirstCompo"
+  # }
  ##
 @app.route('/newComposition', methods=['POST'])
 def newComposition():
@@ -100,6 +103,8 @@ def newComposition():
         return newCompositions.newCompo()
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
+
+
 
 @app.route('/newMusicSheet', methods=['POST'])
 def newMusicSheet():
@@ -124,13 +129,20 @@ def getInfo():
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
+@app.route('/getInfoByEmail', methods=['POST'])
+def getInfoByEmail():
+    if request.method == 'POST':
+        return getInfos.getInfoByEmail()
+    else:
+        return '\n\nDEBUG: Should not see this: app.py\n\n'
+
 ##
  # Will update a specfic value in a table for a specific user
- #{
+ # {
 # 	"table": "composition",
 # 	"update": ["description", "Chucken"],
 # 	"where": ["composition_id", 2]
-# }
+#  }
  ##
 @app.route('/update', methods=['POST'])
 def update():

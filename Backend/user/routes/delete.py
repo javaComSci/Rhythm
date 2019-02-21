@@ -1,4 +1,4 @@
-from flask import Flask, render_template, json, url_for, request
+from flask import Flask, render_template, json, url_for, request, jsonify
 from MySQL import MySQLConnect
 
 ##
@@ -8,5 +8,8 @@ from MySQL import MySQLConnect
 def deleteRoute():
     content = request.json
     print("delete Route Call")
-    MySQLConnect.delete(content['table'], content['id'], content['delete']);
-    return 'Deleted'
+    MySQLConnect.delete(content['table'], content['delete']);
+    result = {
+        "ok": "true"
+    }
+    return jsonify(result)

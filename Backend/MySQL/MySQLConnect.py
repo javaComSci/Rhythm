@@ -17,7 +17,7 @@ db = pymysql.connect(json_data['server'], json_data['username'], json_data['pass
 cursor = db.cursor()
 
 def update(table, update, where):
-    sql = "UPDATE {} SET {}='{}' WHERE {}='{}'".format(table, update[0], update[1], where[0], where[1]);
+    sql = "UPDATE {} SET {}='{}' WHERE {}='{}';".format(table, update[0], update[1], where[0], where[1]);
     cursor.execute(sql)
     db.commit()
     print("MYSQL COMMAND: {}".format(sql));
@@ -29,18 +29,25 @@ def update(table, update, where):
  #
  ##
 def find(table, id):
-    sql = "SELECT * FROM {} WHERE user_id = '{}'".format(table, id);
+    sql = "SELECT * FROM {} WHERE user_id = '{}';".format(table, id);
     print("MYSQL COMMAND: {}".format(sql));
     cursor.execute(sql)
     db.commit()
     result = cursor.fetchall()
-    print(result)
     return result;
 
 
+def findByEmail(table, email):
+    sql = "SELECT * FROM {} WHERE email = '{}';".format(table, email);
+    print("MYSQL COMMAND: {}".format(sql));
+    cursor.execute(sql)
+    db.commit()
+    result = cursor.fetchall()
+    return result;
+
 
 def findVerf(table, code):
-    sql = "SELECT * FROM {} WHERE verf_code = {}".format(table, code);
+    sql = "SELECT * FROM {} WHERE verf_code = {};".format(table, code);
     print("MYSQL COMMAND: {}".format(sql));
     cursor.execute(sql)
     db.commit()
@@ -53,7 +60,7 @@ def findVerf(table, code):
  #
  ##
 def findUser(table, value):
-    sql = "SELECT * FROM {} WHERE email = '{}'".format(table, value);
+    sql = "SELECT * FROM {} WHERE email = '{}';".format(table, value);
     print("MYSQL COMMAND: {}".format(sql));
     cursor.execute(sql)
     db.commit()
@@ -70,8 +77,8 @@ def findUser(table, value):
  # @value an array of the condition you want met
  # @return void
  ##
-def delete(table, id, value):
-    sql = "DELETE FROM {} WHERE {} = '{}' AND user_id = '{}';".format(table, value[0], value[1], id);
+def delete(table, delete):
+    sql = "DELETE FROM {} WHERE {} = '{}';".format(table, delete[0], delete[1]);
     print("MYSQL COMMAND: {}".format(sql));
     cursor.execute(sql)
     db.commit()
