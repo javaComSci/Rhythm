@@ -438,25 +438,35 @@ def print_objects(mask,SOL,path=""):
 # @return - 2D numpy array of sheet object
 #	Converts a sheet object into it's corresponding numpy array
 def SO_to_array(ob):
+	#intitialize array
 	n_arr = np.ones((70,50))
 
+	#set flag of image size
 	flag = False
+
+	#If sheet object cant fit into a 70x50 array, create minimum sized array that works
 	if (ob.R2 - ob.R1 >= 70 or ob.C2 - ob.C1 >= 50):
 		flag = True
 		n_arr = np.ones(((ob.R2 - ob.R1 + 1),(ob.C2 - ob.C1 + 1)))
 
+	#For every pixel in the sheet object
 	for p in ob.pixel_list:
+
+		#Center pixels
 		Rcenter = int((70 - (ob.R2 - ob.R1))/2.00)
 		Ccenter = int((50 - (ob.C2 - ob.C1))/2.00)
 
+		#Set centering to 0 if using custom array size
 		if flag or Rcenter < 0:
 			Rcenter = 0
 
 		if flag or Ccenter < 0:
 			Ccenter = 0
 
+		#Set pixel value to black in corresponding pixel
 		n_arr[p[0] - ob.R1 + Rcenter][p[1] - ob.C1 + Ccenter] = 0
-			#n_arr[int((ob.R2 - ob.R1)/2.0) + p[0] - 70][int((ob.C2 - ob.C1)/2.0) + p[1] - 50] = 0
+		
+	#Resize array to 70x50 if it was a custom size array
 	if flag:
 		n_arr = cv2.resize(n_arr, (70, 50)) 
 
@@ -499,32 +509,8 @@ def full_partition(path):
 	return mask, SOL
 
 if __name__ == "__main__":
-	# im_gray = cv2.imread("DATA/test5.jpg", cv2.IMREAD_GRAYSCALE)
-	# (thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-	# print "Completed 'image load'"
-
-	# if (im_bw.shape[0] > 2000 and im_bw.shape[1] > 2000):
-	# 	im_bw = cv2.resize(im_bw, (1000, 1000)) 
-
-	# runs = locate_run_blocks(im_bw)
-	# remove_runs_and_fill(im_bw, runs)
-	# print "Completed 'run segmenting'"
-
-	# dividers = locate_vertical_dividers(im_bw)
-	# remove_vertical_dividers_and_fill(im_bw, dividers)
-	# print "Completed 'divider segmenting'"
-
-	# mask, SOL = locate_objects(im_bw)
-	# print "Completed 'object location'"
-
-	# print_objects(mask,SOL,path="test")
-	# print "Completed 'print objects'"
 	mask, SOL = full_partition("DATA/test14.jpg")
-	obby = 1
-	for ob in SOL:
-		cv2.imwrite("{}/{}.jpg".format("test",obby), SO_to_array(ob)*255)
-		obby += 1
-	#print_objects(mask,SOL,path="test")
+	print_objects(mask,SOL,path="test")
 
 
 

@@ -20,6 +20,7 @@ class RegisterScreen extends React.Component {
             email: '',
             submit: false,
             awaitingCode: false,
+            loading: false,
             verfCode: '',
             pendingEmail: '',
             id: 524,
@@ -114,14 +115,21 @@ class RegisterScreen extends React.Component {
         }).then(res => {
             res.text().then(function (data) {
                 console.log("DATA:", data)
+                that.setState({
+                    loading: true
+                })
                 if (data == 'sent') {
                     that.setState({
                         awaitingCode: true,
                         pendingEmail: email,
+                        loading: false,
                     })
                 }
                 else {
                     Alert.alert("Please enter a valid email address")
+                    this.setState({
+                        loading: false
+                    })
                 }
             });
         }).catch(res => {
@@ -161,7 +169,7 @@ class RegisterScreen extends React.Component {
     }
 
     render() {
-        if (this.state.submit && this.state.email === '') {
+        if ((this.state.submit && this.state.email === '') || this.state.loading) {
             return <View><Text>Loading...</Text></View>
         }
         if (this.state.awaitingCode) {

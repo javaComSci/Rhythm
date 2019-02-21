@@ -21,6 +21,14 @@ class Composition {
     getTitle = function () {
         return this.title;
     }
+
+    getID = function () {
+        return this.key;
+    }
+
+    getDescription = function () {
+        return this.description;
+    }
 }
 
 export default class CompositionScreen extends React.Component {
@@ -31,6 +39,8 @@ export default class CompositionScreen extends React.Component {
             newCompo: false,
             text: "",
             description: "",
+            deleteCompo: false,
+            deleteText: "",
         }
     }
     static navigationOptions = {
@@ -103,7 +113,50 @@ export default class CompositionScreen extends React.Component {
         });
     }
 
+    deleteComposition() {
+        this.setState({
+            deleteCompo: true,
+        });
+    }
+
+    doneDeleteComposition() {
+        deleteArr = ['name']
+        deleteArr.push(this.state.deleteText)
+        fetch('http://18.237.79.152:5000/delete', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'table': 'composition',
+                'delete': deleteArr,
+            }),
+        }).then((res) => {
+            this.getInfo()
+            this.state.deleteCompo = false;
+        }).catch((res) => {
+            console.log("err", res)
+        });
+    }
+
     render() {
+        if (this.state.deleteCompo == true) {
+            return (
+                <View style={styles.container}>
+                    <View>
+                        <View style={styles.textHolder}>
+                            <TextInput style={{ marginTop: 200, height: 50, width: '80%', borderColor: 'gray', borderWidth: 1 }}
+                                placeholder="DeleteText"
+                                onChangeText={(deleteText) => this.setState({ deleteText })}
+                                value={this.state.deleteText} />
+                            <Button onPress={() => this.doneDeleteComposition()} title="Delete Composition" />
+                        </View>
+                    </View>
+                </View>
+            );
+        }
+
         if (this.state.newCompo == true) {
             return (
                 <View style={styles.container}>
@@ -132,12 +185,15 @@ export default class CompositionScreen extends React.Component {
             );
         }
 
+
+
         return (
             <View style={styles.container}>
                 <View style={styles}>
                     <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> COMPOSITIONS </Text>
                     <View style={styles.lineBreak} />
                     <Button onPress={() => this.createComposition()} title="+" />
+                    <Button onPress={() => this.deleteComposition()} title="-" />
                 </View>
                 <ScrollView>
                     <FlatList
@@ -145,7 +201,7 @@ export default class CompositionScreen extends React.Component {
                         extraData={this.state}
                         renderItem={({ item }) =>
                             <View style={styles.compositionContainer}>
-                                <TouchableOpacity onPress={() => this.props.navigation.navigate('ViewCompScreen')} style={styles.compositionItem}>
+                                <TouchableOpacity onPress={() => this.props.navigation.navigate('ViewCompScreen', { 'compositionID': item.getID(), 'compositionTitle': item.getTitle(), 'compositionDescription': item.getDescription() })} style={styles.compositionItem}>
                                     <Text style={{ color: '#f19393', fontSize: 40 }}>{item.getTitle()}</Text>
                                 </TouchableOpacity>
                                 <View style={styles.lineBreak} />
