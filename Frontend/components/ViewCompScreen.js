@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, TextInput, KeyboardAvoidingView, FlatList, TouchableOpacity, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { connect } from 'react-redux';
+import DialogInput from 'react-native-dialog-input'
 
 var styles = require('../style')
 
@@ -39,6 +40,8 @@ class ViewCompScreen extends React.Component {
             newCompo: false,
             text: "",
             description: "",
+            isDialogVisible: false,
+            toEdit: '',
         }
     }
 
@@ -133,6 +136,35 @@ class ViewCompScreen extends React.Component {
             console.log("err", res)
         });
     }
+
+    editSheet(name, id) {
+        // #  {
+        //     # 	"table": "composition",
+        //     # 	"update": ["name", "Chucken"],
+        //     # 	"where": ["composition_id", 2]
+        //     # }
+        fetch('http://18.237.79.152:5000/update', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'table': 'sheet_music',
+                'update': ['name', name],
+                'where': ['sheet_id', id],
+            }),
+        }).then((res) => {
+            this.getInfo();
+            // this.setState({
+            //     edit: false,
+            //     email: this.state.emailText,
+            // });
+        }).catch((res) => {
+            console.log("err", res)
+        });
+    }
+
     render() {
 
         if (this.state.deleteCompo == true) {
@@ -144,7 +176,7 @@ class ViewCompScreen extends React.Component {
                                 placeholder="DeleteText"
                                 onChangeText={(deleteText) => this.setState({ deleteText })}
                                 value={this.state.deleteText} />
-                            <Button onPress={() => this.doneDeleteComposition()} title="Delete Composition" />
+                            <Button onPress={() => this.doneDeleteComposition()} title="Delete Sheet Music" />
                         </View>
                     </View>
                 </View>
@@ -180,7 +212,18 @@ class ViewCompScreen extends React.Component {
         const compositionTitle = navigation.getParam('compositionTitle', 'NO_TITLE')
         const compositionDescription = navigation.getParam('compositionDescription', '')
         return (
+
             <View style={styles.container}>
+                <DialogInput isDialogVisible={this.state.isDialogVisible}
+                    title={"Edit Sheet Name"}
+                    hintInput={"New Title"}
+                    submitInput={(inputText) => {
+                        // edit title
+                        this.editSheet(inputText, this.state.toEdit[1])
+                        this.setState({ isDialogVisible: false, toEdit: '' })
+                    }}
+                    closeDialog={() => { this.setState({ isDialogVisible: false, toEdit: '' }) }}>
+                </DialogInput>
                 <View>
                     <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> {compositionTitle} </Text>
                     <Button onPress={() => this.createComposition()} title="+" />
@@ -194,7 +237,15 @@ class ViewCompScreen extends React.Component {
                         renderItem={({ item }) =>
                             <View style={styles.compositionContainer}>
                                 <TouchableOpacity
-                                    style={styles.compositionItem}>
+                                    style={styles.compositionItem}
+                                    onLongPress={(e) => {
+                                        console.log("pepper")
+                                        this.setState({
+                                            isDialogVisible: true,
+                                            toEdit: [item.getTitle(), item.getDescription()], // getdescription actually gets the composition id
+                                        })
+                                    }}
+                                >
                                     <Text style={{ color: '#f19393', fontSize: 40 }}>{item.getTitle()}</Text>
                                 </TouchableOpacity>
                                 <View style={styles.lineBreak} />
