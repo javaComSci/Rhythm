@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { AsyncStorage, TouchableOpacity, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, AsyncStorage, TouchableOpacity, ScrollView, StyleSheet, Text, View } from 'react-native';
 import RegisterScreen from './RegisterScreen';
+import { ImagePicker, Permissions } from 'expo';
 import { addEmail } from '../actions/addEmail'
 var styles = require('../style')
 
@@ -17,6 +18,51 @@ class HomeScreen extends React.Component {
             isLoading: false,
             userEmail: null,
         };
+    }
+
+    takeAndUploadPhotoAsync = async () => {
+        // Display the camera to the user and wait for them to take a photo or to cancel
+        // the action
+        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        if (status !== 'granted') {
+            Alert.alert("Permissions not granted")
+            return;
+        }
+        let result = await ImagePicker.launchCameraAsync({
+            allowsEditing: true,
+            aspect: [4, 3],
+        });
+
+        if (result.cancelled) {
+            return;
+        }
+
+        // ImagePicker saves the taken photo to disk and returns a local URI to it
+        let localUri = result.uri;
+        let filename = localUri.split('/').pop();
+
+        // Infer the type of the image
+        let match = /\.(\w+)$/.exec(filename);
+        let type = match ? `image/${match[1]}` : `image`;
+
+        // Upload the image using the fetch and FormData APIs
+        let formData = new FormData();
+        // Assume "photo" is the name of the form field the server expects
+        formData.append('photo', { uri: localUri, name: filename, type });
+
+        fetch("http://18.237.79.152:5000/uploadPhoto", {
+            method: 'POST',
+            body: formData,
+            header: {
+                'content-type': 'multipart/form-data',
+            },
+        }).then(result => {
+            result.text().then(res => {
+                console.log("camera res", res)
+            }).catch(err => {
+                console.log("camera err", err)
+            })
+        });
     }
 
     componentDidMount() {
@@ -65,6 +111,11 @@ class HomeScreen extends React.Component {
                 <View style={styles.footer}>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('Profile')} style={styles.navButton}>
                         <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Profile </Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.footer}>
+                    <TouchableOpacity onPress={() => this.takeAndUploadPhotoAsync()} style={styles.navButton}>
+                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Camera </Text>
                     </TouchableOpacity>
                 </View>
             </View>

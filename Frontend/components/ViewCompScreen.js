@@ -11,7 +11,7 @@ var styles = require('../style')
 class ViewCompScreen extends React.Component {
     constructor(props) {
         super(props);
-        console.log("props,",props);
+        console.log("props,", props);
     }
 
     static navigationOptions = {

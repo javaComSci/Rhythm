@@ -1,0 +1,9 @@
+{
+  "packagerPort": 19001,
+  "packagerPid": 29928,
+  "expoServerNgrokUrl": "https://cf-zsf.anonymous.frontend.exp.direct",
+  "packagerNgrokUrl": "https://packager.cf-zsf.anonymous.frontend.exp.direct",
+  "ngrokPid": 23428,
+  "devToolsPort": 19003,
+  "expoServerPort": 19000
+}

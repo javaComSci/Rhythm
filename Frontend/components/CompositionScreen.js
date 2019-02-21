@@ -1,5 +1,6 @@
 import React from 'react';
-import { TextInput, FlatList, TouchableOpacity, Button, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { TextInput, FlatList, TouchableOpacity, Button, ScrollView, StyleSheet, Text, View, KeyboardAvoidingView } from 'react-native';
+import { Header } from 'react-navigation';
 
 var styles = require('../style');
 /*
@@ -110,14 +111,21 @@ export default class CompositionScreen extends React.Component {
                     <ScrollView>
                     </ScrollView>
                     <View>
-                        <View style={styles}>
-                            <TextInput style={{ height: 50, borderColor: 'gray', borderWidth: 1 }}
-                                onChangeText={(description) => this.setState({ description })}
-                                value={this.state.description} />
-                            <TextInput style={{ height: 50, borderColor: 'gray', borderWidth: 1 }}
+                        <KeyboardAvoidingView keyboardVerticalOffset={-500} behavior="padding" style={styles.textHolder} enabled>
+                            <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1 }}
+                                placeholder="Title"
                                 onChangeText={(text) => this.setState({ text })}
                                 value={this.state.text} />
+                            <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1 }}
+                                placeholder="Description"
+                                onChangeText={(description) => this.setState({ description })}
+                                value={this.state.description} />
                             <Button onPress={() => this.doneComposition()} title="Create Composition" />
+                        </KeyboardAvoidingView>
+                        <View style={styles.footer}>
+                            <TouchableOpacity onPress={() => this.setState({ newCompo: false })} style={styles.navButton}>
+                                <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Back </Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </View>

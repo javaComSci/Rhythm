@@ -12,6 +12,7 @@ import ProfileScreen from '../components/ProfileScreen';
 import CompositionScreen from '../components/CompositionScreen';
 import RegisterScreen from '../components/RegisterScreen';
 import ViewCompScreen from '../components/ViewCompScreen';
+import SheetCamera from '../components/SheetCamera';
 
 const middleware = createReactNavigationReduxMiddleware(
   'root',
@@ -24,6 +25,7 @@ const RootNavigator = createStackNavigator({
   Composition: { screen: CompositionScreen },
   Register: { screen: RegisterScreen },
   ViewCompScreen: { screen: ViewCompScreen },
+  SheetCamera: { screen: SheetCamera },
 });
 
 const AppWithNavigationState = reduxifyNavigator(RootNavigator, 'root');
