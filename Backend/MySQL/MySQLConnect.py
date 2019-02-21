@@ -65,6 +65,14 @@ def findVerf(table, code):
     print(result)
     return result;
 
+def findSheet(table, email):
+    sql = "SELECT * FROM {} WHERE composition_id = '{}';".format(table, email);
+    print("MYSQL COMMAND: {}".format(sql));
+    cursor.execute(sql)
+    db.commit()
+    result = cursor.fetchall()
+    return result;
+
 ##
  # This will find everything in a specific table and matching the id with the user_id
  #

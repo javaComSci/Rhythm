@@ -137,6 +137,14 @@ def getInfoByEmail():
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
+@app.route('/getInfoBySheet', methods=['POST'])
+def getInfoBySheet():
+    if request.method == 'POST':
+        return getInfos.getInfoSheet()
+    else:
+        return '\n\nDEBUG: Should not see this: app.py\n\n'
+
+
 ##
  # Will update a specfic value in a table for a specific user
  # {
