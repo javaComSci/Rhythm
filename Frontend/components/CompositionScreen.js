@@ -29,6 +29,7 @@ export default class CompositionScreen extends React.Component {
             "compositions": [],
             newCompo: false,
             text: "",
+            description: "",
         }
     }
     static navigationOptions = {
@@ -80,7 +81,7 @@ export default class CompositionScreen extends React.Component {
             },
             body: JSON.stringify({
                 'id': 1,
-                'description': 'I like pancakes',
+                'description': this.state.description,
                 'name': this.state.text,
             }),
         }).then((res) => {
@@ -110,6 +111,9 @@ export default class CompositionScreen extends React.Component {
                     </ScrollView>
                     <View>
                         <View style={styles}>
+                            <TextInput style={{ height: 50, borderColor: 'gray', borderWidth: 1 }}
+                                onChangeText={(description) => this.setState({ description })}
+                                value={this.state.description} />
                             <TextInput style={{ height: 50, borderColor: 'gray', borderWidth: 1 }}
                                 onChangeText={(text) => this.setState({ text })}
                                 value={this.state.text} />
