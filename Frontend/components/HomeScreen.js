@@ -22,7 +22,9 @@ class HomeScreen extends React.Component {
 
     clearCache = function () {
         console.log("clearing storage");
-        AsyncStorage.clear();
+        AsyncStorage.clear().then(() => {
+            this.props.navigation.navigate("Register");
+        });
         console.log("cleared");
     }
 

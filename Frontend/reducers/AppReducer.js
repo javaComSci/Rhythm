@@ -39,6 +39,8 @@ function auth(state = initalRegisterState, action) {
     switch (action.type) {
         case 'ADD_EMAIL':
             return { ...state, isRegistered: action.email }; //duplicate
+        case 'ADD_USERID':
+            return { ...state, id: action.id }
         default:
             return state;
     }

@@ -97,7 +97,6 @@ class RegisterScreen extends React.Component {
             Alert.alert("Please enter an email address");
             return;
         }
-        console.log("FLKSWFJGLKJDGLKJSDFLGKJ")
         fetch('http://18.237.79.152:5000/register', {
             method: 'POST',
             headers: {
