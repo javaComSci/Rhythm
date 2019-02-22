@@ -14,6 +14,7 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
     "react-native-dialog": "^5.5.0",
     "react-native-dialog-input": "^1.0.7",
+    "react-native-elements": "^1.0.0",
     "react-navigation": "2.5.2",
     "react-navigation-redux-helpers": "2.0.0",
     "react-redux": "^6.0.0",
