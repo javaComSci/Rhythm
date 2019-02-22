@@ -15,8 +15,7 @@ def predictClef(testingInput):
 
 	for i in range(predictions.shape[0]):		
 		currentPrediction = np.argmax(predictions[i])
-		print("AAA", predictions, predictions.shape)
-		print("ALL THE PREDICTIONS", predictions[i], predictions[i].shape)
+		print("Clef Prediction", predictions)
 		overallPredictions.append(currentPrediction)
 
 	return overallPredictions

@@ -361,12 +361,12 @@ def testGeneralNN(testingIn, testingOut):
 		# 	break
 
 		# show the example of the image and the value wanted
-		# if i % 100 == 0 and overallPredictions[i] == testingOut[i]:
-		# 	testing = testingIn[i]
-		# 	testing = testing * 255
-		# 	testing = testing.reshape(70, 50)
-		# 	img = Image.fromarray(testing)
-		# 	img.show()
+		if i % 1000 == 0 and overallPredictions[i] == testingOut[i]:
+			testing = testingIn[i]
+			testing = testing * 255
+			testing = testing.reshape(70, 50)
+			img = Image.fromarray(testing)
+			img.show()
 
 	print("Accuracy on general testing data:", (np.sum(overallPredictions == testingOut)+0.0)/len(testingOut))
 
@@ -427,18 +427,18 @@ def checkPredictions(testingInput, testingOut):
 	incorrect = 0
 	correct = 0
 
-	for t in range(0, testingInput.shape[0], 500):
-
-		print("PREDICTION: ", prediction[0][0], "ACTUAL:", stringOutputs[t])
+	for t in range(0, testingInput.shape[0], 100):
 
 		test = testingInput[t].reshape((1, 3500))
 		prediction = predict(test)
 
-		testing = testingInput[t]
-		testing = testing * 255
-		testing = testing.reshape(70, 50)
-		img = Image.fromarray(testing)
-		img.show()
+		print("PREDICTION: ", prediction[0][0], "ACTUAL:", stringOutputs[t])
+
+		# testing = testingInput[t]
+		# testing = testing * 255
+		# testing = testing.reshape(70, 50)
+		# img = Image.fromarray(testing)
+		# img.show()
 
 		if prediction[0][0] == stringOutputs[t]:
 			correct += 1
