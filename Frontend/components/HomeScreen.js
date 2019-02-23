@@ -33,15 +33,11 @@ class HomeScreen extends React.Component {
     takeAndUploadPhotoAsync = async () => {
         // Display the camera to the user and wait for them to take a photo or to cancel
         // the action
-        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-        if (status !== 'granted') {
-            Alert.alert("Permissions not granted")
-            return;
-        }
-        let result = await ImagePicker.launchCameraAsync({
-            allowsEditing: true,
-            aspect: [4, 3],
-        });
+        await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        await Permissions.askAsync(Permissions.CAMERA);
+        // changed
+        let result = await ImagePicker.launchCameraAsync();
+        
 
         if (result.cancelled) {
             return;

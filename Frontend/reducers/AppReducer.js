@@ -17,17 +17,10 @@ function nav(state = initialNavState, action) {
                 ...state, isRegistered: action.email
             };
         case 'ADD_USERID':
+            console.log('user id route nav')
             return {
                 ...state, id: action.id
             };
-        /*
-        case 'NameOfAction':
-            nextState = RootNavigator.router.getStateForAction(
-                *do things*,
-                state
-            );
-            break;
-        */
         default:
             nextState = RootNavigator.router.getStateForAction(action, state);
             break;
@@ -43,6 +36,7 @@ function auth(state = initalRegisterState, action) {
         case 'ADD_EMAIL':
             return { ...state, isRegistered: action.email }; //duplicate
         case 'ADD_USERID':
+            console.log('user id route auth')
             return { ...state, id: action.id }
         default:
             return state;

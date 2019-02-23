@@ -1,5 +1,6 @@
 import React from 'react';
 import { TextInput, FlatList, TouchableOpacity, Button, ScrollView, StyleSheet, Text, View, KeyboardAvoidingView } from 'react-native';
+import { connect } from 'react-redux';
 import { Header } from 'react-navigation';
 
 var styles = require('../style');
@@ -31,7 +32,7 @@ class Composition {
     }
 }
 
-export default class CompositionScreen extends React.Component {
+class CompositionScreen extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -49,6 +50,7 @@ export default class CompositionScreen extends React.Component {
 
     getInfo = function () {
         const that = this; // a reference to the previous value of "this" is required as there is a context change going into the promise of the fetch
+        console.log ("USER ID:",that.props.id)
         fetch('http://18.237.79.152:5000/getInfo', {
             method: 'POST',
             headers: {
@@ -57,11 +59,10 @@ export default class CompositionScreen extends React.Component {
             },
             body: JSON.stringify({
                 'table': 'composition',
-                'id': 1
+                'id': that.props.id
             }),
         }).then((res) => {
             res.text().then(function (res) {
-                console.log("RES", res)
                 var dummyList = [] // temp list to hold compositions before being added to state
                 JSON.parse(res).forEach(element => {
                     dummyList.push(new Composition(element[1], element[2], element[0]));
@@ -84,6 +85,7 @@ export default class CompositionScreen extends React.Component {
     }
 
     makeCompositionCall() {
+        const that = this;
         fetch('http://18.237.79.152:5000/newComposition', {
             method: 'POST',
             headers: {
@@ -91,7 +93,7 @@ export default class CompositionScreen extends React.Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                'id': 1,
+                'id': that.props.id,
                 'description': this.state.description,
                 'name': this.state.text,
             }),
@@ -217,3 +219,12 @@ export default class CompositionScreen extends React.Component {
         );
     }
 };
+
+function mapStateToProps(state) {
+    return {
+        isRegistered: state.auth.email,
+        id: state.auth.id,
+    }
+}
+
+export default connect(mapStateToProps)(CompositionScreen);

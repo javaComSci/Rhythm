@@ -37,16 +37,11 @@ class ProfileScreen extends React.Component {
             },
             body: JSON.stringify({
                 'table': 'user',
-                'id': 1
+                'id': this.props.id
             }),
         }).then((res) => {
-            console.log("RES", res)
             res.text().then(function (res) {
                 let stuff = JSON.parse(res);
-                var dummyList = [] // temp list to hold compositions before being added to state
-                JSON.parse(res).forEach(element => {
-                    //dummyList.push(new Composition(element[1], element[2], element[0]));
-                });
                 that.setState({
                     email: stuff[0][1],
                     name: stuff[0][3]
@@ -84,7 +79,7 @@ class ProfileScreen extends React.Component {
                 body: JSON.stringify({
                     'table': 'user',
                     'update': updateInfo,
-                    'where': ['user_id', 1],
+                    'where': ['user_id', this.props.id],
                 }),
             }).then((res) => {
                 this.setState({
@@ -107,7 +102,7 @@ class ProfileScreen extends React.Component {
                 body: JSON.stringify({
                     'table': 'user',
                     'update': updateInfo,
-                    'where': ['user_id', 1],
+                    'where': ['user_id', this.props.id],
                 }),
             }).then((res) => {
                 this.setState({
@@ -131,7 +126,7 @@ class ProfileScreen extends React.Component {
                 body: JSON.stringify({
                     'table': 'user',
                     'update': updateInfo,
-                    'where': ['user_id', 1],
+                    'where': ['user_id', this.props.id],
                 }),
             }).then((res) => {
                 this.setState({
@@ -196,6 +191,7 @@ class ProfileScreen extends React.Component {
 
 const mapStateToProps = state => ({
     isRegistered: state.auth.isRegistered,
+    id: state.auth.id
 })
 
 export default connect(mapStateToProps)(ProfileScreen);

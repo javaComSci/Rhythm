@@ -88,6 +88,7 @@ class RegisterScreen extends React.Component {
                     console.log("added")
                     that.props.addUser(JSON.parse(data).id)
                     that.saveIDLocal(JSON.parse(data).id, that);
+                    console.log("saved local?")
                     that.saveEmailLocal(that.state.pendingEmail, that)
                 }
             })
@@ -156,6 +157,7 @@ class RegisterScreen extends React.Component {
             res.text().then(function (res) {
                 console.log("RESULT FROM SETEMAIL", res);
                 if (JSON.parse(res).ok == 'true') {
+                    that.saveIDLocal(JSON.parse(res).id,that)
                     that.saveEmailLocal(email, that);
                 }
                 else {
