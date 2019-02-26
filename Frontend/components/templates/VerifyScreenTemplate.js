@@ -1,15 +1,15 @@
 import React from 'react';
-import { AsyncStorage, TextInput, FlatList, TouchableOpacity, Button, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { TextInput, TouchableOpacity, ScrollView, Text, View } from 'react-native';
 
-var styles = require('../../style');
+var styles = require('../../style')
 
-const RegisterHome = () => {
+var VerifyScreenTemplate = function () {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}>
-                    Register
-              </Text>
+                    Verification
+        </Text>
                 <View style={styles.lineBreak} />
             </View>
             <ScrollView>
@@ -17,8 +17,8 @@ const RegisterHome = () => {
                     <View style={{ alignItems: 'center', width: '90%' }}>
                         <Text
                             style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}>
-                            Email:
-                            </Text>
+                            Verification Code:
+                </Text>
                     </View>
                     <TextInput
                         style={{
@@ -29,34 +29,21 @@ const RegisterHome = () => {
                             borderWidth: 1,
                             fontWeight: 'bold',
                         }}
-                        onChangeText={text => this.setState({ email: text })}
-                        value={this.state.email}
+                        onChangeText={text => this.setState({ verfCode: text })}
+                        value={this.state.verfCode}
                     />
                 </View>
             </ScrollView>
             <View style={styles.footer}>
                 <TouchableOpacity
                     onPress={() => {
-                        this.setEmail(this.state.email)
+                        this.verifyAccount(this.state.verfCode)
                     }}
                     style={styles.navButton}>
                     <Text
                         style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}>
                         {' '}
-                        Register Email{' '}
-                    </Text>
-                </TouchableOpacity>
-            </View>
-            <View style={styles.footer}>
-                <TouchableOpacity
-                    onPress={() => {
-                        this.recoverAccount(this.state.email)
-                    }}
-                    style={styles.navButton}>
-                    <Text
-                        style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}>
-                        {' '}
-                        Recover Account{' '}
+                        Verify{' '}
                     </Text>
                 </TouchableOpacity>
             </View>
@@ -64,4 +51,4 @@ const RegisterHome = () => {
     )
 }
 
-export default RegisterHome
+export default VerifyScreenTemplate;
