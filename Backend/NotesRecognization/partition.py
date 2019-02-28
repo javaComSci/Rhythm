@@ -491,6 +491,8 @@ def full_partition(path):
 	#locate runs in the image
 	runs = locate_run_blocks(im_bw)
 
+	print prune_runs(runs)
+
 	#remove runs in the image
 	remove_runs_and_fill(im_bw, runs)
 	#print "Completed 'run segmenting'"
@@ -508,8 +510,31 @@ def full_partition(path):
 
 	return mask, SOL
 
+def prune_runs(runs):
+	pruned = []
+
+	new_set = []
+
+	for r in runs:
+		if len(new_set) == 0:
+			new_set.append(r)
+		elif abs(new_set[len(new_set) - 1] - r) <= 2:
+			new_set.append(r)
+		else:
+			pruned.append(new_set)
+			new_set = []
+
+	pruned.append(new_set)
+
+	final_runs = []
+
+	for s in pruned:
+		final_runs.append(float(sum(s))/len(s))
+
+	return final_runs
+
 if __name__ == "__main__":
-	mask, SOL = full_partition("DATA/test14.jpg")
+	mask, SOL = full_partition("DATA/test3.jpg")
 	print_objects(mask,SOL,path="test")
 
 
