@@ -18,6 +18,11 @@ module.exports = StyleSheet.create({
         marginTop: 20,
         backgroundColor: '#ffeceb',
     },
+    editContainer: {
+        flex: 1,
+        marginTop: 20,
+        backgroundColor: '#ffffff',
+    },
     textHolder: {
         height: 200,
         alignItems: 'center'

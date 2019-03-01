@@ -27,7 +27,7 @@ const RootNavigator = createStackNavigator({
   Register: { screen: RegisterScreen },
   ViewCompScreen: { screen: ViewCompScreen },
   SheetCamera: { screen: SheetCamera },
-  // EditMusicScreen: { screen: EditMusicScreen },
+  EditMusicScreen: { screen: EditMusicScreen },
 });
 
 const AppWithNavigationState = reduxifyNavigator(RootNavigator, 'root');

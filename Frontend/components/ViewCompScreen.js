@@ -228,6 +228,7 @@ class ViewCompScreen extends React.Component {
                     <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> {compositionTitle} </Text>
                     <Button onPress={() => this.createComposition()} title="+" />
                     <Button onPress={() => this.deleteComposition()} title="-" />
+                    <Button onPress={() => this.props.navigation.navigate('EditMusicScreen')} title="Jesus" /> 
                 </View>
                 <Text>{compositionDescription}</Text>
                 <ScrollView>
