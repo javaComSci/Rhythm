@@ -5,6 +5,8 @@ import RegisterScreen from './RegisterScreen';
 import { ImagePicker, Permissions } from 'expo';
 import { addEmail } from '../actions/addEmail'
 import { addUser } from '../actions/addUserID';
+import HomeScreenTemplate from './templates/HomeScreenTemplate';
+import LoadingScreen from './LoadingScreen';
 var styles = require('../style')
 
 /*
@@ -113,39 +115,11 @@ class HomeScreen extends React.Component {
         title: '', header: null // setting header to null to remove the default header from react-navigation
     };
     render() {
-        if (this.state.isLoading) {
-            return <View><Text>Loading...</Text></View>
+        if (this.state.isLoading || !this.state.userEmail) {
+            return <LoadingScreen />
         }
-        else if (!this.state.userEmail)
-            return <View><Text>Loading...</Text></View>
         return (
-            <View style={styles.container}>
-                <ScrollView>
-                    <View style={styles.textHolder}>
-                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 75 }}> Rhythm </Text>
-                    </View>
-                </ScrollView>
-                <View style={styles.footer}>
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Composition')} style={styles.navButton}>
-                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Compositions </Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.footer}>
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Profile')} style={styles.navButton}>
-                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Profile </Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.footer}>
-                    <TouchableOpacity onPress={() => this.takeAndUploadPhotoAsync()} style={styles.navButton}>
-                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Camera </Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.footer}>
-                    <TouchableOpacity onPress={() => this.clearCache()} style={styles.navButton}>
-                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Clear Cache </Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+            HomeScreenTemplate.call(this)
         );
     }
 };

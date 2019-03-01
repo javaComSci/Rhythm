@@ -1,9 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Alert, AsyncStorage, TextInput, FlatList, TouchableOpacity, Button, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { addEmail } from '../actions/addEmail'
-import { addUser } from '../actions/addUserID'
-import Connection from '../utils/connect'
+import { addEmail } from '../actions/addEmail';
+import { addUser } from '../actions/addUserID';
+import Connection from '../utils/connect';
+import LoadingScreen from './LoadingScreen';
+import VerifyScreenTemplate from './templates/VerifyScreenTemplate';
+import RegisterScreenTemplate from './templates/RegisterScreenTemplate';
+
 var styles = require('../style');
 
 /*
@@ -80,7 +84,7 @@ class RegisterScreen extends React.Component {
             })
         }).then(res => {
             res.text().then(function (data) {
-                console.log("pada",data)
+                console.log("pada", data)
                 if (JSON.parse(data).id == -1) {
                     Alert.alert("Invalid verification code")
                 }
@@ -104,6 +108,9 @@ class RegisterScreen extends React.Component {
             Alert.alert("Please enter a valid email address")
             return
         }
+        that.setState({
+            loading: true
+        })
         fetch('http://18.237.79.152:5000/recoverEmail', {
             method: 'POST',
             headers: {
@@ -116,9 +123,6 @@ class RegisterScreen extends React.Component {
         }).then(res => {
             res.text().then(function (data) {
                 console.log("DATA:", data)
-                that.setState({
-                    loading: true
-                })
                 if (data == 'sent') {
                     that.setState({
                         awaitingCode: true,
@@ -157,7 +161,7 @@ class RegisterScreen extends React.Component {
             res.text().then(function (res) {
                 console.log("RESULT FROM SETEMAIL", res);
                 if (JSON.parse(res).ok == 'true') {
-                    that.saveIDLocal(JSON.parse(res).id,that)
+                    that.saveIDLocal(JSON.parse(res).id, that)
                     that.saveEmailLocal(email, that);
                 }
                 else {
@@ -172,112 +176,15 @@ class RegisterScreen extends React.Component {
 
     render() {
         if ((this.state.submit && this.state.email === '') || this.state.loading) {
-            return <View><Text>Loading...</Text></View>
+            return <LoadingScreen />
         }
         if (this.state.awaitingCode) {
             return (
-                <View style={styles.container}>
-                    <View style={styles.header}>
-                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}>
-                            Verification
-                        </Text>
-                        <View style={styles.lineBreak} />
-                    </View>
-                    <ScrollView>
-                        <View style={styles.inputContainer}>
-                            <View style={{ alignItems: 'center', width: '90%' }}>
-                                <Text
-                                    style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}>
-                                    Verification Code:
-                                </Text>
-                            </View>
-                            <TextInput
-                                style={{
-                                    width: '90%',
-                                    height: 40,
-                                    color: '#f19393',
-                                    borderColor: '#f19393',
-                                    borderWidth: 1,
-                                    fontWeight: 'bold',
-                                }}
-                                onChangeText={text => this.setState({ verfCode: text })}
-                                value={this.state.verfCode}
-                            />
-                        </View>
-                    </ScrollView>
-                    <View style={styles.footer}>
-                        <TouchableOpacity
-                            onPress={() => {
-                                this.verifyAccount(this.state.verfCode)
-                            }}
-                            style={styles.navButton}>
-                            <Text
-                                style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}>
-                                {' '}
-                                Verify{' '}
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                VerifyScreenTemplate.call(this)
             )
         }
         return (
-            <View style={styles.container}>
-                <View style={styles.header}>
-                    <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}>
-                        Register
-              </Text>
-                    <View style={styles.lineBreak} />
-                </View>
-                <ScrollView>
-                    <View style={styles.inputContainer}>
-                        <View style={{ alignItems: 'center', width: '90%' }}>
-                            <Text
-                                style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}>
-                                Email:
-                            </Text>
-                        </View>
-                        <TextInput
-                            style={{
-                                width: '90%',
-                                height: 40,
-                                color: '#f19393',
-                                borderColor: '#f19393',
-                                borderWidth: 1,
-                                fontWeight: 'bold',
-                            }}
-                            onChangeText={text => this.setState({ email: text })}
-                            value={this.state.email}
-                        />
-                    </View>
-                </ScrollView>
-                <View style={styles.footer}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            this.setEmail(this.state.email)
-                        }}
-                        style={styles.navButton}>
-                        <Text
-                            style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}>
-                            {' '}
-                            Register Email{' '}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.footer}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            this.recoverAccount(this.state.email)
-                        }}
-                        style={styles.navButton}>
-                        <Text
-                            style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}>
-                            {' '}
-                            Recover Account{' '}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+            RegisterScreenTemplate.call(this)
         );
     }
 };

@@ -158,7 +158,6 @@ class CompositionScreen extends React.Component {
                 </View>
             );
         }
-
         if (this.state.newCompo == true) {
             return (
                 <View style={styles.container}>
@@ -186,9 +185,6 @@ class CompositionScreen extends React.Component {
                 </View>
             );
         }
-
-
-
         return (
             <View style={styles.container}>
                 <View style={styles}>
