@@ -127,8 +127,6 @@ class EditMusicScreen extends React.Component {
       screenSize += 100;
     }
     for (let i = 0; i < Math.ceil((NotesList.length)/4.5); i++) {
-
-
       amountOfMeasure.push(
         <Svg height="100%" width="100%">
           <Path x={[x*mesureLength].join(' ')} y={[((parseInt(i/2))+1)*start].join(' ')} transform={['scale(', .8, .4, ')'].join(' ')}  style="fill:green"
