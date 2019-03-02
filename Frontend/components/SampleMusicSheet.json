@@ -1,0 +1,449 @@
+/*
+ note: What note it is (int)
+ length: How many beats
+ pitch: Where it is on that line [0-13]
+*/
+{
+	"clef": 1,
+	"notes":
+	[
+		{
+			"note": 0,
+			"length": 1,
+			"pitch": 1,
+		},
+		{
+			"note": 1,
+			"length": 1,
+			"pitch": 0,
+		},
+		{
+			"note": 2,
+			"length": 1,
+			"pitch": 1,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 2,
+		},
+		{
+			"note": 5,
+			"length": 1,
+			"pitch": 3,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 4,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 5,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 6,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 7,
+		},
+
+
+
+
+		{
+			"note": 0,
+			"length": 1,
+			"pitch": 1,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 0,
+		},
+		{
+			"note": 5,
+			"length": 1,
+			"pitch": 1,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 2,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 3,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 4,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 5,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 6,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 7,
+		},
+
+
+
+		{
+			"note": 0,
+			"length": 1,
+			"pitch": 1,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 0,
+		},
+		{
+			"note": 1,
+			"length": 1,
+			"pitch": 1,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 2,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 3,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 4,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 5,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 6,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 7,
+		},
+
+
+
+
+
+		{
+			"note": 0,
+			"length": 1,
+			"pitch": 1,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 0,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 1,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 2,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 3,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 4,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 5,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 6,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 7,
+		},
+
+
+
+		{
+			"note": 0,
+			"length": 1,
+			"pitch": 1,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 0,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 1,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 2,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 3,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 4,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 5,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 6,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 7,
+		},
+
+
+
+
+
+
+
+		{
+			"note": 0,
+			"length": 1,
+			"pitch": 1,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 0,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 1,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 2,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 3,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 4,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 5,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 6,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 7,
+		},
+
+
+
+
+
+
+		{
+			"note": 0,
+			"length": 1,
+			"pitch": 1,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 0,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 1,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 2,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 3,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 4,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 5,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 6,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 7,
+		},
+
+
+
+
+
+		{
+			"note": 0,
+			"length": 1,
+			"pitch": 1,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 0,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 1,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 2,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 3,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 4,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 5,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 6,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 7,
+		},
+		{
+			"note": 0,
+			"length": 1,
+			"pitch": 1,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 0,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 1,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 2,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 3,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 4,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 5,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 6,
+		},
+		{
+			"note": 3,
+			"length": 1,
+			"pitch": 7,
+		},
+	]
+}

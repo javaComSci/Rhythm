@@ -15,6 +15,10 @@ class sheet_object:
 		#Top and bottom left corners
 		self.C1 = self.C2 = tup[1]
 
+		#run and staff line object is attached to
+		self.run = -1
+		self.staff_line = -1
+
 	#tup - (row,column) location of a pixel in specified object
 	#	Add pixel to an object
 	def add_pixel(self,tup):
@@ -411,7 +415,7 @@ def prune_objects(mask, SOL):
 # @path - path that jpgs will be written to
 # @return - void
 #	Prints all objects in sheet object list as jpgs
-def print_objects(mask,SOL,path=""):
+def print_objects(mask,SOL,sl,path="",staff_lines=False):
 	#Ensures path is in correct format
 	if path.endswith("/") == False:
 		path = path + "/"
@@ -425,11 +429,22 @@ def print_objects(mask,SOL,path=""):
 
 		#For each pixel in the object, place the pixel into new_img
 		for tup in ob.pixel_list:
-			full_img[tup[0]][tup[1]] = 255
+
+			if (ob.staff_line == 2):
+				full_img[tup[0]][tup[1]] = 255
+
 			new_img[tup[0] - ob.R1][tup[1] - ob.C1] = 255
 
 		#Write object to specified path
-		cv2.imwrite("{}ob_{}.jpg".format(path,ob.object_number), new_img)
+		if (ob.staff_line == 2):
+			cv2.imwrite("{}ob_{}_R{}SL{}.jpg".format(path,ob.object_number,ob.run,ob.staff_line), new_img)
+
+
+	if staff_lines:
+		for s in sl:
+			for r in s:
+				for c in range(full_img.shape[1]):
+					full_img[r][c] = 255
 
 	#Write full object image to specified path
 	cv2.imwrite("{}FullImage.jpg".format(path), full_img)
@@ -437,7 +452,7 @@ def print_objects(mask,SOL,path=""):
 # @ob - A single sheet object
 # @return - 2D numpy array of sheet object
 #	Converts a sheet object into it's corresponding numpy array
-def SO_to_array(ob):
+def SO_to_array(ob, resize='True'):
 	#intitialize array
 	n_arr = np.ones((70,50))
 
@@ -445,7 +460,7 @@ def SO_to_array(ob):
 	flag = False
 
 	#If sheet object cant fit into a 70x50 array, create minimum sized array that works
-	if (ob.R2 - ob.R1 >= 70 or ob.C2 - ob.C1 >= 50):
+	if not resize or (ob.R2 - ob.R1 >= 70 or ob.C2 - ob.C1 >= 50):
 		flag = True
 		n_arr = np.ones(((ob.R2 - ob.R1 + 1),(ob.C2 - ob.C1 + 1)))
 
@@ -491,7 +506,12 @@ def full_partition(path):
 	#locate runs in the image
 	runs = locate_run_blocks(im_bw)
 
-	# print prune_runs(runs)
+
+	#merge runs into pruned format
+	pruned_runs = prune_runs(runs)
+
+	#group runs by measures, add in-between rows for runs
+	staff_lines = augment_runs(pruned_runs)
 
 	#remove runs in the image
 	remove_runs_and_fill(im_bw, runs)
@@ -508,34 +528,165 @@ def full_partition(path):
 	mask, SOL = locate_objects(im_bw)
 	#print "Completed 'object location'"
 
-	return mask, SOL
+	#locate row and staff lines
+	locate_note_run(SOL, staff_lines)
 
+	return mask, SOL, staff_lines
+
+#@ pr - a list of pruned runs
+#@ return - a list of all the staff lines and the rows that are present in the staff lines
+#	Adds middle rows to a list of the 5 runs in a single staff line. Places runs in their correct
+#	staff lines
+def augment_runs(pr):
+	#intitialize staff_lines array
+	staff_lines = []
+
+	#remove extra rows if entire measure was not in image
+	pr = pr[:len(pr) - (len(pr) % 5)]
+
+	#group runs by sets of 5 into staff_lines, creating staff lines
+	for m in range(0,len(pr),5):
+		staff_lines.append(pr[m:m+5])
+
+	#for every staff line in staff_lines
+	for sl in range(len(staff_lines)):
+		print("PRE STAFF LINE: {}".format(staff_lines[sl]))
+		#calculate average run distance for a given staff line
+		avg_dist = average_run_distance(staff_lines[sl])
+
+		#add row at front and end of list of runs
+		staff_lines[sl].insert(0,staff_lines[sl][0] - avg_dist)
+		staff_lines[sl].append(staff_lines[sl][len(staff_lines[sl]) - 1] + avg_dist)
+
+		#add rows between each previous row of staff line 
+		list_len = len(staff_lines[sl])
+		for d in range(1, list_len):
+			# value of new row
+			val = staff_lines[sl][2*d - 2] + int(avg_dist/2)
+			#insert new row between other two rows
+			staff_lines[sl].insert(2*d - 1,val)
+		print("POST STAFF LINE: {}".format(staff_lines[sl]))
+	return staff_lines
+
+#@ run_list - a list of rows
+#@ return - The avg distance between each row
+def average_run_distance(run_list):
+	#initialize avgs
+	avg = 0
+
+	#sum all differences between averages
+	for i in range(len(run_list)-1):
+		avg += abs(run_list[i+1] - run_list[i])
+
+	#divide by number of differences
+	avg = float(avg) / (len(run_list)-1)
+
+	return int(avg)
+
+#@ runs - list of all the rows that may contain a run
+#@ return - a list of merged runs
+#	Given a list of runs, they will be merged into their close counterparts to
+#	create a list of the true runs that make up the music sheet
 def prune_runs(runs):
 	pruned = []
 
 	new_set = []
 
+	#for every run
 	for r in runs:
+		#if new set is empty, add the run
 		if len(new_set) == 0:
 			new_set.append(r)
-		elif abs(new_set[len(new_set) - 1] - r) <= 2:
+		# if the current run is within 1 pixel of the previous run add it set
+		elif abs(new_set[len(new_set) - 1] - r) <= 1:
 			new_set.append(r)
+		#add new set as it's own singular run
 		else:
 			pruned.append(new_set)
 			new_set = []
 
+	#append final set
 	pruned.append(new_set)
 
 	final_runs = []
 
+	#find average of all rows in each run
 	for s in pruned:
-		final_runs.append(float(sum(s))/len(s))
+		final_runs.append(int(float(sum(s))/len(s)))
 
 	return final_runs
 
+#@ SOL - list of sheet objects
+#@ runs - list of runs found in music sheet
+#@ return - void
+#	Sets the predicted run for each note
+def locate_note_run(SOL,staff_lines):
+	for ob in SOL:
+		#get object in array form
+		ob_arr = SO_to_array(ob, resize="False")
+
+		#figure out if object is top or bottom heavy
+		note_weight = top_bottom_heavy(ob_arr)
+
+		#starting row of object
+		expected_row = ob.R1
+
+		if note_weight == 0: #top heavy
+			expected_row += ob_arr.shape[0] / 5
+		else: #bottom heavy
+			expected_row += (ob_arr.shape[0] * 4) / 5
+
+		#find closest row to expected row
+		cr, sl = closest_row(expected_row,staff_lines)
+
+		#set which row and staff line object is on
+		ob.run = cr
+		ob.staff_line = sl
+
+#@ n_arr - a pixel representation of a sheet object
+#@ return - 0 if the object is top heavy, 1 otherwise
+def top_bottom_heavy(n_arr):
+	#get top and bottom half of provided array
+	top_half = n_arr[:n_arr.shape[0]/2,:]
+	bottom_half = n_arr[n_arr.shape[0]/2:,:]
+
+	#notes are black pixels, with a value of 0. More white pixels, mean less object space
+	if np.sum(top_half) <= np.sum(bottom_half):
+		#object is top heavy
+		return 0
+
+	#object is bottom heavy
+	return 1
+
+#@ er - Expected row for which a note is placed on
+#@ measures
+#@ retrun - returns measure and row of measure that note occurs on
+def closest_row(er, staff_lines):
+	#initialize min distance to INF
+	dist = float("inf")
+
+	#current closest row
+	cr = -1
+	mes = -1
+
+	for sl in range(len(staff_lines)):
+		#for every row
+		for r in range(len(staff_lines[sl])):
+			#if distance from expected note row to a given row is less than current min distance
+			if abs(staff_lines[sl][r] - er) < dist:
+				#update current row
+				cr = r
+				#update current measure
+				mes = sl
+				#update min distance
+				dist = abs(staff_lines[sl][r] - er)
+
+	return cr, mes
+
+
 if __name__ == "__main__":
-	mask, SOL = full_partition("DATA/test3.jpg")
-	print_objects(mask,SOL,path="test")
+	mask, SOL, sl = full_partition("DATA/test3.jpg")
+	print_objects(mask,SOL,sl,path="test",staff_lines=True)
 
 
 
