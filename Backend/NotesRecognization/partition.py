@@ -491,7 +491,7 @@ def full_partition(path):
 	#locate runs in the image
 	runs = locate_run_blocks(im_bw)
 
-	print prune_runs(runs)
+	# print prune_runs(runs)
 
 	#remove runs in the image
 	remove_runs_and_fill(im_bw, runs)

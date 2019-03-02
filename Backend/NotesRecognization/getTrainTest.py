@@ -5,6 +5,7 @@ from PIL import Image
 import re
 import imageio
 import random
+from random import shuffle
 
 # split the data into training and testing
 def splitData(symbols):
@@ -22,14 +23,14 @@ def splitData(symbols):
 		print("SYMBOL", symbols[symbol].shape)
 		translations[count] = symbolName
 
-		trainingIn = np.vstack((trainingIn, symbols[symbol][1:301]))
+		trainingIn = np.vstack((trainingIn, symbols[symbol][1:351]))
 
-		currTrainingOut = np.array(np.ones(300) * count).reshape((300, 1))
+		currTrainingOut = np.array(np.ones(350) * count).reshape((350, 1))
 		trainingOut = np.vstack((trainingOut, currTrainingOut))
 
-		testingIn = np.vstack((testingIn, symbols[symbol][301:]))
+		testingIn = np.vstack((testingIn, symbols[symbol][351:]))
 
-		currTestingOut = np.array((np.ones(len(symbols[symbol])-301) * count)).reshape(len(symbols[symbol])-301, 1)
+		currTestingOut = np.array((np.ones(len(symbols[symbol])-351) * count)).reshape(len(symbols[symbol])-351, 1)
 		testingOut = np.vstack((testingOut, currTestingOut))
 
 		count += 1
@@ -84,6 +85,9 @@ def getTrainingAndTestingData():
 
 		# all in specific directory are of specific type
 		symbols[dirName] = np.empty((1, 3500))
+
+		# randomly shuffle the files in the folder
+		shuffle(files)
 
 		for file in files:
 			# make sure that it is not a hidden file

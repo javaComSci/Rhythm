@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 
 if __name__ == "__main__":
-	file_path = "ExamplePredictions/DATA/t10.jpg"
+	file_path = "ExamplePredictions/DATA/t5.jpg"
 
 	mask, SOL = partition.full_partition(file_path)
 

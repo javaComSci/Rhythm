@@ -7,7 +7,6 @@ from PIL import Image
 from keras.layers import Dense, Dropout
 from keras.models import load_model
 import math
-import partition
 import os
 from clefNeuralNet import predictClef
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
