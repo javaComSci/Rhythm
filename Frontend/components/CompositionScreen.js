@@ -2,6 +2,7 @@ import React from 'react';
 import { TextInput, FlatList, TouchableOpacity, Button, ScrollView, StyleSheet, Text, View, KeyboardAvoidingView } from 'react-native';
 import { connect } from 'react-redux';
 import { Header } from 'react-navigation';
+import DialogInput from 'react-native-dialog-input';
 import { addEmail } from '../actions/addEmail'
 import { addUser } from '../actions/addUserID';
 import { addComposition } from '../actions/addComposition';
@@ -43,7 +44,9 @@ class CompositionScreen extends React.Component {
             text: "",
             description: "",
             deleteCompo: false,
+            isDialogVisible: false,
             deleteText: "",
+            toEdit: "",
         }
     }
     static navigationOptions = {
@@ -52,7 +55,7 @@ class CompositionScreen extends React.Component {
 
     getInfo = function () {
         const that = this; // a reference to the previous value of "this" is required as there is a context change going into the promise of the fetch
-        console.log ("USER ID:",that.props.id)
+        console.log("USER ID:", that.props.id)
         fetch('http://18.237.79.152:5000/getInfo', {
             method: 'POST',
             headers: {
@@ -104,6 +107,26 @@ class CompositionScreen extends React.Component {
         }).then((res) => {
             this.getInfo()
             this.state.newCompo = false;
+        }).catch((res) => {
+            console.log("err", res)
+        });
+    }
+
+    duplicateComposition(newName) {
+        const that = this;
+        fetch('http://18.237.79.152:5000/duplicateComposition', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'user_id': that.props.id,
+                'title': newName,
+                'comp_id': this.state.toEdit[1],
+            }),
+        }).then((res) => {
+            this.getInfo()
         }).catch((res) => {
             console.log("err", res)
         });
@@ -191,6 +214,17 @@ class CompositionScreen extends React.Component {
         }
         return (
             <View style={styles.container}>
+                <DialogInput isDialogVisible={this.state.isDialogVisible}
+                    title={"Duplicate Composition"}
+                    hintInput={"New Composition Name"}
+                    submitInput={(inputText) => {
+                        // edit title
+                        // duplicate composition
+                        this.duplicateComposition(inputText)
+                        this.setState({ isDialogVisible: false, toEdit: '' })
+                    }}
+                    closeDialog={() => { this.setState({ isDialogVisible: false, toEdit: '' }) }}>
+                </DialogInput>
                 <View style={styles}>
                     <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> COMPOSITIONS </Text>
                     <View style={styles.lineBreak} />
@@ -203,7 +237,17 @@ class CompositionScreen extends React.Component {
                         extraData={this.state}
                         renderItem={({ item }) =>
                             <View style={styles.compositionContainer}>
-                                <TouchableOpacity onPress={() => this.props.navigation.navigate('ViewCompScreen', { 'compositionID': item.getID(), 'compositionTitle': item.getTitle(), 'compositionDescription': item.getDescription() })} style={styles.compositionItem}>
+                                <TouchableOpacity
+                                    onPress={() => this.props.navigation.navigate('ViewCompScreen', { 'compositionID': item.getID(), 'compositionTitle': item.getTitle(), 'compositionDescription': item.getDescription() })}
+                                    style={styles.compositionItem}
+                                    onLongPress={(e) => {
+                                        console.log("pepper")
+                                        console.log(item.getTitle(), item.getID())
+                                        this.setState({
+                                            isDialogVisible: true,
+                                            toEdit: [item.getTitle(), item.getID()], // getdescription actually gets the composition id
+                                        })
+                                    }}>
                                     <Text style={{ color: '#f19393', fontSize: 40 }}>{item.getTitle()}</Text>
                                 </TouchableOpacity>
                                 <View style={styles.lineBreak} />
