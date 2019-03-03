@@ -296,6 +296,79 @@ def trainNoteNN(trainingIn, trainingOut, testingIn, testingOut):
 	model.save('notes_model.h5')
 
 
+# @testingIn - 2d numpy array of testing inputs
+# @testingOut - 2d numpy array of testing labels
+# @return - void
+# Tests the accuracy of the neural network for the base
+def testNoteNN(testingIn, testingOut):
+	model = load_model('notes_model.h5')
+
+	# modify the labels for notes, sharp/flat, and rests in all training data first
+	for t in range(0, len(testingOut)):
+		output = testingOut[t][0]
+		
+		translation = translations[output]
+		if translation == 'Flat' or translation == 'Sharp':
+			# for sharp/flat
+			testingOut[t][0] = -1
+		elif translation == 'Whole-Note' or translation == 'Eighth-Note' or translation == 'Half-Note' or translation == 'Sixteenth-Note' or translation == 'Quarter-Note':
+			# for actual notes
+			testingOut[t][0] = -2
+		elif translation == 'Whole-Half-Rest' or translation == 'Eighth-Rest' or translation == 'Quarter-Rest':
+			# for the rests
+			testingOut[t][0] = -3
+
+
+	# TESTING DATA CLEANING
+	# row indicies so need the [0]
+	extrasIndiciesTesting = np.where(testingOut == -1)[0]
+	realNotesIndiciesTesting = np.where(testingOut == -2)[0]
+	restsIndiciesTesting = np.where(testingOut == -3)[0]
+
+	# for inputs
+	notesTestingIn = testingIn[extrasIndiciesTesting]
+	notesTestingIn = np.vstack((notesTestingIn, testingIn[realNotesIndiciesTesting]))
+	notesTestingIn = np.vstack((notesTestingIn, testingIn[restsIndiciesTesting]))
+
+	# for outputs
+	notesTestingOut = testingOut[extrasIndiciesTesting,:]
+	notesTestingOut = np.vstack((notesTestingOut, testingOut[realNotesIndiciesTesting,:]))
+	notesTestingOut = np.vstack((notesTestingOut, testingOut[restsIndiciesTesting,:]))
+
+	# changing values
+	notesTestingOut[notesTestingOut == -1] = 0
+	notesTestingOut[notesTestingOut == -2] = 1
+	notesTestingOut[notesTestingOut == -3] = 2
+
+
+	# predictions on unseen data
+	predictions = model.predict(notesTestingIn)
+	overallPredictions = -np.ones((len(notesTestingOut),1))
+
+	for i in range(predictions.shape[0]):
+		overallPredictions[i] = np.argmax(predictions[i])
+		print("Prediction:", overallPredictions[i], "True Label", notesTestingOut[i])
+
+		# showing the incorrect image
+		# if overallPredictions[i] != clefTestingOut[i]:
+		# 	testing = clefTestingIn[i]
+		# 	testing = testing * 255
+		# 	testing = testing.reshape(70, 50)
+		# 	img = Image.fromarray(testing)
+		# 	img.show()
+		# 	break
+
+		# show the example of the image and the value wanted
+		# if i % 99 == 0 and overallPredictions[i] == notesTestingOut[i]:
+		# 	print("Prediction:", overallPredictions[i], "True Label", notesTestingOut[i])
+		# 	testing = notesTestingIn[i]
+		# 	testing = testing * 255
+		# 	testing = testing.reshape(70, 50)
+		# 	img = Image.fromarray(testing)
+		# 	img.show()
+			
+
+	print("Accuracy on notes testing data:", (np.sum(overallPredictions == notesTestingOut)+0.0)/len(notesTestingOut))
 
 
 # @TODO
@@ -600,5 +673,6 @@ if __name__ == '__main__':
 	# testGeneralNN(testingIn, testingOut)
 	# trainClefNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testClefNN(testingIn, testingOut)
-	trainNoteNN(trainingIn, trainingOut, testingIn, testingOut)
+	# trainNoteNN(trainingIn, trainingOut, testingIn, testingOut)
+	testNoteNN(testingIn, testingOut)
 	# checkPredictions(testingIn, testingOut)
