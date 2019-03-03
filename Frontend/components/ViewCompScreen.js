@@ -1,15 +1,19 @@
 import React from 'react';
-import { Button, TextInput, KeyboardAvoidingView, FlatList, TouchableOpacity, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button, TextInput, TouchableHighlight, FlatList, TouchableOpacity, ScrollView, Text, View } from 'react-native';
+import { Icon } from 'react-native-elements'
 import { connect } from 'react-redux';
-import DialogInput from 'react-native-dialog-input'
-
+import DialogInput from 'react-native-dialog-input';
+import RNPickerSelect from 'react-native-picker-select';
+import { addEmail } from '../actions/addEmail'
+import { addUser } from '../actions/addUserID';
+import { addComposition } from '../actions/addComposition';
 var styles = require('../style')
 
 /*
 Composition class
 */
 class Composition {
-    constructor(title, description, id) {
+    constructor(title, id, description) {
         this.title = title;
         this.description = description;
         this.key = id.toString(); // must be stored as string for FlatList
@@ -35,16 +39,26 @@ class ViewCompScreen extends React.Component {
     constructor(props) {
         super(props);
         console.log("props,", props);
+        this.sheetList = [];
+        this.compList = this.props.compositions.map(composition => ({ value: composition.key, label: composition.title, color: "red" }));
+        this.compList.forEach(element => {
+            if (element.value == this.props.navigation.getParam('compositionID'))
+            {
+                this.compList.splice(this.compList.indexOf(element), 1);
+            }
+        });
         this.state = {
             "sheet_music": [],
             newCompo: false,
+            duplicateVisible: false,
+            selectedSheet: null,
+            selectedComposition: null,
             text: "",
             description: "",
             isDialogVisible: false,
             toEdit: '',
         }
     }
-
 
     getInfo = function () {
         const that = this; // a reference to the previous value of "this" is required as there is a context change going into the promise of the fetch
@@ -67,6 +81,7 @@ class ViewCompScreen extends React.Component {
                     dummyList.push(new Composition(element[3], element[0], element[2]));
                 });
                 that.setState({ "sheet_music": dummyList })
+                that.sheetList = dummyList.map(sheet => ({ value: sheet.getID(), label: sheet.getTitle(), color: "red" }))
             })
                 .catch((err) => {
                     console.log("err", err)
@@ -113,6 +128,27 @@ class ViewCompScreen extends React.Component {
     deleteComposition() {
         this.setState({
             deleteCompo: true,
+        });
+    }
+ //{"comp_id": 146, "sheet_id": 19}
+    duplicateComposition() {
+        console.log("called")
+        console.log(this.state.selectedComposition);
+        fetch('http://18.237.79.152:5000/duplicateSheet', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'comp_id': this.state.selectedComposition,
+                'sheet_id': this.state.selectedSheet,
+            }),
+        }).then((res) => {
+            console.log("DUP res", res)
+            this.setState({duplicateVisible: false})
+        }).catch((res) => {
+            console.log("err", res)
         });
     }
 
@@ -166,24 +202,86 @@ class ViewCompScreen extends React.Component {
     }
 
     render() {
-
-        if (this.state.deleteCompo == true) {
+        const placeholder = {
+            label: 'Select sheet music...',
+            value: null,
+            color: "gray"
+        };
+        const placeholder2 = {
+            label: 'Select composition...',
+            value: null,
+            color: "gray"
+        };
+        if (this.state.deleteCompo) {
             return (
                 <View style={styles.container}>
+                    <View></View>
+                    <ScrollView>
+                    </ScrollView>
                     <View>
                         <View style={styles.textHolder}>
-                            <TextInput style={{ marginTop: 200, height: 50, width: '80%', borderColor: 'gray', borderWidth: 1 }}
+                            <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1 }}
                                 placeholder="DeleteText"
                                 onChangeText={(deleteText) => this.setState({ deleteText })}
                                 value={this.state.deleteText} />
-                            <Button onPress={() => this.doneDeleteComposition()} title="Delete Sheet Music" />
+                        </View>
+                        <Button onPress={() => this.doneDeleteComposition()} title="Delete Sheet Music" />
+                        <View style={styles.footer}>
+                            <TouchableOpacity onPress={() => this.setState({ deleteCompo: false })} style={styles.navButton}>
+                                <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Back </Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </View>
             );
         }
-
-        if (this.state.newCompo == true) {
+        //{"comp_id": 146, "sheet_id": 19}
+        if (this.state.duplicateVisible) {
+            return (
+                <View style={styles.container}>
+                    <View>
+                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40, width: "80%" }}> Duplicate </Text>
+                    </View>
+                    <View>
+                        <RNPickerSelect
+                            placeholder={placeholder}
+                            items={this.sheetList}
+                            onValueChange={(value) => {
+                                this.setState({
+                                    selectedSheet: value,
+                                })
+                            }}>
+                        </RNPickerSelect>
+                    </View>
+                    <View style={styles.lineBreak} />
+                    <View>
+                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 30, width: "80%" }}> Select composition </Text>
+                    </View>
+                    <View>
+                        <RNPickerSelect
+                            placeholder={placeholder2}
+                            items={this.compList}
+                            onValueChange={(value) => {
+                                this.setState({
+                                    selectedComposition: value,
+                                })
+                            }}>
+                        </RNPickerSelect>
+                    </View>
+                    <View style={styles.footer}>
+                        <TouchableOpacity onPress={() => this.duplicateComposition()} style={styles.navButton}>
+                            <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Submit </Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.footer}>
+                        <TouchableOpacity onPress={() => this.setState({ duplicateVisible: false })} style={styles.navButton}>
+                            <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Back </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )
+        }
+        if (this.state.newCompo) {
             return (
                 <View style={styles.container}>
                     <View></View>
@@ -195,7 +293,6 @@ class ViewCompScreen extends React.Component {
                                 placeholder="Title"
                                 onChangeText={(text) => this.setState({ text })}
                                 value={this.state.text} />
-
                         </View>
                         <Button onPress={() => this.doneComposition()} title="Create Sheet Music" />
                         <View style={styles.footer}>
@@ -212,7 +309,6 @@ class ViewCompScreen extends React.Component {
         const compositionTitle = navigation.getParam('compositionTitle', 'NO_TITLE')
         const compositionDescription = navigation.getParam('compositionDescription', '')
         return (
-
             <View style={styles.container}>
                 <DialogInput isDialogVisible={this.state.isDialogVisible}
                     title={"Edit Sheet Name"}
@@ -225,10 +321,19 @@ class ViewCompScreen extends React.Component {
                     closeDialog={() => { this.setState({ isDialogVisible: false, toEdit: '' }) }}>
                 </DialogInput>
                 <View>
-                    <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> {compositionTitle} </Text>
-                    <Button onPress={() => this.createComposition()} title="+" />
-                    <Button onPress={() => this.deleteComposition()} title="-" />
-                    <Button onPress={() => this.props.navigation.navigate('EditMusicScreen')} title="Jesus" /> 
+                    <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40, width: "80%" }}> {compositionTitle} </Text>
+                    <View style={{ flexDirection: "row" }}>
+                        <TouchableHighlight style={styles.menuButton} onPress={() => this.createComposition()}>
+                            <Text style={styles.buttonText}>Add Music</Text>
+                        </TouchableHighlight>
+                        <TouchableHighlight style={styles.menuButton} onPress={() => this.setState({ "duplicateVisible": true })}>
+                            <Text style={styles.buttonText}>Duplicate Music</Text>
+                        </TouchableHighlight>
+                        <TouchableHighlight style={styles.menuButton} onPress={() => this.deleteComposition()}>
+                            <Text style={styles.buttonText}>Delete Music</Text>
+                        </TouchableHighlight>
+                    </View>
+                    <Button onPress={() => this.props.navigation.navigate('EditMusicScreen')} title="Jesus" />
                 </View>
                 <Text>{compositionDescription}</Text>
                 <ScrollView>
@@ -243,7 +348,7 @@ class ViewCompScreen extends React.Component {
                                         console.log("pepper")
                                         this.setState({
                                             isDialogVisible: true,
-                                            toEdit: [item.getTitle(), item.getDescription()], // getdescription actually gets the composition id
+                                            toEdit: [item.getTitle(), item.getID()], // getdescription actually gets the composition id
                                         })
                                     }}
                                 >
@@ -261,7 +366,7 @@ class ViewCompScreen extends React.Component {
                         <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Back </Text>
                     </TouchableOpacity>
                 </View>
-            </View>
+            </View >
         );
     }
 };
@@ -269,6 +374,7 @@ class ViewCompScreen extends React.Component {
 const mapStateToProps = state => ({
     isRegistered: state.auth.isRegistered,
     id: state.auth.id,
+    compositions: state.auth.compositions,
 })
 
 export default connect(mapStateToProps)(ViewCompScreen);

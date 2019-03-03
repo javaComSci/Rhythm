@@ -17,7 +17,6 @@ function nav(state = initialNavState, action) {
                 ...state, isRegistered: action.email
             };
         case 'ADD_USERID':
-            console.log('user id route nav')
             return {
                 ...state, id: action.id
             };
@@ -29,7 +28,7 @@ function nav(state = initialNavState, action) {
     return nextState || state;
 }
 
-const initalRegisterState = { isRegistered: false, id: "26342" };
+const initalRegisterState = { isRegistered: false, id: "26342", compositions: [] };
 
 function auth(state = initalRegisterState, action) {
     switch (action.type) {
@@ -38,6 +37,11 @@ function auth(state = initalRegisterState, action) {
         case 'ADD_USERID':
             console.log('user id route auth')
             return { ...state, id: action.id }
+        case 'ADD_COMPOSITION':
+            console.log("compasdfasdf")
+            return {
+                ...state, compositions: [...state.compositions, action.composition]
+            };
         default:
             return state;
     }
