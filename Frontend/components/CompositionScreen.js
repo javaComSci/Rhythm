@@ -2,7 +2,9 @@ import React from 'react';
 import { TextInput, FlatList, TouchableOpacity, Button, ScrollView, StyleSheet, Text, View, KeyboardAvoidingView } from 'react-native';
 import { connect } from 'react-redux';
 import { Header } from 'react-navigation';
-
+import { addEmail } from '../actions/addEmail'
+import { addUser } from '../actions/addUserID';
+import { addComposition } from '../actions/addComposition';
 var styles = require('../style');
 /*
 todo: get compositions from database
@@ -65,7 +67,9 @@ class CompositionScreen extends React.Component {
             res.text().then(function (res) {
                 var dummyList = [] // temp list to hold compositions before being added to state
                 JSON.parse(res).forEach(element => {
-                    dummyList.push(new Composition(element[1], element[2], element[0]));
+                    var tempComp = new Composition(element[1], element[2], element[0]);
+                    dummyList.push(tempComp);
+                    that.props.dispatchAddComposition(tempComp);
                 });
                 that.setState({ "compositions": dummyList })
             })
@@ -220,7 +224,16 @@ function mapStateToProps(state) {
     return {
         isRegistered: state.auth.email,
         id: state.auth.id,
+        compositions: state.auth.compositions
     }
 }
 
-export default connect(mapStateToProps)(CompositionScreen);
+function mapDispatchToProps(dispatch) {
+    return {
+        dispatchAddEmail: email => dispatch(addEmail(email)),
+        dispatchAddUser: id => dispatch(addUser(id)),
+        dispatchAddComposition: composition => dispatch(addComposition(composition)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CompositionScreen);

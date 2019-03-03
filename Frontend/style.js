@@ -13,6 +13,39 @@ module.exports = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    menuButton: {
+        marginTop: 10,
+        paddingTop: 20,
+        paddingBottom: 20,
+        width: "33%",
+        backgroundColor: 'black',
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#fff'
+    },
+    headerWithMenu: {
+        flex: 1,
+        flexDirection: 'row',
+    },
+    headerText: {
+        fontSize: 20,
+        margin: 10,
+        fontWeight: "bold"
+    },
+    iconText: {
+        fontSize: 40,
+        fontWeight: "bold"
+    },
+    menuContent: {
+        color: "#000",
+        fontWeight: "bold",
+        padding: 2,
+        fontSize: 20
+    },
+    buttonText: {
+        textAlign: 'center',
+        color: 'white'
+    },
     container: {
         flex: 1,
         marginTop: 20,
