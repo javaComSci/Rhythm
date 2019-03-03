@@ -128,7 +128,7 @@ def trainClefNN(trainingIn, trainingOut, testingIn, testingOut):
 	]
 
 	# obtain the best model from hyperparameter tuning
-	model = hyperparameterTuning(clefTrainingIn, clefTrainingOut, clefTestingIn, clefTestingOut, layersForTraining)
+	model = hyperparameterTuning(clefTrainingIn, clefTrainingOut, clefTestingIn, clefTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam')
 
 	# save the model for later use
 	model.save('clef_model.h5')
@@ -193,10 +193,108 @@ def testClefNN(testingIn, testingOut):
 	print("Accuracy on clef testing data:", (np.sum(overallPredictions == clefTestingOut)+0.0)/len(clefTestingOut))
 
 
-# @TODO
-# neural network for specific notes
+# @trainingIn - 2d numpy array of training inputs
+# @trainingOut - 2d numpy array of training labels
+# @testingIn - 2d numpy array of testing inputs
+# @testingOut - 2d numpy array of testing labels
+# @return - void
+# Trains neural network with notes, sharp/flat, rests
 def trainNoteNN(trainingIn, trainingOut, testingIn, testingOut):
-	return
+	# just need the notes and need to separate by the different notes there are 
+
+	# modify the labels for notes, sharp/flat, and rests in all training data first
+	for t in range(0, len(trainingOut)):
+		output = trainingOut[t][0]
+		
+		translation = translations[output]
+		if translation == 'Flat' or translation == 'Sharp':
+			# for sharp/flat
+			trainingOut[t][0] = -1
+		elif translation == 'Whole-Note' or translation == 'Eighth-Note' or translation == 'Half-Note' or translation == 'Sixteenth-Note' or translation == 'Quarter-Note':
+			# for actual notes
+			trainingOut[t][0] = -2
+		elif translation == 'Whole-Half-Rest' or translation == 'Eighth-Rest' or translation == 'Quarter-Rest':
+			# for the rests
+			trainingOut[t][0] = -3
+
+	# modify the labels for notes, sharp/flat, and rests in all training data first
+	for t in range(0, len(testingOut)):
+		output = testingOut[t][0]
+		
+		translation = translations[output]
+		if translation == 'Flat' or translation == 'Sharp':
+			# for sharp/flat
+			testingOut[t][0] = -1
+		elif translation == 'Whole-Note' or translation == 'Eighth-Note' or translation == 'Half-Note' or translation == 'Sixteenth-Note' or translation == 'Quarter-Note':
+			# for actual notes
+			testingOut[t][0] = -2
+		elif translation == 'Whole-Half-Rest' or translation == 'Eighth-Rest' or translation == 'Quarter-Rest':
+			# for the rests
+			testingOut[t][0] = -3
+
+
+	# TRAINING DATA CLEANING
+	# row indicies so need the [0]
+	extrasIndiciesTraining = np.where(trainingOut == -1)[0]
+	realNotesIndiciesTraining = np.where(trainingOut == -2)[0]
+	restsIndiciesTraining = np.where(trainingOut == -3)[0]
+
+	# for inputs
+	notesTrainingIn = trainingIn[extrasIndiciesTraining]
+	notesTrainingIn = np.vstack((notesTrainingIn, trainingIn[realNotesIndiciesTraining]))
+	notesTrainingIn = np.vstack((notesTrainingIn, trainingIn[restsIndiciesTraining]))
+
+	# for outputs
+	notesTrainingOut = trainingOut[extrasIndiciesTraining,:]
+	notesTrainingOut = np.vstack((notesTrainingOut, trainingOut[realNotesIndiciesTraining,:]))
+	notesTrainingOut = np.vstack((notesTrainingOut, trainingOut[restsIndiciesTraining,:]))
+
+	# changing values
+	notesTrainingOut[notesTrainingOut == -1] = 0
+	notesTrainingOut[notesTrainingOut == -2] = 1
+	notesTrainingOut[notesTrainingOut == -3] = 2
+
+
+	# TESTING DATA CLEANING
+	# row indicies so need the [0]
+	extrasIndiciesTesting = np.where(testingOut == -1)[0]
+	realNotesIndiciesTesting = np.where(testingOut == -2)[0]
+	restsIndiciesTesting = np.where(testingOut == -3)[0]
+
+	# for inputs
+	notesTestingIn = testingIn[extrasIndiciesTesting]
+	notesTestingIn = np.vstack((notesTestingIn, testingIn[realNotesIndiciesTesting]))
+	notesTestingIn = np.vstack((notesTestingIn, testingIn[restsIndiciesTesting]))
+
+	# for outputs
+	notesTestingOut = testingOut[extrasIndiciesTesting,:]
+	notesTestingOut = np.vstack((notesTestingOut, testingOut[realNotesIndiciesTesting,:]))
+	notesTestingOut = np.vstack((notesTestingOut, testingOut[restsIndiciesTesting,:]))
+
+	# changing values
+	notesTestingOut[notesTestingOut == -1] = 0
+	notesTestingOut[notesTestingOut == -2] = 1
+	notesTestingOut[notesTestingOut == -3] = 2
+
+
+	print("SHAPES", notesTestingIn.shape, notesTestingOut.shape, notesTrainingIn.shape, notesTrainingOut.shape)
+	
+
+	# setup layers for hyperparameter tuning
+	layersForTraining = [ [[50, 'relu'], [20, 'relu'], [3, 'softmax'] ],
+	[ [20, 'relu'], [15, 'relu'], [3, 'softmax'] ],
+	[ [25, 'relu'], [5, 'relu'], [3, 'softmax'] ],
+	[ [30, 'relu'], [15, 'relu'], [3, 'softmax'] ],
+	[ [50, 'sigmoid'], [3, 'softmax'] ],
+	[ [10, 'relu'], [3, 'softmax'] ],
+	]
+
+	# obtain the best model from hyperparameter tuning
+	model = hyperparameterTuning(notesTrainingIn, notesTrainingOut, notesTestingIn, notesTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam')
+
+	# save the model for later use
+	model.save('notes_model.h5')
+
 
 
 
@@ -212,7 +310,7 @@ def trainRestNN(trainingIn, trainingOut, testingIn, testingOut):
 # @modelIfo - array of models with layer info for each model of form [[[numNeurons,activationFunction],....]]
 # @return - neural network model
 # Add layers to sequential model, compile model, and fit the model
-def trainModel(trainingIn, trainingOut, modelInfo):
+def trainModel(trainingIn, trainingOut, modelInfo, lossInfo, optInfo):
 	# create model sequential
 	model = Sequential()
 
@@ -224,12 +322,12 @@ def trainModel(trainingIn, trainingOut, modelInfo):
 		model.add(Dense(modelInfo[i][0], activation=modelInfo[i][1]))
 
 	# compile the model with optimizer
-	model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+	model.compile(loss=lossInfo, optimizer=optInfo, metrics=['accuracy'])
 
 	model.summary()
 
 	# train the model
-	model.fit(trainingIn, trainingOut, epochs=20)
+	model.fit(trainingIn, trainingOut, epochs=15)
 
 	return model
 
@@ -242,7 +340,7 @@ def trainModel(trainingIn, trainingOut, modelInfo):
 # @modelIfo - array of models with layer info for each model of form [[[numNeurons,activationFunction],....]]
 # @return - neural network model
 # Do hyperparameter tuning to find the best hyperparameters for a model
-def hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, modelsInfo):
+def hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, modelsInfo, optInfo, lossInfo):
 	# stores the best model after hyperparamter tuning
 	bestModel = None
 	bestTestAcc = -math.inf
@@ -253,7 +351,7 @@ def hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, modelsI
 	for modelInfo in modelsInfo:
 		
 		# create and traing a model
-		model = trainModel(trainingIn, trainingOut, modelInfo)
+		model = trainModel(trainingIn, trainingOut, modelInfo, optInfo, lossInfo)
 
 		# see how it does on test dataset
 		testLoss, testAcc = model.evaluate(testingIn, testingOut)
@@ -306,17 +404,25 @@ def trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut):
 			testingOut[t][0] = 1
 
 
-	# create the layers that could be used for hyperparameter tuning
+	# create the layers that could be used for hyperparameter tuning - categorical cross enrotpy
 	layersForTraining = [ [[50, 'relu'], [20, 'relu'], [2, 'softmax'] ],
 	[ [20, 'relu'], [15, 'tanh'], [2, 'softmax'] ],
 	[ [50, 'relu'], [2, 'softmax'] ],
 	[ [40, 'tanh'], [2, 'softmax'] ],
 	[ [50, 'sigmoid'], [2, 'softmax'] ],
-	[ [300, 'relu'], [2, 'softmax'] ],
 	]
 
+	# create the layers that could be used for hyperparameter tuning - binary cross entorpy
+	# layersForTraining = [ [[50, 'relu'], [20, 'relu'], [2, 'softmax'] ],
+	# [ [20, 'relu'], [15, 'tanh'], [2, 'softmax'] ],
+	# [ [50, 'relu'], [2, 'softmax'] ],
+	# [ [40, 'tanh'], [2, 'softmax'] ],
+	# [ [50, 'sigmoid'], [2, 'softmax'] ],
+	# [ [300, 'relu'], [2, 'softmax'] ],
+	# ]
+
 	# perform hyperparameter tuning
-	model = hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, layersForTraining)
+	model = hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam')
 
 	# save the best model for the general NN
 	model.save('general_model.h5')
@@ -494,4 +600,5 @@ if __name__ == '__main__':
 	# testGeneralNN(testingIn, testingOut)
 	# trainClefNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testClefNN(testingIn, testingOut)
-	checkPredictions(testingIn, testingOut)
+	trainNoteNN(trainingIn, trainingOut, testingIn, testingOut)
+	# checkPredictions(testingIn, testingOut)
