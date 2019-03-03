@@ -121,6 +121,20 @@ def duplicateSheet():
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
+'''
+duplicateComposition
+takes:
+"title" - title of duplicated composition
+"user_id" - user's ID
+"comp_id" - id of composition to be duplicated
+'''
+@app.route('/duplicateComposition', methods=['POST'])
+def duplicateComposition():
+    if request.method == 'POST':
+        return newCompositions.duplicateComposition()
+    else:
+        return '\n\nDEBUG: Should not see this: app.py\n\n'
+
 ##
  # Call this to get info on a specific user from a specific table.
  # This will return a json array of the results
