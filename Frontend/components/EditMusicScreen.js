@@ -6,6 +6,7 @@ import { Button, Header } from 'react-native-elements';
 import { Col, Row, Grid } from "react-native-easy-grid";
 import Icon from 'react-native-vector-icons/AntDesign'
 import PinchZoomView from 'react-native-pinch-zoom-view';
+// import NotesRender from 'NotesRendering'
 // import Svg,{
 //     Circle
 // } from 'react-native-svg';
@@ -15,6 +16,7 @@ import { Svg } from 'expo';
 const { Circle, Rect, Path, Line, Text, G, Defs, Use } = Svg;
 
 // https://oblador.github.io/react-native-vector-icons/
+// var sampleJson = require('./testRichard.json');
 var sampleJson = require('./SampleMusicSheet.json');
 var NoteSVG = require('./NotesData.json');
 var MiscJson = require('./EditMisc.json');
@@ -30,13 +32,19 @@ var Section;
 var totalBeats;
 var screenSize = SCREEN_HEIGHT;
 
-class NoteObjects {
+class NoteObjects extends React.Component {
   constructor(note, length, pitch){
+    super();
     this._id = idCounter++;
     this.note = note;
     this.length = length;
     this.pitch = pitch;
     this.color = "black";
+  }
+  render(){
+    return (
+      yes
+    )
   }
 }
 
@@ -50,14 +58,13 @@ class EditMusicScreen extends React.Component {
       for (let i = 0; i < sampleJson.notes.length; i++) {
         NotesList.push(new NoteObjects(sampleJson.notes[i].note, sampleJson.notes[i].length, sampleJson.notes[i].pitch));
       }
-      // console.log(NotesList);
+      console.log(NotesList.length);
       this.state = {
         NotesL: NotesList,
         colorProp: 'black',
       };
-
-
   }
+
   static navigationOptions = {
       title: 'Welcome', header: null
   };
@@ -124,7 +131,7 @@ class EditMusicScreen extends React.Component {
     }
     // console.log((((parseInt(Math.ceil((NotesList.length)/4.5/2))+1)*start + (5*SCREEN_HEIGHT/110)) + ":" + screenSize)
     if(((parseInt(Math.ceil((NotesList.length)/4.5/2))+1)*start + (5*SCREEN_HEIGHT/110)) > screenSize){
-      screenSize += 100;
+      screenSize += 500;
     }
     for (let i = 0; i < Math.ceil((NotesList.length)/4.5); i++) {
       amountOfMeasure.push(
@@ -186,7 +193,7 @@ class EditMusicScreen extends React.Component {
             width={[NoteSVG[Note.note].flipX * (mesureLength/1.1)].join(' ')}
             height={[NoteSVG[Note.note].flipY * (-start/1.6)].join(' ')}
             fill="none"
-            strokeWidth="1"
+            strokeWidth="0"
             onPress={this.pressHandler.bind(this, Note)}
           />
         </G>
@@ -246,10 +253,64 @@ class EditMusicScreen extends React.Component {
   }
 };
 
-// <Image
-//   style={styles.Notes}
-//   source={require('../assets/mesure.png')}
-// />
+  // class NoteRender extends React.Component {
+//
+//       constructor(props) {
+//           super(props);
+//           console.log("HERE")
+//       }
+//       static navigationOptions = {
+//           title: 'Welcome', header: null
+//       };
+//
+//       componentDidMount() {}
+//
+//       Notes(Note){
+//         // console.log(screenSize);
+//         let mesureLength = SCREEN_WIDTH/10;
+//         let start = SCREEN_HEIGHT/8;
+//         let betweenNotes = SCREEN_WIDTH/11;
+//         let x = (Note._id%9)
+//         let y = Math.ceil(Note._id/9);
+//         if(Note._id == 0){
+//           y = 1;
+//         }else if(Note._id%9 == 0){
+//           y++;
+//         }
+//         let pitch = Note.pitch;
+//         if(pitch == 0)
+//           pitch++;
+//         x++;
+//         return (
+//             <G x="0" stroke="black" stroke-width="0" y="0" fill={[Note.color].join(' ')}>
+//               <Path x={[((x)*(SCREEN_WIDTH/11))+NoteSVG[Note.note].adjustX].join(' ')} y={([((y)*(SCREEN_HEIGHT/8))+ (Note.pitch*SCREEN_HEIGHT/164) + NoteSVG[Note.note].adjustY].join(' '))} transform={['scale(', NoteSVG[Note.note].scale1, NoteSVG[Note.note].scale2, ')'].join(' ')} d={[NoteSVG[Note.note].data].join(' ')}/>
+//               <Rect
+//                 x={[((x)*(SCREEN_WIDTH/11)) + mesureLength*NoteSVG[Note.note].HitBoxX].join(' ')}
+//                 y={[((y)*(SCREEN_HEIGHT/8)) + NoteSVG[Note.note].HitBoxY + (NoteSVG[Note.note].flipY*(pitch)*SCREEN_HEIGHT/110)].join(' ')}
+//                 width={[NoteSVG[Note.note].flipX * (mesureLength/1.1)].join(' ')}
+//                 height={[NoteSVG[Note.note].flipY * (-start/1.6)].join(' ')}
+//                 fill="none"
+//                 strokeWidth="0"
+//                 onPress={this.pressHandler.bind(this, Note)}
+//               />
+//             </G>
+//         )
+//       }
+//
+//       // setNotes(Notes){
+//       //   let NotesL = [];
+//       //   for (let i = 0; i < NotesList.length; i++) {
+//       //     NotesL.push(this.Notes(Notes[i]))
+//       //   }
+//       //     return NotesL;
+//       // }
+//
+//       render(){
+//
+//       }
+//
+// };
+
   function mapStateToProps(state) {}
 
   function mapDispatchToProps(dispatch) {}
