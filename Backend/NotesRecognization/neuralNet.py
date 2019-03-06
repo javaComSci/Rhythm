@@ -13,7 +13,7 @@ os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 
 # load all translations
-translations = np.load('translations.npy')
+translations = np.load('translationsWithLines.npy')
 translations = translations.item()
 print("TRANLSATIONS", translations)
 
@@ -120,6 +120,7 @@ def trainClefNN(trainingIn, trainingOut, testingIn, testingOut):
 
 	# setup layers for hyperparameter tuning
 	layersForTraining = [ [[50, 'relu'], [20, 'relu'], [3, 'softmax'] ],
+	[ [70, 'relu'], [30, 'relu'], [3, 'softmax'] ],
 	[ [20, 'relu'], [15, 'relu'], [3, 'softmax'] ],
 	[ [25, 'relu'], [5, 'relu'], [3, 'softmax'] ],
 	[ [30, 'relu'], [15, 'relu'], [3, 'softmax'] ],
@@ -350,8 +351,8 @@ def testNoteNN(testingIn, testingOut):
 		print("Prediction:", overallPredictions[i], "True Label", notesTestingOut[i])
 
 		# showing the incorrect image
-		# if overallPredictions[i] != clefTestingOut[i]:
-		# 	testing = clefTestingIn[i]
+		# if overallPredictions[i] != notesTestingOut[i]:
+		# 	testing = notesTestingIn[i]
 		# 	testing = testing * 255
 		# 	testing = testing.reshape(70, 50)
 		# 	img = Image.fromarray(testing)
@@ -371,11 +372,275 @@ def testNoteNN(testingIn, testingOut):
 	print("Accuracy on notes testing data:", (np.sum(overallPredictions == notesTestingOut)+0.0)/len(notesTestingOut))
 
 
-# @TODO
-# neural network for different rests
-def trainRestNN(trainingIn, trainingOut, testingIn, testingOut):
-	return
+# @trainingIn - 2d numpy array of training inputs
+# @trainingOut - 2d numpy array of training labels
+# @testingIn - 2d numpy array of testing inputs
+# @testingOut - 2d numpy array of testing labels
+# @return - void
+# Trains neural network with distinguishing between different rests
+def trainExtrasNN(trainingIn, trainingOut, testingIn, testingOut):
+	# TRAINING DATA CLEANING
+	# row indicies so need the [0]
+	sharpIndiciesTraining = np.where(trainingOut == 0)[0]
+	flatIndiciesTraining = np.where(trainingOut == 12)[0]
 
+	# for inputs
+	extraTrainingIn = trainingIn[sharpIndiciesTraining]
+	extraTrainingIn = np.vstack((extraTrainingIn, trainingIn[flatIndiciesTraining]))
+
+	# for outputs
+	extraTrainingOut = trainingOut[sharpIndiciesTraining,:]
+	extraTrainingOut = np.vstack((extraTrainingOut, trainingOut[flatIndiciesTraining]))
+
+	# changing values
+	extraTrainingOut[extraTrainingOut == 0] = 0
+	extraTrainingOut[extraTrainingOut == 12] = 1
+
+
+	#TESTING DATA CLEANING
+	# row indicies
+	sharpIndiciesTesting = np.where(testingOut == 0)[0]
+	flatIndiciesTesting = np.where(testingOut == 12)[0]
+
+	# for inputs
+	extraTestingIn = testingIn[sharpIndiciesTesting]
+	extraTestingIn = np.vstack((extraTestingIn, testingIn[flatIndiciesTesting]))
+
+	# for outputs
+	extraTestingOut = testingOut[sharpIndiciesTesting,:]
+	extraTestingOut = np.vstack((extraTestingOut, testingOut[flatIndiciesTesting]))
+
+	# changing values
+	extraTestingOut[extraTestingOut == 0] = 0
+	extraTestingOut[extraTestingOut == 12] = 1
+
+	print("SHAPES", extraTestingIn.shape, extraTestingOut.shape, extraTrainingIn.shape, extraTrainingOut.shape)
+	
+
+	# setup layers for hyperparameter tuning
+	layersForTraining = [ [[50, 'relu'], [20, 'relu'], [3, 'softmax'] ],
+	[ [70, 'relu'], [30, 'relu'], [3, 'softmax'] ],
+	[ [90, 'relu'], [40, 'relu'], [3, 'softmax'] ],
+	[ [100, 'relu'], [50, 'relu'], [3, 'softmax'] ],
+	[ [30, 'relu'], [15, 'relu'], [3, 'softmax'] ],
+	[ [50, 'sigmoid'], [3, 'softmax'] ],
+	]
+
+	# obtain the best model from hyperparameter tuning
+	model = hyperparameterTuning(extraTrainingIn, extraTrainingOut, extraTestingIn, extraTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam', epochs=10)
+
+	# save the model for later use
+	model.save('extras_model.h5')
+
+
+# @testingIn - 2d numpy array of testing inputs
+# @testingOut - 2d numpy array of testing labels
+# @return - void
+# Tests the accuracy of the neural network trained with sharps/falts
+def testExtrasNN(testingIn, testingOut):
+	model = load_model('extras_model.h5')
+
+	#TESTING DATA CLEANING
+	# row indicies
+	sharpIndiciesTesting = np.where(testingOut == 0)[0]
+	flatIndiciesTesting = np.where(testingOut == 12)[0]
+
+	# for inputs
+	extraTestingIn = testingIn[sharpIndiciesTesting]
+	extraTestingIn = np.vstack((extraTestingIn, testingIn[flatIndiciesTesting]))
+
+	# for outputs
+	extraTestingOut = testingOut[sharpIndiciesTesting,:]
+	extraTestingOut = np.vstack((extraTestingOut, testingOut[flatIndiciesTesting]))
+
+	# changing values
+	extraTestingOut[extraTestingOut == 0] = 0
+	extraTestingOut[extraTestingOut == 12] = 1
+
+	# predictions on unseen data
+	predictions = model.predict(extraTestingIn)
+	overallPredictions = -np.ones((len(extraTestingOut),1))
+
+	for i in range(predictions.shape[0]):
+		overallPredictions[i] = np.argmax(predictions[i])
+		print("Prediction:", overallPredictions[i], "True Label", extraTestingOut[i])
+
+		# showing the incorrect extraTestingOut
+		# if overallPredictions[i] != extraTestingOut[i]:
+		# 	testing = extraTestingIn[i]
+		# 	testing = testing * 255
+		# 	testing = testing.reshape(70, 50)
+		# 	img = Image.fromarray(testing)
+		# 	img.show()
+		# 	break
+
+		# show the example of the image and the value wanted
+		# if i % 50 == 0 and overallPredictions[i] == extraTestingOut[i]:
+		# 	print("Prediction:", overallPredictions[i], "True Label", extraTestingOut[i])
+		# 	testing = extraTestingIn[i]
+		# 	testing = testing * 255
+		# 	testing = testing.reshape(70, 50)
+		# 	img = Image.fromarray(testing)
+		# 	img.show()
+			
+
+	print("Accuracy on extras testing data:", (np.sum(overallPredictions == extraTestingOut)+0.0)/len(extraTestingOut))
+
+
+# @trainingIn - 2d numpy array of training inputs
+# @trainingOut - 2d numpy array of training labels
+# @testingIn - 2d numpy array of testing inputs
+# @testingOut - 2d numpy array of testing labels
+# @return - void
+# Trains neural network with distinguishing between different rests
+def trainRestNN(trainingIn, trainingOut, testingIn, testingOut):
+	# TRAINING DATA CLEANING
+	# row indicies so need the [0]
+	eighthIndiciesTraining = np.where(trainingOut == 7)[0]
+	quarterIndiciesTraining = np.where(trainingOut == 3)[0]
+	halfIndiciesTraining = np.where(trainingOut == 4)[0]
+
+	# for inputs
+	restTrainingIn = trainingIn[eighthIndiciesTraining]
+	restTrainingIn = np.vstack((restTrainingIn, trainingIn[quarterIndiciesTraining]))
+	restTrainingIn = np.vstack((restTrainingIn, trainingIn[halfIndiciesTraining]))
+
+	# for outputs
+	restTrainingOut = trainingOut[eighthIndiciesTraining,:]
+	restTrainingOut = np.vstack((restTrainingOut, trainingOut[quarterIndiciesTraining]))
+	restTrainingOut = np.vstack((restTrainingOut, trainingOut[halfIndiciesTraining]))
+
+	# changing values
+	restTrainingOut[restTrainingOut == 7] = 0
+	restTrainingOut[restTrainingOut == 3] = 1
+	restTrainingOut[restTrainingOut == 4] = 2
+
+
+	#TESTING DATA CLEANING
+	# row indicies
+	eighthIndiciesTesting = np.where(testingOut == 7)[0]
+	quarterIndiciesTesting = np.where(testingOut == 3)[0]
+	halfIndiciesTesting = np.where(testingOut == 4)[0]
+
+	# for inputs
+	restTestingIn = testingIn[eighthIndiciesTesting]
+	restTestingIn = np.vstack((restTestingIn, testingIn[quarterIndiciesTesting]))
+	restTestingIn = np.vstack((restTestingIn, testingIn[halfIndiciesTesting]))
+
+	# for outputs
+	restTestingOut = testingOut[eighthIndiciesTesting,:]
+	restTestingOut = np.vstack((restTestingOut, testingOut[quarterIndiciesTesting]))
+	restTestingOut = np.vstack((restTestingOut, testingOut[halfIndiciesTesting]))
+
+	# changing values
+	restTestingOut[restTestingOut == 7] = 0
+	restTestingOut[restTestingOut == 3] = 1
+	restTestingOut[restTestingOut == 4] = 2
+
+	print("SHAPES", restTestingIn.shape, restTestingOut.shape, restTrainingIn.shape, restTrainingOut.shape)
+	
+
+	# setup layers for hyperparameter tuning
+	layersForTraining = [ [[50, 'relu'], [20, 'relu'], [3, 'softmax'] ],
+	[ [70, 'relu'], [30, 'relu'], [3, 'softmax'] ],
+	[ [90, 'relu'], [40, 'relu'], [3, 'softmax'] ],
+	[ [100, 'relu'], [50, 'relu'], [3, 'softmax'] ],
+	[ [30, 'relu'], [15, 'relu'], [3, 'softmax'] ],
+	[ [50, 'sigmoid'], [3, 'softmax'] ],
+	]
+
+	# obtain the best model from hyperparameter tuning
+	model = hyperparameterTuning(restTrainingIn, restTrainingOut, restTestingIn, restTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam', epochs=15)
+
+	# save the model for later use
+	model.save('rest_model.h5')
+
+
+
+# @trainingIn - 2d numpy array of training inputs
+# @trainingOut - 2d numpy array of training labels
+# @testingIn - 2d numpy array of testing inputs
+# @testingOut - 2d numpy array of testing labels
+# @return - void
+# Trains neural network with distingiusihing between real notes
+def trainRealNoteNN(trainingIn, trainingOut, testingIn, testingOut):
+	# TRAINING DATA CLEANING
+	# row indicies so need the [0]
+	sixteenthIndiciesTraining = np.where(trainingOut == 10)[0]
+	eighthIndiciesTraining = np.where(trainingOut == 5)[0]
+	quarterIndiciesTraining = np.where(trainingOut == 11)[0]
+	halfIndiciesTraining = np.where(trainingOut == 9)[0]
+	wholeIndiciesTraining = np.where(trainingOut == 2)[0]
+
+	# for inputs
+	realNoteTrainingIn = trainingIn[sixteenthIndiciesTraining]
+	realNoteTrainingIn = np.vstack((realNoteTrainingIn, trainingIn[eighthIndiciesTraining]))
+	realNoteTrainingIn = np.vstack((realNoteTrainingIn, trainingIn[quarterIndiciesTraining]))
+	realNoteTrainingIn = np.vstack((realNoteTrainingIn, trainingIn[halfIndiciesTraining]))
+	realNoteTrainingIn = np.vstack((realNoteTrainingIn, trainingIn[wholeIndiciesTraining]))
+
+	# for outputs
+	realNoteTrainingOut = trainingOut[sixteenthIndiciesTraining,:]
+	realNoteTrainingOut = np.vstack((realNoteTrainingOut, trainingOut[eighthIndiciesTraining]))
+	realNoteTrainingOut = np.vstack((realNoteTrainingOut, trainingOut[quarterIndiciesTraining]))
+	realNoteTrainingOut = np.vstack((realNoteTrainingOut, trainingOut[halfIndiciesTraining]))
+	realNoteTrainingOut = np.vstack((realNoteTrainingOut, trainingOut[wholeIndiciesTraining]))
+
+	# changing values
+	realNoteTrainingOut[realNoteTrainingOut == 10] = 0
+	realNoteTrainingOut[realNoteTrainingOut == 5] = 1
+	realNoteTrainingOut[realNoteTrainingOut == 11] = 2
+	realNoteTrainingOut[realNoteTrainingOut == 9] = 3
+	realNoteTrainingOut[realNoteTrainingOut == 2] = 4
+
+
+	#TESTING DATA CLEANING
+	# row indicies
+	sixteenthIndiciesTesting = np.where(testingOut == 10)[0]
+	eighthIndiciesTesting = np.where(testingOut == 5)[0]
+	quarterIndiciesTesting = np.where(testingOut == 11)[0]
+	halfIndiciesTesting = np.where(testingOut == 9)[0]
+	wholeIndiciesTesting = np.where(testingOut == 2)[0]
+
+	# for inputs
+	realNoteTestingIn = testingIn[sixteenthIndiciesTesting]
+	realNoteTestingIn = np.vstack((realNoteTestingIn, testingIn[eighthIndiciesTesting]))
+	realNoteTestingIn = np.vstack((realNoteTestingIn, testingIn[quarterIndiciesTesting]))
+	realNoteTestingIn = np.vstack((realNoteTestingIn, testingIn[halfIndiciesTesting]))
+	realNoteTestingIn = np.vstack((realNoteTestingIn, testingIn[wholeIndiciesTesting]))
+
+	# for outputs
+	realNoteTestingOut = testingOut[sixteenthIndiciesTesting,:]
+	realNoteTestingOut = np.vstack((realNoteTestingOut, testingOut[eighthIndiciesTesting]))
+	realNoteTestingOut = np.vstack((realNoteTestingOut, testingOut[quarterIndiciesTesting]))
+	realNoteTestingOut = np.vstack((realNoteTestingOut, testingOut[halfIndiciesTesting]))
+	realNoteTestingOut = np.vstack((realNoteTestingOut, testingOut[wholeIndiciesTesting]))
+
+	# changing values
+	realNoteTestingOut[realNoteTestingOut == 10] = 0
+	realNoteTestingOut[realNoteTestingOut == 5] = 1
+	realNoteTestingOut[realNoteTestingOut == 11] = 2
+	realNoteTestingOut[realNoteTestingOut == 9] = 3
+	realNoteTestingOut[realNoteTestingOut == 2] = 4
+
+	# print("TRAINING", cclefIndiciesTraining, gclefIndiciesTraining, fclefIndiciesTraining, clefTrainingIn, clefTrainingIn.shape, clefTrainingOut, clefTrainingOut.shape)
+	# print("TESTING", clefTestingIn.shape, clefTestingIn, clefTestingOut, clefTestingOut.shape)
+
+	print("SHAPES", realNoteTestingIn.shape, realNoteTestingOut.shape, realNoteTrainingIn.shape, realNoteTrainingOut.shape)
+	
+
+	# setup layers for hyperparameter tuning
+	layersForTraining = [ [[50, 'relu'], [20, 'relu'], [5, 'softmax'] ],
+	[ [70, 'relu'], [30, 'relu'], [5, 'softmax'] ],
+	[ [60, 'relu'], [50, 'relu'], [5, 'softmax'] ],
+	[ [100, 'relu'], [50, 'relu'], [5, 'softmax'] ],
+	]
+
+	# obtain the best model from hyperparameter tuning
+	model = hyperparameterTuning(realNoteTrainingIn, realNoteTrainingOut, realNoteTestingIn, realNoteTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam', epochs=20)
+
+	# save the model for later use
+	model.save('real_note_model.h5')
 
 
 # @trainingIn - 2d numpy array of training inputs
@@ -383,7 +648,7 @@ def trainRestNN(trainingIn, trainingOut, testingIn, testingOut):
 # @modelIfo - array of models with layer info for each model of form [[[numNeurons,activationFunction],....]]
 # @return - neural network model
 # Add layers to sequential model, compile model, and fit the model
-def trainModel(trainingIn, trainingOut, modelInfo, lossInfo, optInfo):
+def trainModel(trainingIn, trainingOut, modelInfo, lossInfo, optInfo, epochs = 15):
 	# create model sequential
 	model = Sequential()
 
@@ -400,7 +665,7 @@ def trainModel(trainingIn, trainingOut, modelInfo, lossInfo, optInfo):
 	model.summary()
 
 	# train the model
-	model.fit(trainingIn, trainingOut, epochs=15)
+	model.fit(trainingIn, trainingOut, epochs=epochs)
 
 	return model
 
@@ -413,7 +678,7 @@ def trainModel(trainingIn, trainingOut, modelInfo, lossInfo, optInfo):
 # @modelIfo - array of models with layer info for each model of form [[[numNeurons,activationFunction],....]]
 # @return - neural network model
 # Do hyperparameter tuning to find the best hyperparameters for a model
-def hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, modelsInfo, optInfo, lossInfo):
+def hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, modelsInfo, optInfo, lossInfo, epochs = 15):
 	# stores the best model after hyperparamter tuning
 	bestModel = None
 	bestTestAcc = -math.inf
@@ -424,7 +689,7 @@ def hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, modelsI
 	for modelInfo in modelsInfo:
 		
 		# create and traing a model
-		model = trainModel(trainingIn, trainingOut, modelInfo, optInfo, lossInfo)
+		model = trainModel(trainingIn, trainingOut, modelInfo, optInfo, lossInfo, epochs)
 
 		# see how it does on test dataset
 		testLoss, testAcc = model.evaluate(testingIn, testingOut)
@@ -656,7 +921,7 @@ def predict(testingIn):
 				stringPredictions.append(translations[6])
 			else:
 				stringPredictions.append(translations[8])
-
+				
 		else:
 			# send to the note neural network
 			notePrediction = predictNote(testingIn)
@@ -674,5 +939,9 @@ if __name__ == '__main__':
 	# trainClefNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testClefNN(testingIn, testingOut)
 	# trainNoteNN(trainingIn, trainingOut, testingIn, testingOut)
-	testNoteNN(testingIn, testingOut)
+	# testNoteNN(testingIn, testingOut)
+	trainRealNoteNN(trainingIn, trainingOut, testingIn, testingOut)
+	# trainRestNN(trainingIn, trainingOut, testingIn, testingOut)
+	# trainExtrasNN(trainingIn, trainingOut, testingIn, testingOut)
+	# testExtrasNN(testingIn, testingOut)
 	# checkPredictions(testingIn, testingOut)
