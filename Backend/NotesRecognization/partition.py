@@ -429,15 +429,13 @@ def print_objects(mask,SOL,sl,path="",staff_lines=False):
 
 		#For each pixel in the object, place the pixel into new_img
 		for tup in ob.pixel_list:
-
-			if (ob.staff_line == 2):
-				full_img[tup[0]][tup[1]] = 255
-
+			#update full image
+			full_img[tup[0]][tup[1]] = 255
+			#update object image
 			new_img[tup[0] - ob.R1][tup[1] - ob.C1] = 255
 
 		#Write object to specified path
-		if (ob.staff_line == 2):
-			cv2.imwrite("{}ob_{}_R{}SL{}.jpg".format(path,ob.object_number,ob.run,ob.staff_line), new_img)
+		cv2.imwrite("{}ob_{}_R{}SL{}.jpg".format(path,ob.object_number,ob.run,ob.staff_line), new_img)
 
 
 	if staff_lines:
@@ -506,6 +504,7 @@ def full_partition(path):
 	#locate runs in the image
 	runs = locate_run_blocks(im_bw)
 
+
 	#merge runs into pruned format
 	pruned_runs = prune_runs(runs)
 
@@ -549,7 +548,6 @@ def augment_runs(pr):
 
 	#for every staff line in staff_lines
 	for sl in range(len(staff_lines)):
-		print("PRE STAFF LINE: {}".format(staff_lines[sl]))
 		#calculate average run distance for a given staff line
 		avg_dist = average_run_distance(staff_lines[sl])
 
@@ -564,7 +562,7 @@ def augment_runs(pr):
 			val = staff_lines[sl][2*d - 2] + int(avg_dist/2)
 			#insert new row between other two rows
 			staff_lines[sl].insert(2*d - 1,val)
-		print("POST STAFF LINE: {}".format(staff_lines[sl]))
+
 	return staff_lines
 
 #@ run_list - a list of rows
