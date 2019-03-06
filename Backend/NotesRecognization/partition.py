@@ -504,6 +504,7 @@ def full_partition(path):
 	#locate runs in the image
 	runs = locate_run_blocks(im_bw)
 
+
 	#merge runs into pruned format
 	pruned_runs = prune_runs(runs)
 
