@@ -429,15 +429,13 @@ def print_objects(mask,SOL,sl,path="",staff_lines=False):
 
 		#For each pixel in the object, place the pixel into new_img
 		for tup in ob.pixel_list:
-
-			if (ob.staff_line == 2):
-				full_img[tup[0]][tup[1]] = 255
-
+			#update full image
+			full_img[tup[0]][tup[1]] = 255
+			#update object image
 			new_img[tup[0] - ob.R1][tup[1] - ob.C1] = 255
 
 		#Write object to specified path
-		if (ob.staff_line == 2):
-			cv2.imwrite("{}ob_{}_R{}SL{}.jpg".format(path,ob.object_number,ob.run,ob.staff_line), new_img)
+		cv2.imwrite("{}ob_{}_R{}SL{}.jpg".format(path,ob.object_number,ob.run,ob.staff_line), new_img)
 
 
 	if staff_lines:
