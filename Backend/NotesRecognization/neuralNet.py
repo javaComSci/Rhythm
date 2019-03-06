@@ -1,5 +1,6 @@
 import tensorflow as tf
 from tensorflow import keras
+from tensorflow import Graph, Session
 import numpy as np
 from keras.models import Sequential
 import cv2
@@ -8,8 +9,8 @@ from keras.layers import Dense, Dropout
 from keras.models import load_model
 import math
 import os
-from clefNeuralNet import predictClef
 from noteNeuralNet import predictNote
+from clefNeuralNet import predictClef
 from realNoteNeuralNet import predictRealNote
 from extrasNeuralNet import predictExtraNote
 from restNeuralNet import predictRest
@@ -869,7 +870,7 @@ def checkPredictions(testingInput, testingOut):
 			stringOutputs.append(translation)
 		else:
 			# for note
-			stringOutputs.append('NOTE')
+			stringOutputs.append(translation)
 
 	incorrect = 0
 	correct = 0
@@ -901,81 +902,175 @@ def checkPredictions(testingInput, testingOut):
 # @return - prediction for given note
 # Does the prediction for the given notes
 def predict(testingIn):
-	model = load_model('general_model.h5')
+	generalPredGraph = Graph()
+	with generalPredGraph.as_default():
+		# open new session
+		session1 = Session()
 
-	# actual values for which one of the different types it could be
-	generalPredictions = model.predict(testingIn)
+		with session1.as_default():
+			# load model
+			model = load_model('general_model.h5')
 
-	# actual value of the predictions
-	overallPredictions = -np.ones((testingIn.shape[0],1))
+			generalPredictions = model.predict(testingIn)
 
-	# predicted values of the strings
-	stringPredictions = []
+			# actual value of the predictions
+			overallPredictions = -np.ones((testingIn.shape[0],1))
 
-	for i in range(generalPredictions.shape[0]):
-		overallPredictions[i] = np.argmax(generalPredictions[i])
+			# predicted values of the strings
+			stringPredictions = []
 
-		if overallPredictions[i] == 0:
-			# send to the clef neural network
-			clefPrediction = predictClef(testingIn)
+			for i in range(generalPredictions.shape[0]):
 
-			if clefPrediction[0] == 0:
-				stringPredictions.append(translations[1])
-			elif clefPrediction[0] == 1:
-				stringPredictions.append(translations[6])
-			else:
-				stringPredictions.append(translations[8])
+				overallPredictions[i] = np.argmax(generalPredictions[i])
 
-		else:
-			# send to the note neural network
-			notePrediction = predictNote(testingIn)
-			print("P1", notePrediction)
-			# stringPredictions.append('NOTE')
+				if overallPredictions[i] == 0:
+					clefPredGraph = Graph()
 
-			if notePrediction[0] == 0:
-				print("P2")
-				extraPrediction = predictExtra(testingIn)
+					with clefPredGraph.as_default():
+						session = Session()
+						with session.as_default():
+							#load model
+							model = load_model("clef_model.h5")
 
-				if extraPrediction[0] == 0:
-					stringPredictions.append('Sharp')
+							predictions = model.predict(testingIn)
+
+							# actual value of the predictions
+							overallPredictions = []
+
+							for i in range(predictions.shape[0]):		
+								currentPrediction = np.argmax(predictions[i])
+								print("Clef Prediction", predictions)
+								overallPredictions.append(currentPrediction)
+
+							clefPrediction = overallPredictions
+
+							if clefPrediction[0] == 0:
+								stringPredictions.append(translations[1])
+							elif clefPrediction[0] == 1:
+								stringPredictions.append(translations[6])
+							else:
+								stringPredictions.append(translations[8])
+
+							return stringPredictions, testingIn
+
 				else:
-					stringPredictions.append('Flat')
 
-				
+					# find the general note
+					notePredGraph = Graph()
+					with notePredGraph.as_default():
+						session = Session()
+						with session.as_default():
+							print("NOTE")
+							#load model
+							model = load_model("notes_model.h5")
 
-			elif notePrediction[0] == 1:
-				print("P3")
-				realNotePrediction = predictRealNote(testingIn)
+							predictions = model.predict(testingIn)
 
-				if realNotePrediction[0] == 0:
-					stringPredictions.append('Sixteenth Note')
-				elif realNotePrediction[0] == 1:
-					stringPredictions.append('Eighth Note')
-				elif realNotePrediction[0] == 2:
-					stringPredictions.append('Quarter Note')
-				elif realNotePrediction[0] == 3:
-					stringPredictions.append('Half Note')
-				elif realNotePrediction[0] == 4:
-					stringPredictions.append('Whole Note')
+							print("Predictions", predictions)
+
+							# actual value of the predictions
+							overallPredictions = []
+
+							for i in range(predictions.shape[0]):		
+								currentPrediction = np.argmax(predictions[i])
+								print("Note Prediction", predictions)
+								overallPredictions.append(currentPrediction)
+
+							notePrediction = overallPredictions
+
+							if notePrediction[0] == 0:
+									# predict the extras
+									extrasPredGraph = Graph()
+
+									with extrasPredGraph.as_default():
+										print("EXTRAS")
+										session = Session()
+										with session.as_default():
+											#load model
+											model = load_model("extras_model.h5")
+
+											predictions = model.predict(testingIn)
+
+											# actual value of the predictions
+											overallPredictions = []
+
+											for i in range(predictions.shape[0]):		
+												currentPrediction = np.argmax(predictions[i])
+												print("Extras Prediction", predictions)
+												overallPredictions.append(currentPrediction)
+
+											extraPrediction = overallPredictions
+
+											if extraPrediction[0] == 0:
+												stringPredictions.append('Sharp')
+											else:
+												stringPredictions.append('Flat')
+								
+							elif notePrediction[0] == 1:
+								realNotePredGraph = Graph()
+
+								with realNotePredGraph.as_default():
+									session = Session()
+									with session.as_default():
+										print("REAL NOTE")
+										#load model
+										model = load_model("real_note_model.h5")
+
+										predictions = model.predict(testingIn)
+
+										# actual value of the predictions
+										overallPredictions = []
+
+										for i in range(predictions.shape[0]):		
+											currentPrediction = np.argmax(predictions[i])
+											print("Real Note Prediction", predictions)
+											overallPredictions.append(currentPrediction)
+
+										realNotePrediction = overallPredictions
+
+										if realNotePrediction[0] == 0:
+											stringPredictions.append('Sixteenth Note')
+										elif realNotePrediction[0] == 1:
+											stringPredictions.append('Eighth Note')
+										elif realNotePrediction[0] == 2:
+											stringPredictions.append('Quarter Note')
+										elif realNotePrediction[0] == 3:
+											stringPredictions.append('Half Note')
+										elif realNotePrediction[0] == 4:
+											stringPredictions.append('Whole Note')
 
 
+							elif notePrediction[0] == 2:
 
-			elif notePrediction[0] == 2:
+								restPredGraph = Graph()
 
-				restPrediction = predictRest(testingIn)
+								with restPredGraph.as_default():
+									session = Session()
+									with session.as_default():
+										print("REST")
+										#load model
+										model = load_model("rest_model.h5")
 
-				if restPrediction[0] == 1:
-					stringPredictions.append('Eighth Rest')
-				elif restPrediction[0] == 2:
-					stringPredictions.append('Quarter Rest')
-				elif restPrediction[0] == 3:
-					stringPredictions.append('Half Rest')
+										predictions = model.predict(testingIn)
 
-				print("P4")
+										# actual value of the predictions
+										overallPredictions = []
 
-	return stringPredictions, testingIn
+										for i in range(predictions.shape[0]):		
+											currentPrediction = np.argmax(predictions[i])
+											print("Rest Prediction", predictions)
+											overallPredictions.append(currentPrediction)
 
+										restPrediction = overallPredictions
 
+										if restPrediction[0] == 1:
+											stringPredictions.append('Eighth Rest')
+										elif restPrediction[0] == 2:
+											stringPredictions.append('Quarter Rest')
+										elif restPrediction[0] == 3:
+											stringPredictions.append('Half Rest')
+
+							return stringPredictions, testingIn
 
 if __name__ == '__main__':
 

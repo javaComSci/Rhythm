@@ -3,19 +3,25 @@ from tensorflow import keras
 import numpy as np
 from keras.layers import Dense, Dropout
 from keras.models import load_model
-
-model = load_model("clef_model.h5")
+from tensorflow import Graph, Session
 
 def predictClef(testingInput):
-	# which clef
-	predictions = model.predict(testingInput)
+	clefPredGraph = Graph()
 
-	# actual value of the predictions
-	overallPredictions = []
+	with clefPredGraph.as_default():
+		session = Session()
+		with session.as_default():
+			#load model
+			model = load_model("clef_model.h5")
 
-	for i in range(predictions.shape[0]):		
-		currentPrediction = np.argmax(predictions[i])
-		print("Clef Prediction", predictions)
-		overallPredictions.append(currentPrediction)
+			predictions = model.predict(testingInput)
 
-	return overallPredictions
+			# actual value of the predictions
+			overallPredictions = []
+
+			for i in range(predictions.shape[0]):		
+				currentPrediction = np.argmax(predictions[i])
+				print("Clef Prediction", predictions)
+				overallPredictions.append(currentPrediction)
+
+			return overallPredictions
