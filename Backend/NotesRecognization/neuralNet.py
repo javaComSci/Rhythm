@@ -9,6 +9,10 @@ from keras.models import load_model
 import math
 import os
 from clefNeuralNet import predictClef
+from noteNeuralNet import predictNote
+from realNoteNeuralNet import predictRealNote
+from extrasNeuralNet import predictExtraNote
+from restNeuralNet import predictRest
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 
@@ -921,11 +925,53 @@ def predict(testingIn):
 				stringPredictions.append(translations[6])
 			else:
 				stringPredictions.append(translations[8])
-				
+
 		else:
 			# send to the note neural network
 			notePrediction = predictNote(testingIn)
-			stringPredictions.append('NOTE')
+			print("P1", notePrediction)
+			# stringPredictions.append('NOTE')
+
+			if notePrediction[0] == 0:
+				print("P2")
+				extraPrediction = predictExtra(testingIn)
+
+				if extraPrediction[0] == 0:
+					stringPredictions.append('Sharp')
+				else:
+					stringPredictions.append('Flat')
+
+				
+
+			elif notePrediction[0] == 1:
+				print("P3")
+				realNotePrediction = predictRealNote(testingIn)
+
+				if realNotePrediction[0] == 0:
+					stringPredictions.append('Sixteenth Note')
+				elif realNotePrediction[0] == 1:
+					stringPredictions.append('Eighth Note')
+				elif realNotePrediction[0] == 2:
+					stringPredictions.append('Quarter Note')
+				elif realNotePrediction[0] == 3:
+					stringPredictions.append('Half Note')
+				elif realNotePrediction[0] == 4:
+					stringPredictions.append('Whole Note')
+
+
+
+			elif notePrediction[0] == 2:
+
+				restPrediction = predictRest(testingIn)
+
+				if restPrediction[0] == 1:
+					stringPredictions.append('Eighth Rest')
+				elif restPrediction[0] == 2:
+					stringPredictions.append('Quarter Rest')
+				elif restPrediction[0] == 3:
+					stringPredictions.append('Half Rest')
+
+				print("P4")
 
 	return stringPredictions, testingIn
 
@@ -940,8 +986,8 @@ if __name__ == '__main__':
 	# testClefNN(testingIn, testingOut)
 	# trainNoteNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testNoteNN(testingIn, testingOut)
-	trainRealNoteNN(trainingIn, trainingOut, testingIn, testingOut)
+	# trainRealNoteNN(trainingIn, trainingOut, testingIn, testingOut)
 	# trainRestNN(trainingIn, trainingOut, testingIn, testingOut)
 	# trainExtrasNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testExtrasNN(testingIn, testingOut)
-	# checkPredictions(testingIn, testingOut)
+	checkPredictions(testingIn, testingOut)

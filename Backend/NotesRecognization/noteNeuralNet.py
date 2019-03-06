@@ -1,0 +1,23 @@
+import tensorflow as tf
+from tensorflow import keras
+import numpy as np
+from keras.layers import Dense, Dropout
+from keras.models import load_model
+
+model = load_model("notes_model.h5")
+
+def predictNote(testingInput):
+	# which note
+	return [10]
+	print("YOYYOY")
+	predictions = model.predict(testingInput)
+
+	# actual value of the predictions
+	overallPredictions = []
+
+	for i in range(predictions.shape[0]):		
+		currentPrediction = np.argmax(predictions[i])
+		print("Note Prediction", predictions)
+		overallPredictions.append(currentPrediction)
+
+	return overallPredictions
