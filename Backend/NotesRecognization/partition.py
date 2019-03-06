@@ -548,7 +548,6 @@ def augment_runs(pr):
 
 	#for every staff line in staff_lines
 	for sl in range(len(staff_lines)):
-		print("PRE STAFF LINE: {}".format(staff_lines[sl]))
 		#calculate average run distance for a given staff line
 		avg_dist = average_run_distance(staff_lines[sl])
 
@@ -563,7 +562,7 @@ def augment_runs(pr):
 			val = staff_lines[sl][2*d - 2] + int(avg_dist/2)
 			#insert new row between other two rows
 			staff_lines[sl].insert(2*d - 1,val)
-		print("POST STAFF LINE: {}".format(staff_lines[sl]))
+
 	return staff_lines
 
 #@ run_list - a list of rows
