@@ -3,21 +3,28 @@ from tensorflow import keras
 import numpy as np
 from keras.layers import Dense, Dropout
 from keras.models import load_model
-
-model = load_model("notes_model.h5")
+from tensorflow import Graph, Session
 
 def predictNote(testingInput):
-	# which note
-	return [10]
-	print("YOYYOY")
-	predictions = model.predict(testingInput)
+	return 5
+	print("G1")
+	notePredGraph = Graph()
 
-	# actual value of the predictions
-	overallPredictions = []
+	with notePredGraph.as_default():
+		print("G2")
+		session = Session()
+		with session.as_default():
+			#load model
+			model = load_model("notes_model.h5")
 
-	for i in range(predictions.shape[0]):		
-		currentPrediction = np.argmax(predictions[i])
-		print("Note Prediction", predictions)
-		overallPredictions.append(currentPrediction)
+			predictions = model.predict(testingInput)
 
-	return overallPredictions
+			# actual value of the predictions
+			overallPredictions = []
+
+			for i in range(predictions.shape[0]):		
+				currentPrediction = np.argmax(predictions[i])
+				print("Note Prediction", predictions)
+				overallPredictions.append(currentPrediction)
+
+			return overallPredictions

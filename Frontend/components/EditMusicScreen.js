@@ -17,7 +17,7 @@ const { Circle, Rect, Path, Line, Text, G, Defs, Use } = Svg;
 
 // https://oblador.github.io/react-native-vector-icons/
 // var sampleJson = require('./testRichard.json');
-var sampleJson = require('./SampleMusicSheet.json');
+var sampleJson = require('./data1.json');
 var NoteSVG = require('./NotesData.json');
 var MiscJson = require('./EditMisc.json');
 var NotesList = [];
