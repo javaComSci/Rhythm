@@ -57,6 +57,11 @@ def locate_run_blocks(image):
 	#For evert row in the image
 	for row in range(image.shape[0]):
 
+		minRow = max(0, row-1)
+		maxRow = min(row+1,image.shape[0]-1)
+
+		currRow = row
+
 		#Checks total number of pixels found in a given stretch of a row
 		pixel_sum = 0
 
@@ -73,6 +78,18 @@ def locate_run_blocks(image):
 				else:
 					black_flag = True
 					pixel_sum += 1
+			elif image[minRow][col] == 0:
+				if black_flag:
+					pixel_sum += 1
+				else:
+					black_flag = True
+					pixel_sum += 1
+			elif image[maxRow][col] == 0:
+				if black_flag:
+					pixel_sum += 1
+				else:
+					black_flag = True
+					pixel_sum += 1
 			else:
 				pixel_sum = 0;
 				black_flag = False
@@ -82,6 +99,10 @@ def locate_run_blocks(image):
 			if pixel_sum / (image.shape[1] * 1.00) >= 0.1:
 				if row not in runs:
 					runs.append(row)
+				if minRow not in runs:
+					runs.append(minRow)
+				if maxRow not in runs:
+					runs.append(maxRow)
 
 	return runs
 
@@ -471,8 +492,6 @@ def SO_to_array(ob, resize=True):
 		if shift < 1:
 			shift = 0
 
-		print(ob.run, ob.staff_line, shift)
-
 		n_arr = np.ones(((shift + ob.R2 - ob.R1 + 1),(ob.C2 - ob.C1 + 1))) * 255
 
 	#For every pixel in the sheet object
@@ -608,7 +627,7 @@ def prune_runs(runs):
 		if len(new_set) == 0:
 			new_set.append(r)
 		# if the current run is within 1 pixel of the previous run add it set
-		elif abs(new_set[len(new_set) - 1] - r) <= 1:
+		elif abs(new_set[len(new_set) - 1] - r) <= 2:
 			new_set.append(r)
 		#add new set as it's own singular run
 		else:
