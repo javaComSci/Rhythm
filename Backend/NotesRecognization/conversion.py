@@ -1,5 +1,5 @@
 import partition
-import neuralNet
+# import neuralNet
 import numpy as np
 import cv2
 import json
@@ -36,9 +36,9 @@ if __name__ == "__main__":
 
 		print("DIMS", flat_arr.shape)
 
-		ob_prediction, im = neuralNet.predict(flat_arr)
-		im = im.reshape((70,50)) * 255
-
-		cv2.imwrite("ExamplePredictions/predictions/ob#{}_label:{}.jpg".format(ob_counter, ob_prediction[0]), im)
-		ob_counter += 1
-	print("Number of objects", ob_counter)
+	# 	ob_prediction, im = neuralNet.predict(flat_arr)
+	# 	im = im.reshape((70,50)) * 255
+	#
+	# 	cv2.imwrite("ExamplePredictions/predictions/ob#{}_label:{}.jpg".format(ob_counter, ob_prediction[0]), im)
+	# 	ob_counter += 1
+	# print("Number of objects", ob_counter)
