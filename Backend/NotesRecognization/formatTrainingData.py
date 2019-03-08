@@ -20,26 +20,27 @@ def splitData(symbols):
 	for symbol in symbols.keys():
 
 		symbolName = re.split('/', symbol)[2]
-		print("SYMBOL", symbols[symbol].shape)
 		translations[count] = symbolName
 
-		trainingIn = np.vstack((trainingIn, symbols[symbol][1:351]))
+		trainingIn = np.vstack((trainingIn, symbols[symbol][1:451]))
 
-		currTrainingOut = np.array(np.ones(350) * count).reshape((350, 1))
+		currTrainingOut = np.array(np.ones(450) * count).reshape((450, 1))
 		trainingOut = np.vstack((trainingOut, currTrainingOut))
 
-		testingIn = np.vstack((testingIn, symbols[symbol][351:]))
+		testingIn = np.vstack((testingIn, symbols[symbol][451:]))
 
-		currTestingOut = np.array((np.ones(len(symbols[symbol])-351) * count)).reshape(len(symbols[symbol])-351, 1)
+		currTestingOut = np.array((np.ones(len(symbols[symbol])-451) * count)).reshape(len(symbols[symbol])-451, 1)
 		testingOut = np.vstack((testingOut, currTestingOut))
 
 		count += 1
 
 	# array delete first row
-	trainingIn = np.delete(trainingIn, 0, 0)
-	testingIn = np.delete(testingIn, 0, 0)
-	trainingOut = np.delete(trainingOut, 0, 0)
-	testingOut = np.delete(testingOut, 0, 0)
+	trainingIn = np.delete(trainingIn, (0), axis=0)
+	testingIn = np.delete(testingIn, (0), axis=0)
+	trainingOut = np.delete(trainingOut, (0), axis=0)
+	testingOut = np.delete(testingOut, (0), axis=0)
+
+	print("SYMBOL AFTER ", symbols[symbol].shape, trainingIn.shape)
 
 	print("TRANSLATIONS", translations)
 
@@ -76,11 +77,11 @@ def modifyImg(pixelArr):
 # will go though the dataset to separate the data into training and testing sets
 def getTrainingAndTestingData():
 	symbols = {}
-	symbolsDir = './SymbolsDatasetParsedSmall'
+	symbolsDir = './PrintedNotesParsed'
 	modImageCount = 0
 	# data has already been parsed into images, need to group and change into pixels for training
 	for (dirName, subdirList, files) in os.walk(symbolsDir):
-		if dirName == './SymbolsDatasetParsedSmall':
+		if dirName == './PrintedNotesParsed':
 			continue
 
 		# all in specific directory are of specific type
@@ -97,18 +98,24 @@ def getTrainingAndTestingData():
 			# parse file path
 			filePath = os.path.join(dirName, file)
 
+			# open image in grayscale
+			im_gray = cv2.imread(filePath, cv2.IMREAD_GRAYSCALE)
+
+			# update image to binary
+			thresh = 127
+			pixelArr = cv2.threshold(im_gray, thresh, 255, cv2.THRESH_BINARY)[1]
+
 			# repixel for the size
-			pixelArr = Image.open(filePath)
-			pixelArr = pixelArr.convert('L')
-			pixelArr = pixelArr.resize((50, 70))
-			pixelArr = np.array(pixelArr)
-			img = Image.fromarray(pixelArr)
+			# pixelArr = Image.open(filePath)
+			# pixelArr = pixelArr.convert('L')
+			# pixelArr = pixelArr.resize((50, 70))
+			# pixelArr = np.array(pixelArr)
+			# img = Image.fromarray(pixelArr)
 			# img.show()
 			# return
 
 
 			# randomly set approximately 10% of the images to have lines through them
-
 			randInt = random.randint(0, 10)
 			if randInt == 5:
 				pixelArr = modifyImg(pixelArr)
@@ -131,9 +138,15 @@ def getTrainingAndTestingData():
 			pixelArrFlat = pixelArr.flatten()
 			pixelArrFlat = pixelArrFlat.reshape(pixelArrFlat.shape[0], 1).T
 
-			# for each of the symbols, there is an array of dimension (401, 3500) with 401 samples
+			# for each of the symbols, there is an array of dimension (500, 3500) with 500 samples
 			symbols[dirName] = np.append(symbols[dirName], pixelArrFlat, axis = 0)
+
+		# delete the first row as it was created for the array init
+		symbols[dirName] = np.delete(symbols[dirName], (0), axis=0)
+
 		print("SYMBOLS", dirName, symbols[dirName], symbols[dirName].shape, symbols[dirName][0].shape)
+
+		# split all the data into training and testing data
 	trainingIn, trainingOut, testingIn, testingOut, translations = splitData(symbols)
 
 	# write data to file

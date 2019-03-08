@@ -465,7 +465,8 @@ def print_objects(mask,SOL,sl,path="",staff_lines=False):
 		for s in sl:
 			for r in s:
 				for c in range(full_img.shape[1]):
-					full_img[r][c] = 255
+					if r < full_img.shape[0]:
+						full_img[r][c] = 255
 
 	#Write full object image to specified path
 	cv2.imwrite("{}FullImage.jpg".format(path), full_img)
@@ -530,8 +531,8 @@ def full_partition(path):
 	#print "Completed 'image load'"
 
 	#resize image if it is too large
-	if (im_bw.shape[0] > 2000 and im_bw.shape[1] > 2000):
-		im_bw = cv2.resize(im_bw, (1500, 1500)) 
+	# if (im_bw.shape[0] > 2000 and im_bw.shape[1] > 2000):
+	# 	im_bw = cv2.resize(im_bw, (1500, 1500)) 
 
 	#locate runs in the image
 	runs = locate_run_blocks(im_bw)
@@ -714,8 +715,8 @@ def closest_row(er, staff_lines):
 
 
 if __name__ == "__main__":
-	mask, SOL, sl = full_partition("DATA/test8.jpg")
-	print_objects(mask,SOL,sl,path="test",staff_lines=True)
+	mask, SOL, sl = full_partition("ExamplePredictions/DATA/file11.jpg")
+	print_objects(mask,SOL,sl,path="ExamplePredictions/predictions",staff_lines=True)
 
 
 

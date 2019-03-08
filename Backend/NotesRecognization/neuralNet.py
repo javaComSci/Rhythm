@@ -20,7 +20,12 @@ os.environ['KMP_DUPLICATE_LIB_OK']='True'
 # load all translations
 translations = np.load('translationsWithLines.npy')
 translations = translations.item()
+
+# create the inversion of the translations for value by key
+translationsInverse = dict([v,k] for k,v in translations.items())
+
 print("TRANLSATIONS", translations)
+print("TRANLSATIONS INVERSE", translationsInverse)
 
 # SYMBOL TABLE
 	# - clef
@@ -64,14 +69,118 @@ def getData():
 # @testingIn - 2d numpy array of testing inputs
 # @testingOut - 2d numpy array of testing labels
 # @return - void
+# Train the general neural network with training inputs and labels
+def trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut):
+
+	# modify the labels for clefs, notes, and times for training data
+	for t in range(0, len(trainingOut)):
+		output = trainingOut[t][0]
+		
+		translation = translations[output]
+		if translation == 'CClef' or translation == 'GClef' or translation == 'FClef':
+			# for clef
+			trainingOut[t][0] = 0
+		else:
+			# for note
+			trainingOut[t][0] = 1
+
+
+	# modify the labels for clefs, notes, and times for testing data
+	for t in range(0, len(testingOut)):
+		output = testingOut[t][0]
+		
+		translation = translations[output]
+		if translation == 'CClef' or translation == 'GClef' or translation == 'FClef':
+			# for clef
+			testingOut[t][0] = 0
+		else:
+			# for note
+			testingOut[t][0] = 1
+
+
+	# create the layers that could be used for hyperparameter tuning - categorical cross enrotpy
+	layersForTraining = [ [[50, 'relu'], [20, 'relu'], [2, 'softmax'] ],
+	[ [20, 'relu'], [15, 'tanh'], [2, 'softmax'] ],
+	[ [50, 'relu'], [2, 'softmax'] ],
+	[ [40, 'tanh'], [2, 'softmax'] ],
+	[ [50, 'sigmoid'], [2, 'softmax'] ],
+	]
+
+	# perform hyperparameter tuning
+	model = hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam', epochs=8)
+
+	# save the best model for the general NN
+	model.save('general_model.h5')
+
+
+
+# @testingIn - 2d numpy array of testing inputs
+# @testingOut - 2d numpy array of testing labels
+# @return - void
+# Tests the accuracy of the neural network for the base
+def testGeneralNN(testingIn, testingOut):
+
+	# load the general model for testing
+	model = load_model('general_model.h5')
+
+	# modify the labels for clefs, notes, and times for testing data
+	for t in range(0, len(testingOut)):
+		output = testingOut[t][0]
+		
+		translation = translations[output]
+		if translation == 'CClef' or translation == 'GClef' or translation == 'FClef':
+			# for clef
+			testingOut[t][0] = 0
+		else:
+			# for note
+			testingOut[t][0] = 1
+
+	# predictions on unseen data
+	predictions = model.predict(testingIn)
+	overallPredictions = -np.ones((len(testingOut),1))
+
+	for i in range(predictions.shape[0]):
+		overallPredictions[i] = np.argmax(predictions[i])
+		print("Prediction:", overallPredictions[i], "True Label", testingOut[i])
+
+		# showing the incorrect image
+		# if overallPredictions[i] != testingOut[i]:
+		# 	testing = testingIn[i]
+		# 	testing = testing * 255
+		# 	testing = testing.reshape(70, 50)
+		# 	img = Image.fromarray(testing)
+		# 	img.show()
+		# 	break
+
+		# show the example of the image and the value wanted
+		# if i % 1000 == 0 and overallPredictions[i] == testingOut[i]:
+		# 	testing = testingIn[i]
+		# 	testing = testing * 255
+		# 	testing = testing.reshape(70, 50)
+		# 	img = Image.fromarray(testing)
+		# 	img.show()
+
+	print("Accuracy on general testing data:", (np.sum(overallPredictions == testingOut)+0.0)/len(testingOut))
+
+
+
+# @trainingIn - 2d numpy array of training inputs
+# @trainingOut - 2d numpy array of training labels
+# @testingIn - 2d numpy array of testing inputs
+# @testingOut - 2d numpy array of testing labels
+# @return - void
 # Trains neural network with identifying the different clefs
 def trainClefNN(trainingIn, trainingOut, testingIn, testingOut):
 
+	cclef = translationsInverse["CClef"]
+	gclef = translationsInverse["GClef"]
+	fclef = translationsInverse["FClef"]
+
 	# TRAINING DATA CLEANING
 	# row indicies so need the [0]
-	cclefIndiciesTraining = np.where(trainingOut == 1)[0]
-	gclefIndiciesTraining = np.where(trainingOut == 6)[0]
-	fclefIndiciesTraining = np.where(trainingOut == 8)[0]
+	cclefIndiciesTraining = np.where(trainingOut == cclef)[0]
+	gclefIndiciesTraining = np.where(trainingOut == gclef)[0]
+	fclefIndiciesTraining = np.where(trainingOut == fclef)[0]
 
 	# for inputs
 	clefTrainingIn = trainingIn[cclefIndiciesTraining]
@@ -83,17 +192,22 @@ def trainClefNN(trainingIn, trainingOut, testingIn, testingOut):
 	clefTrainingOut = np.vstack((clefTrainingOut, trainingOut[gclefIndiciesTraining,:]))
 	clefTrainingOut = np.vstack((clefTrainingOut, trainingOut[fclefIndiciesTraining,:]))
 
-	# changing values
-	clefTrainingOut[clefTrainingOut == 1] = 0
-	clefTrainingOut[clefTrainingOut == 6] = 1
-	clefTrainingOut[clefTrainingOut == 8] = 2
+	# changing values so no confusion with overlaps
+	clefTrainingOut[clefTrainingOut == cclef] = -1
+	clefTrainingOut[clefTrainingOut == gclef] = -2
+	clefTrainingOut[clefTrainingOut == fclef] = -3
+
+	# change back to normalized
+	clefTrainingOut[clefTrainingOut == -1] = 0
+	clefTrainingOut[clefTrainingOut == -2] = 1
+	clefTrainingOut[clefTrainingOut == -3] = 2
 
 
 	#TESTING DATA CLEANING
 	# row indicies
-	cclefIndiciesTesting = np.where(testingOut == 1)[0]
-	gclefIndiciesTesting = np.where(testingOut == 6)[0]
-	fclefIndiciesTesting = np.where(testingOut == 8)[0]
+	cclefIndiciesTesting = np.where(testingOut == cclef)[0]
+	gclefIndiciesTesting = np.where(testingOut == gclef)[0]
+	fclefIndiciesTesting = np.where(testingOut == fclef)[0]
 
 	# for inputs
 	clefTestingIn = testingIn[cclefIndiciesTesting]
@@ -106,9 +220,14 @@ def trainClefNN(trainingIn, trainingOut, testingIn, testingOut):
 	clefTestingOut = np.vstack((clefTestingOut, testingOut[fclefIndiciesTesting,:]))
 
 	# changing values
-	clefTestingOut[clefTestingOut == 1] = 0
-	clefTestingOut[clefTestingOut == 6] = 1
-	clefTestingOut[clefTestingOut == 8] = 2
+	clefTestingOut[clefTestingOut == cclef] = -1
+	clefTestingOut[clefTestingOut == gclef] = -2
+	clefTestingOut[clefTestingOut == fclef] = -3
+
+	clefTestingOut[clefTestingOut == -1] = 0
+	clefTestingOut[clefTestingOut == -2] = 1
+	clefTestingOut[clefTestingOut == -3] = 2
+
 
 	# testing = clefTrainingIn[370]
 	# testing = testing * 255
@@ -134,7 +253,7 @@ def trainClefNN(trainingIn, trainingOut, testingIn, testingOut):
 	]
 
 	# obtain the best model from hyperparameter tuning
-	model = hyperparameterTuning(clefTrainingIn, clefTrainingOut, clefTestingIn, clefTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam')
+	model = hyperparameterTuning(clefTrainingIn, clefTrainingOut, clefTestingIn, clefTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam', epochs=8)
 
 	# save the model for later use
 	model.save('clef_model.h5')
@@ -148,11 +267,16 @@ def trainClefNN(trainingIn, trainingOut, testingIn, testingOut):
 def testClefNN(testingIn, testingOut):
 	model = load_model('clef_model.h5')
 
+	cclef = translationsInverse["CClef"]
+	gclef = translationsInverse["GClef"]
+	fclef = translationsInverse["FClef"]
+
+
 	#TESTING DATA CLEANING
 	# row indicies
-	cclefIndiciesTesting = np.where(testingOut == 1)[0]
-	gclefIndiciesTesting = np.where(testingOut == 6)[0]
-	fclefIndiciesTesting = np.where(testingOut == 8)[0]
+	cclefIndiciesTesting = np.where(testingOut == cclef)[0]
+	gclefIndiciesTesting = np.where(testingOut == gclef)[0]
+	fclefIndiciesTesting = np.where(testingOut == fclef)[0]
 
 	# for inputs
 	clefTestingIn = testingIn[cclefIndiciesTesting]
@@ -165,9 +289,13 @@ def testClefNN(testingIn, testingOut):
 	clefTestingOut = np.vstack((clefTestingOut, testingOut[fclefIndiciesTesting,:]))
 
 	# changing values
-	clefTestingOut[clefTestingOut == 1] = 0
-	clefTestingOut[clefTestingOut == 6] = 1
-	clefTestingOut[clefTestingOut == 8] = 2
+	clefTestingOut[clefTestingOut == cclef] = -1
+	clefTestingOut[clefTestingOut == gclef] = -2
+	clefTestingOut[clefTestingOut == fclef] = -3
+
+	clefTestingOut[clefTestingOut == -1] = 0
+	clefTestingOut[clefTestingOut == -2] = 1
+	clefTestingOut[clefTestingOut == -3] = 2
 
 	# predictions on unseen data
 	predictions = model.predict(clefTestingIn)
@@ -197,6 +325,7 @@ def testClefNN(testingIn, testingOut):
 			
 
 	print("Accuracy on clef testing data:", (np.sum(overallPredictions == clefTestingOut)+0.0)/len(clefTestingOut))
+
 
 
 # @trainingIn - 2d numpy array of training inputs
@@ -296,10 +425,11 @@ def trainNoteNN(trainingIn, trainingOut, testingIn, testingOut):
 	]
 
 	# obtain the best model from hyperparameter tuning
-	model = hyperparameterTuning(notesTrainingIn, notesTrainingOut, notesTestingIn, notesTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam')
+	model = hyperparameterTuning(notesTrainingIn, notesTrainingOut, notesTestingIn, notesTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam', epochs=10)
 
 	# save the model for later use
 	model.save('notes_model.h5')
+
 
 
 # @testingIn - 2d numpy array of testing inputs
@@ -365,16 +495,17 @@ def testNoteNN(testingIn, testingOut):
 		# 	break
 
 		# show the example of the image and the value wanted
-		# if i % 99 == 0 and overallPredictions[i] == notesTestingOut[i]:
-		# 	print("Prediction:", overallPredictions[i], "True Label", notesTestingOut[i])
-		# 	testing = notesTestingIn[i]
-		# 	testing = testing * 255
-		# 	testing = testing.reshape(70, 50)
-		# 	img = Image.fromarray(testing)
-		# 	img.show()
+		if i % 99 == 0 and overallPredictions[i] == notesTestingOut[i]:
+			print("Prediction:", overallPredictions[i], "True Label", notesTestingOut[i])
+			testing = notesTestingIn[i]
+			testing = testing * 255
+			testing = testing.reshape(70, 50)
+			img = Image.fromarray(testing)
+			img.show()
 			
 
 	print("Accuracy on notes testing data:", (np.sum(overallPredictions == notesTestingOut)+0.0)/len(notesTestingOut))
+
 
 
 # @trainingIn - 2d numpy array of training inputs
@@ -384,40 +515,52 @@ def testNoteNN(testingIn, testingOut):
 # @return - void
 # Trains neural network with distinguishing between different rests
 def trainExtrasNN(trainingIn, trainingOut, testingIn, testingOut):
+
+	sharp = translationsInverse["Sharp"]
+	flat = translationsInverse["Flat"]
+
 	# TRAINING DATA CLEANING
 	# row indicies so need the [0]
-	sharpIndiciesTraining = np.where(trainingOut == 0)[0]
-	flatIndiciesTraining = np.where(trainingOut == 12)[0]
+	flatIndiciesTraining = np.where(trainingOut == flat)[0]
+	sharpIndiciesTraining = np.where(trainingOut == sharp)[0]
 
 	# for inputs
-	extraTrainingIn = trainingIn[sharpIndiciesTraining]
-	extraTrainingIn = np.vstack((extraTrainingIn, trainingIn[flatIndiciesTraining]))
+	extraTrainingIn = trainingIn[flatIndiciesTraining]
+	extraTrainingIn = np.vstack((extraTrainingIn, trainingIn[sharpIndiciesTraining]))
 
 	# for outputs
-	extraTrainingOut = trainingOut[sharpIndiciesTraining,:]
-	extraTrainingOut = np.vstack((extraTrainingOut, trainingOut[flatIndiciesTraining]))
+	extraTrainingOut = trainingOut[flatIndiciesTraining,:]
+	extraTrainingOut = np.vstack((extraTrainingOut, trainingOut[sharpIndiciesTraining]))
 
 	# changing values
-	extraTrainingOut[extraTrainingOut == 0] = 0
-	extraTrainingOut[extraTrainingOut == 12] = 1
+	extraTrainingOut[extraTrainingOut == flat] = -1
+	extraTrainingOut[extraTrainingOut == sharp] = -2
+
+	extraTrainingOut[extraTrainingOut == -1] = 0
+	extraTrainingOut[extraTrainingOut == -2] = 1
 
 
 	#TESTING DATA CLEANING
 	# row indicies
-	sharpIndiciesTesting = np.where(testingOut == 0)[0]
-	flatIndiciesTesting = np.where(testingOut == 12)[0]
+	sharpIndiciesTesting = np.where(testingOut == sharp)[0]
+	flatIndiciesTesting = np.where(testingOut == flat)[0]
 
 	# for inputs
-	extraTestingIn = testingIn[sharpIndiciesTesting]
-	extraTestingIn = np.vstack((extraTestingIn, testingIn[flatIndiciesTesting]))
+	extraTestingIn = testingIn[flatIndiciesTesting]
+	extraTestingIn = np.vstack((extraTestingIn, testingIn[sharpIndiciesTesting]))
 
 	# for outputs
-	extraTestingOut = testingOut[sharpIndiciesTesting,:]
-	extraTestingOut = np.vstack((extraTestingOut, testingOut[flatIndiciesTesting]))
+	extraTestingOut = testingOut[flatIndiciesTesting,:]
+	extraTestingOut = np.vstack((extraTestingOut, testingOut[sharpIndiciesTesting]))
 
+	# flat is originally 0, so keep it as 0
 	# changing values
-	extraTestingOut[extraTestingOut == 0] = 0
-	extraTestingOut[extraTestingOut == 12] = 1
+	extraTestingOut[extraTestingOut == flat] = -1
+	extraTestingOut[extraTestingOut == sharp] = -2
+
+	extraTestingOut[extraTestingOut == -1] = 0
+	extraTestingOut[extraTestingOut == -2] = 1
+
 
 	print("SHAPES", extraTestingIn.shape, extraTestingOut.shape, extraTrainingIn.shape, extraTrainingOut.shape)
 	
@@ -432,7 +575,7 @@ def trainExtrasNN(trainingIn, trainingOut, testingIn, testingOut):
 	]
 
 	# obtain the best model from hyperparameter tuning
-	model = hyperparameterTuning(extraTrainingIn, extraTrainingOut, extraTestingIn, extraTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam', epochs=10)
+	model = hyperparameterTuning(extraTrainingIn, extraTrainingOut, extraTestingIn, extraTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam', epochs=5)
 
 	# save the model for later use
 	model.save('extras_model.h5')
@@ -445,22 +588,29 @@ def trainExtrasNN(trainingIn, trainingOut, testingIn, testingOut):
 def testExtrasNN(testingIn, testingOut):
 	model = load_model('extras_model.h5')
 
+	sharp = translationsInverse["Sharp"]
+	flat = translationsInverse["Flat"]
+
 	#TESTING DATA CLEANING
 	# row indicies
-	sharpIndiciesTesting = np.where(testingOut == 0)[0]
-	flatIndiciesTesting = np.where(testingOut == 12)[0]
+	sharpIndiciesTesting = np.where(testingOut == sharp)[0]
+	flatIndiciesTesting = np.where(testingOut == flat)[0]
 
 	# for inputs
-	extraTestingIn = testingIn[sharpIndiciesTesting]
-	extraTestingIn = np.vstack((extraTestingIn, testingIn[flatIndiciesTesting]))
+	extraTestingIn = testingIn[flatIndiciesTesting]
+	extraTestingIn = np.vstack((extraTestingIn, testingIn[sharpIndiciesTesting]))
 
 	# for outputs
-	extraTestingOut = testingOut[sharpIndiciesTesting,:]
-	extraTestingOut = np.vstack((extraTestingOut, testingOut[flatIndiciesTesting]))
+	extraTestingOut = testingOut[flatIndiciesTesting,:]
+	extraTestingOut = np.vstack((extraTestingOut, testingOut[sharpIndiciesTesting]))
 
+	# flat is originally 0, so keep it as 0
 	# changing values
-	extraTestingOut[extraTestingOut == 0] = 0
-	extraTestingOut[extraTestingOut == 12] = 1
+	extraTestingOut[extraTestingOut == flat] = -1
+	extraTestingOut[extraTestingOut == sharp] = -2
+
+	extraTestingOut[extraTestingOut == -1] = 0
+	extraTestingOut[extraTestingOut == -2] = 1
 
 	# predictions on unseen data
 	predictions = model.predict(extraTestingIn)
@@ -480,16 +630,17 @@ def testExtrasNN(testingIn, testingOut):
 		# 	break
 
 		# show the example of the image and the value wanted
-		# if i % 50 == 0 and overallPredictions[i] == extraTestingOut[i]:
-		# 	print("Prediction:", overallPredictions[i], "True Label", extraTestingOut[i])
-		# 	testing = extraTestingIn[i]
-		# 	testing = testing * 255
-		# 	testing = testing.reshape(70, 50)
-		# 	img = Image.fromarray(testing)
-		# 	img.show()
+		if i % 50 == 0 and overallPredictions[i] == extraTestingOut[i]:
+			print("Prediction:", overallPredictions[i], "True Label", extraTestingOut[i])
+			testing = extraTestingIn[i]
+			testing = testing * 255
+			testing = testing.reshape(70, 50)
+			img = Image.fromarray(testing)
+			img.show()
 			
 
 	print("Accuracy on extras testing data:", (np.sum(overallPredictions == extraTestingOut)+0.0)/len(extraTestingOut))
+
 
 
 # @trainingIn - 2d numpy array of training inputs
@@ -499,11 +650,17 @@ def testExtrasNN(testingIn, testingOut):
 # @return - void
 # Trains neural network with distinguishing between different rests
 def trainRestNN(trainingIn, trainingOut, testingIn, testingOut):
+
+	# get the inverse translations
+	eighthRest = translationsInverse["Eighth-Rest"]
+	quarterRest = translationsInverse["Quarter-Rest"]
+	halfRest = translationsInverse["Whole-Half-Rest"]
+
 	# TRAINING DATA CLEANING
 	# row indicies so need the [0]
-	eighthIndiciesTraining = np.where(trainingOut == 7)[0]
-	quarterIndiciesTraining = np.where(trainingOut == 3)[0]
-	halfIndiciesTraining = np.where(trainingOut == 4)[0]
+	eighthIndiciesTraining = np.where(trainingOut == eighthRest)[0]
+	quarterIndiciesTraining = np.where(trainingOut == quarterRest)[0]
+	halfIndiciesTraining = np.where(trainingOut == halfRest)[0]
 
 	# for inputs
 	restTrainingIn = trainingIn[eighthIndiciesTraining]
@@ -516,16 +673,20 @@ def trainRestNN(trainingIn, trainingOut, testingIn, testingOut):
 	restTrainingOut = np.vstack((restTrainingOut, trainingOut[halfIndiciesTraining]))
 
 	# changing values
-	restTrainingOut[restTrainingOut == 7] = 0
-	restTrainingOut[restTrainingOut == 3] = 1
-	restTrainingOut[restTrainingOut == 4] = 2
+	restTrainingOut[restTrainingOut == eighthRest] = -1
+	restTrainingOut[restTrainingOut == quarterRest] = -2
+	restTrainingOut[restTrainingOut == halfRest] = -3
+
+	restTrainingOut[restTrainingOut == -1] = 0
+	restTrainingOut[restTrainingOut == -2] = 1
+	restTrainingOut[restTrainingOut == -3] = 2
 
 
 	#TESTING DATA CLEANING
 	# row indicies
-	eighthIndiciesTesting = np.where(testingOut == 7)[0]
-	quarterIndiciesTesting = np.where(testingOut == 3)[0]
-	halfIndiciesTesting = np.where(testingOut == 4)[0]
+	eighthIndiciesTesting = np.where(testingOut == eighthRest)[0]
+	quarterIndiciesTesting = np.where(testingOut == quarterRest)[0]
+	halfIndiciesTesting = np.where(testingOut == halfRest)[0]
 
 	# for inputs
 	restTestingIn = testingIn[eighthIndiciesTesting]
@@ -537,10 +698,16 @@ def trainRestNN(trainingIn, trainingOut, testingIn, testingOut):
 	restTestingOut = np.vstack((restTestingOut, testingOut[quarterIndiciesTesting]))
 	restTestingOut = np.vstack((restTestingOut, testingOut[halfIndiciesTesting]))
 
+	# quarter is orignally at 1, so need to keep it at 1
 	# changing values
-	restTestingOut[restTestingOut == 7] = 0
-	restTestingOut[restTestingOut == 3] = 1
-	restTestingOut[restTestingOut == 4] = 2
+	restTestingOut[restTestingOut == eighthRest] = -1
+	restTestingOut[restTestingOut == quarterRest] = -2
+	restTestingOut[restTestingOut == halfRest] = -3
+
+	restTestingOut[restTestingOut == -1] = 0
+	restTestingOut[restTestingOut == -2] = 1
+	restTestingOut[restTestingOut == -3] = 2
+
 
 	print("SHAPES", restTestingIn.shape, restTestingOut.shape, restTrainingIn.shape, restTrainingOut.shape)
 	
@@ -555,10 +722,78 @@ def trainRestNN(trainingIn, trainingOut, testingIn, testingOut):
 	]
 
 	# obtain the best model from hyperparameter tuning
-	model = hyperparameterTuning(restTrainingIn, restTrainingOut, restTestingIn, restTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam', epochs=15)
+	model = hyperparameterTuning(restTrainingIn, restTrainingOut, restTestingIn, restTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam', epochs=8)
 
 	# save the model for later use
 	model.save('rest_model.h5')
+
+
+# @testingIn - 2d numpy array of testing inputs
+# @testingOut - 2d numpy array of testing labels
+# @return - void
+# Tests the accuracy of the real note network trained with the real notes
+def testRestNN(testingIn, testingOut):
+	model = load_model('rest_model.h5')
+
+	# get the inverse translations
+	eighthRest = translationsInverse["Eighth-Rest"]
+	quarterRest = translationsInverse["Quarter-Rest"]
+	halfRest = translationsInverse["Whole-Half-Rest"]
+
+	#TESTING DATA CLEANING
+	# row indicies
+	eighthIndiciesTesting = np.where(testingOut == eighthRest)[0]
+	quarterIndiciesTesting = np.where(testingOut == quarterRest)[0]
+	halfIndiciesTesting = np.where(testingOut == halfRest)[0]
+
+	# for inputs
+	restTestingIn = testingIn[eighthIndiciesTesting]
+	restTestingIn = np.vstack((restTestingIn, testingIn[quarterIndiciesTesting]))
+	restTestingIn = np.vstack((restTestingIn, testingIn[halfIndiciesTesting]))
+
+	# for outputs
+	restTestingOut = testingOut[eighthIndiciesTesting,:]
+	restTestingOut = np.vstack((restTestingOut, testingOut[quarterIndiciesTesting]))
+	restTestingOut = np.vstack((restTestingOut, testingOut[halfIndiciesTesting]))
+
+	# quarter is orignally at 1, so need to keep it at 1
+	# changing values
+	restTestingOut[restTestingOut == eighthRest] = -1
+	restTestingOut[restTestingOut == quarterRest] = -2
+	restTestingOut[restTestingOut == halfRest] = -3
+
+	restTestingOut[restTestingOut == -1] = 0
+	restTestingOut[restTestingOut == -2] = 1
+	restTestingOut[restTestingOut == -3] = 2
+
+	# predictions on unseen data
+	predictions = model.predict(restTestingIn)
+	overallPredictions = -np.ones((len(restTestingOut),1))
+
+	for i in range(predictions.shape[0]):
+		overallPredictions[i] = np.argmax(predictions[i])
+		print("Prediction:", overallPredictions[i], "True Label", restTestingOut[i])
+
+		# showing the incorrect image
+		# if overallPredictions[i] != restTestingOut[i]:
+		# 	testing = restTestingIn[i]
+		# 	testing = testing * 255
+		# 	testing = testing.reshape(70, 50)
+		# 	img = Image.fromarray(testing)
+		# 	img.show()
+		# 	break
+
+		# show the example of the image and the value wanted
+		if i % 50 == 0 and overallPredictions[i] == restTestingOut[i]:
+			print("Prediction:", overallPredictions[i], "True Label", restTestingOut[i])
+			testing = restTestingIn[i]
+			testing = testing * 255
+			testing = testing.reshape(70, 50)
+			img = Image.fromarray(testing)
+			img.show()
+			
+
+	print("Accuracy on real note testing data:", (np.sum(overallPredictions == restTestingOut)+0.0)/len(restTestingOut))
 
 
 
@@ -569,13 +804,21 @@ def trainRestNN(trainingIn, trainingOut, testingIn, testingOut):
 # @return - void
 # Trains neural network with distingiusihing between real notes
 def trainRealNoteNN(trainingIn, trainingOut, testingIn, testingOut):
+
+	# get the inverse translations
+	sixteenthNote = translationsInverse["Sixteenth-Note"]
+	eighthNote = translationsInverse["Eighth-Note"]
+	quarterNote = translationsInverse["Quarter-Note"]
+	halfNote = translationsInverse["Half-Note"]
+	wholeNote = translationsInverse["Whole-Note"]
+
 	# TRAINING DATA CLEANING
 	# row indicies so need the [0]
-	sixteenthIndiciesTraining = np.where(trainingOut == 10)[0]
-	eighthIndiciesTraining = np.where(trainingOut == 5)[0]
-	quarterIndiciesTraining = np.where(trainingOut == 11)[0]
-	halfIndiciesTraining = np.where(trainingOut == 9)[0]
-	wholeIndiciesTraining = np.where(trainingOut == 2)[0]
+	sixteenthIndiciesTraining = np.where(trainingOut == sixteenthNote)[0]
+	eighthIndiciesTraining = np.where(trainingOut == eighthNote)[0]
+	quarterIndiciesTraining = np.where(trainingOut == quarterNote)[0]
+	halfIndiciesTraining = np.where(trainingOut == halfNote)[0]
+	wholeIndiciesTraining = np.where(trainingOut == wholeNote)[0]
 
 	# for inputs
 	realNoteTrainingIn = trainingIn[sixteenthIndiciesTraining]
@@ -592,20 +835,26 @@ def trainRealNoteNN(trainingIn, trainingOut, testingIn, testingOut):
 	realNoteTrainingOut = np.vstack((realNoteTrainingOut, trainingOut[wholeIndiciesTraining]))
 
 	# changing values
-	realNoteTrainingOut[realNoteTrainingOut == 10] = 0
-	realNoteTrainingOut[realNoteTrainingOut == 5] = 1
-	realNoteTrainingOut[realNoteTrainingOut == 11] = 2
-	realNoteTrainingOut[realNoteTrainingOut == 9] = 3
-	realNoteTrainingOut[realNoteTrainingOut == 2] = 4
+	realNoteTrainingOut[realNoteTrainingOut == sixteenthNote] = -1
+	realNoteTrainingOut[realNoteTrainingOut == eighthNote] = -2
+	realNoteTrainingOut[realNoteTrainingOut == quarterNote] = -3
+	realNoteTrainingOut[realNoteTrainingOut == halfNote] = -4
+	realNoteTrainingOut[realNoteTrainingOut == wholeNote] = -5
+
+	realNoteTrainingOut[realNoteTrainingOut == -1] = 0
+	realNoteTrainingOut[realNoteTrainingOut == -2] = 1
+	realNoteTrainingOut[realNoteTrainingOut == -3] = 2
+	realNoteTrainingOut[realNoteTrainingOut == -4] = 3
+	realNoteTrainingOut[realNoteTrainingOut == -5] = 4
 
 
 	#TESTING DATA CLEANING
 	# row indicies
-	sixteenthIndiciesTesting = np.where(testingOut == 10)[0]
-	eighthIndiciesTesting = np.where(testingOut == 5)[0]
-	quarterIndiciesTesting = np.where(testingOut == 11)[0]
-	halfIndiciesTesting = np.where(testingOut == 9)[0]
-	wholeIndiciesTesting = np.where(testingOut == 2)[0]
+	sixteenthIndiciesTesting = np.where(testingOut == sixteenthNote)[0]
+	eighthIndiciesTesting = np.where(testingOut == eighthNote)[0]
+	quarterIndiciesTesting = np.where(testingOut == quarterNote)[0]
+	halfIndiciesTesting = np.where(testingOut == halfNote)[0]
+	wholeIndiciesTesting = np.where(testingOut == wholeNote)[0]
 
 	# for inputs
 	realNoteTestingIn = testingIn[sixteenthIndiciesTesting]
@@ -622,11 +871,17 @@ def trainRealNoteNN(trainingIn, trainingOut, testingIn, testingOut):
 	realNoteTestingOut = np.vstack((realNoteTestingOut, testingOut[wholeIndiciesTesting]))
 
 	# changing values
-	realNoteTestingOut[realNoteTestingOut == 10] = 0
-	realNoteTestingOut[realNoteTestingOut == 5] = 1
-	realNoteTestingOut[realNoteTestingOut == 11] = 2
-	realNoteTestingOut[realNoteTestingOut == 9] = 3
-	realNoteTestingOut[realNoteTestingOut == 2] = 4
+	realNoteTestingOut[realNoteTestingOut == sixteenthNote] = -1
+	realNoteTestingOut[realNoteTestingOut == eighthNote] = -2
+	realNoteTestingOut[realNoteTestingOut == quarterNote] = -3
+	realNoteTestingOut[realNoteTestingOut == halfNote] = -4
+	realNoteTestingOut[realNoteTestingOut == wholeNote] = -5
+
+	realNoteTestingOut[realNoteTestingOut == -1] = 0
+	realNoteTestingOut[realNoteTestingOut == -2] = 1
+	realNoteTestingOut[realNoteTestingOut == -3] = 2
+	realNoteTestingOut[realNoteTestingOut == -4] = 3
+	realNoteTestingOut[realNoteTestingOut == -5] = 4
 
 	# print("TRAINING", cclefIndiciesTraining, gclefIndiciesTraining, fclefIndiciesTraining, clefTrainingIn, clefTrainingIn.shape, clefTrainingOut, clefTrainingOut.shape)
 	# print("TESTING", clefTestingIn.shape, clefTestingIn, clefTestingOut, clefTestingOut.shape)
@@ -646,6 +901,86 @@ def trainRealNoteNN(trainingIn, trainingOut, testingIn, testingOut):
 
 	# save the model for later use
 	model.save('real_note_model.h5')
+
+
+# @testingIn - 2d numpy array of testing inputs
+# @testingOut - 2d numpy array of testing labels
+# @return - void
+# Tests the accuracy of the real note network trained with the real notes
+def testRealNoteNN(testingIn, testingOut):
+	model = load_model('real_note_model.h5')
+
+	# get the inverse translations
+	sixteenthNote = translationsInverse["Sixteenth-Note"]
+	eighthNote = translationsInverse["Eighth-Note"]
+	quarterNote = translationsInverse["Quarter-Note"]
+	halfNote = translationsInverse["Half-Note"]
+	wholeNote = translationsInverse["Whole-Note"]
+
+	#TESTING DATA CLEANING
+	# row indicies
+	sixteenthIndiciesTesting = np.where(testingOut == sixteenthNote)[0]
+	eighthIndiciesTesting = np.where(testingOut == eighthNote)[0]
+	quarterIndiciesTesting = np.where(testingOut == quarterNote)[0]
+	halfIndiciesTesting = np.where(testingOut == halfNote)[0]
+	wholeIndiciesTesting = np.where(testingOut == wholeNote)[0]
+
+	# for inputs
+	realNoteTestingIn = testingIn[sixteenthIndiciesTesting]
+	realNoteTestingIn = np.vstack((realNoteTestingIn, testingIn[eighthIndiciesTesting]))
+	realNoteTestingIn = np.vstack((realNoteTestingIn, testingIn[quarterIndiciesTesting]))
+	realNoteTestingIn = np.vstack((realNoteTestingIn, testingIn[halfIndiciesTesting]))
+	realNoteTestingIn = np.vstack((realNoteTestingIn, testingIn[wholeIndiciesTesting]))
+
+	# for outputs
+	realNoteTestingOut = testingOut[sixteenthIndiciesTesting,:]
+	realNoteTestingOut = np.vstack((realNoteTestingOut, testingOut[eighthIndiciesTesting]))
+	realNoteTestingOut = np.vstack((realNoteTestingOut, testingOut[quarterIndiciesTesting]))
+	realNoteTestingOut = np.vstack((realNoteTestingOut, testingOut[halfIndiciesTesting]))
+	realNoteTestingOut = np.vstack((realNoteTestingOut, testingOut[wholeIndiciesTesting]))
+
+	# changing values
+	realNoteTestingOut[realNoteTestingOut == sixteenthNote] = -1
+	realNoteTestingOut[realNoteTestingOut == eighthNote] = -2
+	realNoteTestingOut[realNoteTestingOut == quarterNote] = -3
+	realNoteTestingOut[realNoteTestingOut == halfNote] = -4
+	realNoteTestingOut[realNoteTestingOut == wholeNote] = -5
+
+	realNoteTestingOut[realNoteTestingOut == -1] = 0
+	realNoteTestingOut[realNoteTestingOut == -2] = 1
+	realNoteTestingOut[realNoteTestingOut == -3] = 2
+	realNoteTestingOut[realNoteTestingOut == -4] = 3
+	realNoteTestingOut[realNoteTestingOut == -5] = 4
+
+	# predictions on unseen data
+	predictions = model.predict(realNoteTestingIn)
+	overallPredictions = -np.ones((len(realNoteTestingOut),1))
+
+	for i in range(predictions.shape[0]):
+		overallPredictions[i] = np.argmax(predictions[i])
+		print("Prediction:", overallPredictions[i], "True Label", realNoteTestingOut[i])
+
+		# showing the incorrect image
+		# if overallPredictions[i] != realNoteTestingOut[i]:
+		# 	testing = realNoteTestingIn[i]
+		# 	testing = testing * 255
+		# 	testing = testing.reshape(70, 50)
+		# 	img = Image.fromarray(testing)
+		# 	img.show()
+		# 	break
+
+		# show the example of the image and the value wanted
+		if i % 50 == 0 and overallPredictions[i] == realNoteTestingOut[i]:
+			print("Prediction:", overallPredictions[i], "True Label", realNoteTestingOut[i])
+			testing = realNoteTestingIn[i]
+			testing = testing * 255
+			testing = testing.reshape(70, 50)
+			img = Image.fromarray(testing)
+			img.show()
+			
+
+	print("Accuracy on real note testing data:", (np.sum(overallPredictions == realNoteTestingOut)+0.0)/len(realNoteTestingOut))
+
 
 
 # @trainingIn - 2d numpy array of training inputs
@@ -713,145 +1048,6 @@ def hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, modelsI
 	return bestModel
 
 
-# @trainingIn - 2d numpy array of training inputs
-# @trainingOut - 2d numpy array of training labels
-# @testingIn - 2d numpy array of testing inputs
-# @testingOut - 2d numpy array of testing labels
-# @return - void
-# Train the general neural network with training inputs and labels
-def trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut):
-
-	# modify the labels for clefs, notes, and times for training data
-	for t in range(0, len(trainingOut)):
-		output = trainingOut[t][0]
-		
-		translation = translations[output]
-		if translation == 'C-Clef' or translation == 'G-Clef' or translation == 'F-Clef':
-			# for clef
-			trainingOut[t][0] = 0
-		else:
-			# for note
-			trainingOut[t][0] = 1
-
-
-	# modify the labels for clefs, notes, and times for testing data
-	for t in range(0, len(testingOut)):
-		output = testingOut[t][0]
-		
-		translation = translations[output]
-		if translation == 'C-Clef' or translation == 'G-Clef' or translation == 'F-Clef':
-			# for clef
-			testingOut[t][0] = 0
-		else:
-			# for note
-			testingOut[t][0] = 1
-
-
-	# create the layers that could be used for hyperparameter tuning - categorical cross enrotpy
-	layersForTraining = [ [[50, 'relu'], [20, 'relu'], [2, 'softmax'] ],
-	[ [20, 'relu'], [15, 'tanh'], [2, 'softmax'] ],
-	[ [50, 'relu'], [2, 'softmax'] ],
-	[ [40, 'tanh'], [2, 'softmax'] ],
-	[ [50, 'sigmoid'], [2, 'softmax'] ],
-	]
-
-	# create the layers that could be used for hyperparameter tuning - binary cross entorpy
-	# layersForTraining = [ [[50, 'relu'], [20, 'relu'], [2, 'softmax'] ],
-	# [ [20, 'relu'], [15, 'tanh'], [2, 'softmax'] ],
-	# [ [50, 'relu'], [2, 'softmax'] ],
-	# [ [40, 'tanh'], [2, 'softmax'] ],
-	# [ [50, 'sigmoid'], [2, 'softmax'] ],
-	# [ [300, 'relu'], [2, 'softmax'] ],
-	# ]
-
-	# perform hyperparameter tuning
-	model = hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam')
-
-	# save the best model for the general NN
-	model.save('general_model.h5')
-
-
-
-# @testingIn - 2d numpy array of testing inputs
-# @testingOut - 2d numpy array of testing labels
-# @return - void
-# Tests the accuracy of the neural network for the base
-def testGeneralNN(testingIn, testingOut):
-	model = load_model('general_model.h5')
-
-	# modify the labels for clefs, notes, and times for testing data
-	for t in range(0, len(testingOut)):
-		output = testingOut[t][0]
-		
-		translation = translations[output]
-		if translation == 'C-Clef' or translation == 'G-Clef' or translation == 'F-Clef':
-			# for clef
-			testingOut[t][0] = 0
-		else:
-			# for note
-			testingOut[t][0] = 1
-
-	# predictions on unseen data
-	predictions = model.predict(testingIn)
-	overallPredictions = -np.ones((len(testingOut),1))
-
-	for i in range(predictions.shape[0]):
-		overallPredictions[i] = np.argmax(predictions[i])
-		print("Prediction:", overallPredictions[i], "True Label", testingOut[i])
-
-		# showing the incorrect image
-		# if overallPredictions[i] != testingOut[i]:
-		# 	testing = testingIn[i]
-		# 	testing = testing * 255
-		# 	testing = testing.reshape(70, 50)
-		# 	img = Image.fromarray(testing)
-		# 	img.show()
-		# 	break
-
-		# show the example of the image and the value wanted
-		if i % 1000 == 0 and overallPredictions[i] == testingOut[i]:
-			testing = testingIn[i]
-			testing = testing * 255
-			testing = testing.reshape(70, 50)
-			img = Image.fromarray(testing)
-			img.show()
-
-	print("Accuracy on general testing data:", (np.sum(overallPredictions == testingOut)+0.0)/len(testingOut))
-
-
-
-# TODO
-# Predict the type of rest
-def predictRest(testingInput):
-	return
-
-
-# TODO
-# Predict the type of extra note - sharp or flat
-def predictExtra(testingInput):
-	return
-
-
-# TODO
-# Predict the type of real note - eighth, half, quarter, whole
-def predictRealNote(testingInput):
-	return
-
-
-# TODO
-# Predict the type of the note - from all notes - call the respective neural net for prediction
-def predictNote(symbol):
-	# what type of note
-	res = None
-	
-	if res == 'realNote':
-		return predictRealNote(symbol)
-	if res == 'rest':
-		return predictRest(symbol)
-	elif res == 'extra':
-		return predictExtra(symbol)
-
-
 
 # @testingInput - 2d numpy array of testing inputs
 # @testingOutput - 2d numpy array of testing labels
@@ -864,18 +1060,12 @@ def checkPredictions(testingInput, testingOut):
 	for t in range(0, len(testingOut)):
 		output = testingOut[t][0]
 		translation = translations[output]
-
-		if translation == 'C-Clef' or translation == 'G-Clef' or translation == 'F-Clef':
-			# for clef
-			stringOutputs.append(translation)
-		else:
-			# for note
-			stringOutputs.append(translation)
+		stringOutputs.append(translation)
 
 	incorrect = 0
 	correct = 0
 
-	for t in range(0, testingInput.shape[0], 100):
+	for t in range(0, testingInput.shape[0], 50):
 
 		test = testingInput[t].reshape((1, 3500))
 		prediction = predict(test)
@@ -902,15 +1092,21 @@ def checkPredictions(testingInput, testingOut):
 # @return - prediction for given note
 # Does the prediction for the given notes
 def predict(testingIn):
+
+	# create a graph for the general prediction: NOTE or CLEF?
 	generalPredGraph = Graph()
+
 	with generalPredGraph.as_default():
+
 		# open new session
 		session1 = Session()
 
 		with session1.as_default():
-			# load model
+
+			# load general prediction model
 			model = load_model('general_model.h5')
 
+			# do the prediction with the general model
 			generalPredictions = model.predict(testingIn)
 
 			# actual value of the predictions
@@ -919,170 +1115,176 @@ def predict(testingIn):
 			# predicted values of the strings
 			stringPredictions = []
 
+			# for each of the general predictions
 			for i in range(generalPredictions.shape[0]):
 
+				# find the value that was predicted
 				overallPredictions[i] = np.argmax(generalPredictions[i])
 
+				# if it was a clef
 				if overallPredictions[i] == 0:
+
+					# create a graph for clef model: CCLEF, GCLEF, FCELF?
 					clefPredGraph = Graph()
 
 					with clefPredGraph.as_default():
-						session = Session()
-						with session.as_default():
-							#load model
+
+						# create a new session for the clef
+						session2 = Session()
+
+						with session2.as_default():
+
+							#load clef model
 							model = load_model("clef_model.h5")
 
+							# do the predictions with the clef model
 							predictions = model.predict(testingIn)
 
-							# actual value of the predictions
-							overallPredictions = []
+							# find the clef prediction
+							clefPrediction = np.argmax(predictions[i])
+							print("Clef Prediction", predictions, clefPrediction)
 
-							for i in range(predictions.shape[0]):		
-								currentPrediction = np.argmax(predictions[i])
-								print("Clef Prediction", predictions)
-								overallPredictions.append(currentPrediction)
-
-							clefPrediction = overallPredictions
-
-							if clefPrediction[0] == 0:
-								stringPredictions.append(translations[1])
-							elif clefPrediction[0] == 1:
-								stringPredictions.append(translations[6])
-							else:
-								stringPredictions.append(translations[8])
+							if clefPrediction == 0:
+								stringPredictions.append('CClef')
+							elif clefPrediction == 1:
+								stringPredictions.append('GClef')
+							elif clefPrediction == 2:
+								stringPredictions.append('FClef')
 
 							return stringPredictions, testingIn
 
 				else:
 
-					# find the general note
+					# find the general note - REAL NOTE, REST, EXTRA?
 					notePredGraph = Graph()
+
 					with notePredGraph.as_default():
-						session = Session()
-						with session.as_default():
-							print("NOTE")
-							#load model
+
+						session3 = Session()
+
+						with session3.as_default():
+
+							#load general notes model
 							model = load_model("notes_model.h5")
 
+							# do the predictions on the notes model
 							predictions = model.predict(testingIn)
 
-							print("Predictions", predictions)
+							notePrediction = np.argmax(predictions[i])
+							print("Note Prediction", predictions, notePrediction)
 
-							# actual value of the predictions
-							overallPredictions = []
+							# extras note
+							if notePrediction == 0:
 
-							for i in range(predictions.shape[0]):		
-								currentPrediction = np.argmax(predictions[i])
-								print("Note Prediction", predictions)
-								overallPredictions.append(currentPrediction)
-
-							notePrediction = overallPredictions
-
-							if notePrediction[0] == 0:
-									# predict the extras
+									# predict the extras - SHARP, FLAT?
 									extrasPredGraph = Graph()
 
 									with extrasPredGraph.as_default():
-										print("EXTRAS")
-										session = Session()
-										with session.as_default():
-											#load model
+
+										session4 = Session()
+
+										with session4.as_default():
+
+											#load extras model
 											model = load_model("extras_model.h5")
 
 											predictions = model.predict(testingIn)
 
-											# actual value of the predictions
-											overallPredictions = []
+											extraPrediction = np.argmax(predictions[i])
+											print("Extras Prediction", predictions)
 
-											for i in range(predictions.shape[0]):		
-												currentPrediction = np.argmax(predictions[i])
-												print("Extras Prediction", predictions)
-												overallPredictions.append(currentPrediction)
-
-											extraPrediction = overallPredictions
-
-											if extraPrediction[0] == 0:
-												stringPredictions.append('Sharp')
-											else:
+											if extraPrediction == 0:
 												stringPredictions.append('Flat')
-								
-							elif notePrediction[0] == 1:
+											elif extraPrediction == 1:
+												stringPredictions.append('Sharp')
+
+											return stringPredictions, testingIn
+
+							
+							# real note
+							elif notePrediction == 1:
+
+								# real note graph - SIXTEENTH, EIGHTH, QUARTER, HALF, WHOLE
 								realNotePredGraph = Graph()
 
 								with realNotePredGraph.as_default():
-									session = Session()
-									with session.as_default():
-										print("REAL NOTE")
-										#load model
+
+									session5 = Session()
+
+									with session5.as_default():
+
+										#load model real note model
 										model = load_model("real_note_model.h5")
 
 										predictions = model.predict(testingIn)
+	
+										realNotePrediction = np.argmax(predictions[i])
+										print("Real Note Prediction", predictions)
 
-										# actual value of the predictions
-										overallPredictions = []
+										if realNotePrediction == 0:
+											stringPredictions.append('Sixteenth-Note')
+										elif realNotePrediction == 1:
+											stringPredictions.append('Eighth-Note')
+										elif realNotePrediction == 2:
+											stringPredictions.append('Quarter-Note')
+										elif realNotePrediction == 3:
+											stringPredictions.append('Half-Note')
+										elif realNotePrediction == 4:
+											stringPredictions.append('Whole-Note')
 
-										for i in range(predictions.shape[0]):		
-											currentPrediction = np.argmax(predictions[i])
-											print("Real Note Prediction", predictions)
-											overallPredictions.append(currentPrediction)
-
-										realNotePrediction = overallPredictions
-
-										if realNotePrediction[0] == 0:
-											stringPredictions.append('Sixteenth Note')
-										elif realNotePrediction[0] == 1:
-											stringPredictions.append('Eighth Note')
-										elif realNotePrediction[0] == 2:
-											stringPredictions.append('Quarter Note')
-										elif realNotePrediction[0] == 3:
-											stringPredictions.append('Half Note')
-										elif realNotePrediction[0] == 4:
-											stringPredictions.append('Whole Note')
+										return stringPredictions, testingIn
 
 
-							elif notePrediction[0] == 2:
+							# rest 
+							elif notePrediction == 2:
 
+								# rest - EIGHTH, QUARTER, WHOLE?
 								restPredGraph = Graph()
 
 								with restPredGraph.as_default():
-									session = Session()
-									with session.as_default():
-										print("REST")
-										#load model
+
+									session6 = Session()
+									with session6.as_default():
+
+										#load rest model
 										model = load_model("rest_model.h5")
 
 										predictions = model.predict(testingIn)
+	
+										restPrediction = np.argmax(predictions[i])
+										print("Rest Prediction", predictions)
 
-										# actual value of the predictions
-										overallPredictions = []
+										if restPrediction == 0:
+											stringPredictions.append('Eighth-Rest')
+										elif restPrediction == 1:
+											stringPredictions.append('Quarter-Rest')
+										elif restPrediction == 2:
+											stringPredictions.append('Half-Rest')
 
-										for i in range(predictions.shape[0]):		
-											currentPrediction = np.argmax(predictions[i])
-											print("Rest Prediction", predictions)
-											overallPredictions.append(currentPrediction)
+										return stringPredictions, testingIn
 
-										restPrediction = overallPredictions
 
-										if restPrediction[0] == 1:
-											stringPredictions.append('Eighth Rest')
-										elif restPrediction[0] == 2:
-											stringPredictions.append('Quarter Rest')
-										elif restPrediction[0] == 3:
-											stringPredictions.append('Half Rest')
-
-							return stringPredictions, testingIn
 
 if __name__ == '__main__':
 
 	trainingIn, trainingOut, testingIn, testingOut = getData()
+
 	# trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testGeneralNN(testingIn, testingOut)
+
 	# trainClefNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testClefNN(testingIn, testingOut)
+
 	# trainNoteNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testNoteNN(testingIn, testingOut)
+
 	# trainRealNoteNN(trainingIn, trainingOut, testingIn, testingOut)
+	# testRealNoteNN(testingIn, testingOut)
+
 	# trainRestNN(trainingIn, trainingOut, testingIn, testingOut)
+	# testRestNN(testingIn, testingOut)
+
 	# trainExtrasNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testExtrasNN(testingIn, testingOut)
+
 	checkPredictions(testingIn, testingOut)
