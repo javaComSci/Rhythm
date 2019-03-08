@@ -1,5 +1,5 @@
 import partition
-# import neuralNet
+import neuralNet
 import numpy as np
 import cv2
 import json
@@ -11,7 +11,7 @@ class JCpenny:
 		self.pitch = pitch
 
 if __name__ == "__main__":
-	file_path = "ExamplePredictions/DATA/test5.jpg"
+	file_path = "ExamplePredictions/DATA/test3.jpg"
 
 	mask, SOL, staff_lines = partition.full_partition(file_path)
 
@@ -33,11 +33,13 @@ if __name__ == "__main__":
 			flat_arr = n_arr.flatten().reshape((1,3500))
 
 
-		ob_prediction, im = neuralNet.predict(flat_arr)
-		im = im.reshape((70,50)) * 255
+			ob_prediction, im = neuralNet.predict(flat_arr)
+			im = im.reshape((70,50)) * 255
+			if ob_prediction == None or len(ob_prediction) == 0:
+				ob_prediction = "DEFAULT"
 
-		cv2.imwrite("ExamplePredictions/predictions/ob#{}_label:{}.jpg".format(ob_counter, ob_prediction[0]), im)
-		ob_counter += 1
+			cv2.imwrite("ExamplePredictions/predictions/ob#{}_label:{}.jpg".format(ob_counter, ob_prediction[0]), im)
+			ob_counter += 1
 	print("Number of objects", ob_counter)
 #
 # 			print("DIMS", flat_arr.shape)

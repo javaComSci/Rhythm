@@ -57,6 +57,11 @@ def locate_run_blocks(image):
 	#For evert row in the image
 	for row in range(image.shape[0]):
 
+		minRow = max(0, row-1)
+		maxRow = min(row+1,image.shape[0]-1)
+
+		currRow = row
+
 		#Checks total number of pixels found in a given stretch of a row
 		pixel_sum = 0
 
@@ -73,6 +78,18 @@ def locate_run_blocks(image):
 				else:
 					black_flag = True
 					pixel_sum += 1
+			elif image[minRow][col] == 0:
+				if black_flag:
+					pixel_sum += 1
+				else:
+					black_flag = True
+					pixel_sum += 1
+			elif image[maxRow][col] == 0:
+				if black_flag:
+					pixel_sum += 1
+				else:
+					black_flag = True
+					pixel_sum += 1
 			else:
 				pixel_sum = 0;
 				black_flag = False
@@ -82,6 +99,10 @@ def locate_run_blocks(image):
 			if pixel_sum / (image.shape[1] * 1.00) >= 0.1:
 				if row not in runs:
 					runs.append(row)
+				if minRow not in runs:
+					runs.append(minRow)
+				if maxRow not in runs:
+					runs.append(maxRow)
 
 	return runs
 
@@ -425,14 +446,16 @@ def print_objects(mask,SOL,sl,path="",staff_lines=False):
 	#for every object in sheet object list
 	for ob in SOL:
 		#Creates new cropped imag that will be filled with a single object
-		new_img = np.zeros((ob.R2-ob.R1+1,ob.C2-ob.C1+1))
+		#new_img = np.zeros((ob.R2-ob.R1+1,ob.C2-ob.C1+1))
 
 		#For each pixel in the object, place the pixel into new_img
 		for tup in ob.pixel_list:
 			#update full image
 			full_img[tup[0]][tup[1]] = 255
 			#update object image
-			new_img[tup[0] - ob.R1][tup[1] - ob.C1] = 255
+			#new_img[tup[0] - ob.R1][tup[1] - ob.C1] = 255
+
+		new_img = SO_to_array(ob)
 
 		#Write object to specified path
 		cv2.imwrite("{}ob_{}_R{}SL{}.jpg".format(path,ob.object_number,ob.run,ob.staff_line), new_img)
@@ -442,7 +465,8 @@ def print_objects(mask,SOL,sl,path="",staff_lines=False):
 		for s in sl:
 			for r in s:
 				for c in range(full_img.shape[1]):
-					full_img[r][c] = 255
+					if r < full_img.shape[0]:
+						full_img[r][c] = 255
 
 	#Write full object image to specified path
 	cv2.imwrite("{}FullImage.jpg".format(path), full_img)
@@ -450,23 +474,32 @@ def print_objects(mask,SOL,sl,path="",staff_lines=False):
 # @ob - A single sheet object
 # @return - 2D numpy array of sheet object
 #	Converts a sheet object into it's corresponding numpy array
-def SO_to_array(ob, resize='True'):
+def SO_to_array(ob, resize=True):
 	#intitialize array
-	n_arr = np.ones((70,50))
+	n_arr = np.ones((70,50))*255
 
 	#set flag of image size
 	flag = False
 
+	shift = 0
+
 	#If sheet object cant fit into a 70x50 array, create minimum sized array that works
 	if not resize or (ob.R2 - ob.R1 >= 70 or ob.C2 - ob.C1 >= 50):
 		flag = True
-		n_arr = np.ones(((ob.R2 - ob.R1 + 1),(ob.C2 - ob.C1 + 1)))
+
+		if resize:
+			shift = int((70/50) * (ob.C2 - ob.C1 + 1) - (ob.R2 - ob.R1 + 1))
+		
+		if shift < 1:
+			shift = 0
+
+		n_arr = np.ones(((shift + ob.R2 - ob.R1 + 1),(ob.C2 - ob.C1 + 1))) * 255
 
 	#For every pixel in the sheet object
 	for p in ob.pixel_list:
 
 		#Center pixels
-		Rcenter = int((70 - (ob.R2 - ob.R1))/2.00)
+		Rcenter = int((70 - (shift + ob.R2 - ob.R1))/2.00)
 		Ccenter = int((50 - (ob.C2 - ob.C1))/2.00)
 
 		#Set centering to 0 if using custom array size
@@ -481,7 +514,7 @@ def SO_to_array(ob, resize='True'):
 		
 	#Resize array to 70x50 if it was a custom size array
 	if flag:
-		n_arr = cv2.resize(n_arr, (70, 50)) 
+		n_arr = cv2.resize(n_arr, (50, 70)) 
 
 	return n_arr
 
@@ -498,8 +531,8 @@ def full_partition(path):
 	#print "Completed 'image load'"
 
 	#resize image if it is too large
-	if (im_bw.shape[0] > 2000 and im_bw.shape[1] > 2000):
-		im_bw = cv2.resize(im_bw, (1500, 1500)) 
+	# if (im_bw.shape[0] > 2000 and im_bw.shape[1] > 2000):
+	# 	im_bw = cv2.resize(im_bw, (1500, 1500)) 
 
 	#locate runs in the image
 	runs = locate_run_blocks(im_bw)
@@ -595,7 +628,7 @@ def prune_runs(runs):
 		if len(new_set) == 0:
 			new_set.append(r)
 		# if the current run is within 1 pixel of the previous run add it set
-		elif abs(new_set[len(new_set) - 1] - r) <= 1:
+		elif abs(new_set[len(new_set) - 1] - r) <= 2:
 			new_set.append(r)
 		#add new set as it's own singular run
 		else:
@@ -616,11 +649,11 @@ def prune_runs(runs):
 #@ SOL - list of sheet objects
 #@ runs - list of runs found in music sheet
 #@ return - void
-#	Sets the predicted run for each note
+#	Sets the predicted run/staff_line for each note
 def locate_note_run(SOL,staff_lines):
 	for ob in SOL:
 		#get object in array form
-		ob_arr = SO_to_array(ob, resize="False")
+		ob_arr = SO_to_array(ob, resize=False)
 
 		#figure out if object is top or bottom heavy
 		note_weight = top_bottom_heavy(ob_arr)
@@ -644,8 +677,8 @@ def locate_note_run(SOL,staff_lines):
 #@ return - 0 if the object is top heavy, 1 otherwise
 def top_bottom_heavy(n_arr):
 	#get top and bottom half of provided array
-	top_half = n_arr[:n_arr.shape[0]/2,:]
-	bottom_half = n_arr[n_arr.shape[0]/2:,:]
+	top_half = n_arr[:int(n_arr.shape[0]/2),:]
+	bottom_half = n_arr[int(n_arr.shape[0]/2):,:]
 
 	#notes are black pixels, with a value of 0. More white pixels, mean less object space
 	if np.sum(top_half) <= np.sum(bottom_half):
@@ -682,8 +715,8 @@ def closest_row(er, staff_lines):
 
 
 if __name__ == "__main__":
-	mask, SOL, sl = full_partition("DATA/test3.jpg")
-	print_objects(mask,SOL,sl,path="test",staff_lines=True)
+	mask, SOL, sl = full_partition("ExamplePredictions/DATA/file11.jpg")
+	print_objects(mask,SOL,sl,path="ExamplePredictions/predictions",staff_lines=True)
 
 
 
