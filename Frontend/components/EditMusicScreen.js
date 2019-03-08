@@ -6,10 +6,6 @@ import { Button, Header } from 'react-native-elements';
 import { Col, Row, Grid } from "react-native-easy-grid";
 import Icon from 'react-native-vector-icons/AntDesign'
 import PinchZoomView from 'react-native-pinch-zoom-view';
-// import NotesRender from 'NotesRendering'
-// import Svg,{
-//     Circle
-// } from 'react-native-svg';
 
 
 import { Svg } from 'expo';
@@ -17,7 +13,7 @@ const { Circle, Rect, Path, Line, Text, G, Defs, Use } = Svg;
 
 // https://oblador.github.io/react-native-vector-icons/
 // var sampleJson = require('./testRichard.json');
-var sampleJson = require('./data1.json');
+var sampleJson = require('./testRichard.json');
 var NoteSVG = require('./NotesData.json');
 var MiscJson = require('./EditMisc.json');
 var NotesList = [];
@@ -32,36 +28,98 @@ var Section;
 var totalBeats;
 var screenSize = SCREEN_HEIGHT;
 
+
 class NoteObjects extends React.Component {
-  constructor(note, length, pitch){
-    super();
-    this._id = idCounter++;
-    this.note = note;
-    this.length = length;
-    this.pitch = pitch;
-    this.color = "black";
+  constructor(props){
+    super(props);
+    this.state = {
+      NoteNum: "EFF",
+      color: "black",
+    }
   }
+
+  componentDidMount() {}
+
+  pressed() {
+    console.log("Pressed");
+    if(this.state.color == "black"){
+      this.setState({
+        color: "red"
+      })
+    }else{
+      this.setState({
+        color: "black"
+      })
+    }
+  }
+
+  PRESSEDA() {
+    console.log("HELLO");
+  }
+
+  // <TouchableOpacity
+  //   style={styles.button}
+  //   onPress={this.onPress}
+  // >
+  //   <Text> Touch Here </Text>
+  // </TouchableOpacity>
+
   render(){
+    console.log("RENDERING!!!!!!!!\n");
+    console.log(this.props);
+    let mesureLength = SCREEN_WIDTH/10;
+    let start = SCREEN_HEIGHT/8;
+    let betweenNotes = SCREEN_WIDTH/11;
+    let x = (this.props._id%9)
+    let y = Math.ceil(this.props._id/9);
+    if(this.props._id == 0){
+      y = 1;
+    }else if(this.props._id%9 == 0){
+      y++;
+    }
+    let pitch = this.props.pitch;
+    if(pitch == 0)
+     pitch++;
+    x++;
+
     return (
-      yes
+      <G stroke="black" stroke-width="0" fill={this.state.color}>
+        <Path x={[((x)*(SCREEN_WIDTH/11))+ NoteSVG[this.props.note].adjustX].join(' ')} y={([((y)*(SCREEN_HEIGHT/8))+ (this.props.pitch*SCREEN_HEIGHT/164) + NoteSVG[this.props.note].adjustY].join(' '))} transform={['scale(', NoteSVG[this.props.note].scale1, NoteSVG[this.props.note].scale2, ')'].join(' ')} d={[NoteSVG[this.props.note].data].join(' ')}/>
+        <Rect
+          x={[((x)*(SCREEN_WIDTH/11)) + mesureLength*NoteSVG[this.props.note].HitBoxX].join(' ')}
+          y={[((y)*(SCREEN_HEIGHT/8)) + NoteSVG[this.props.note].HitBoxY + (NoteSVG[this.props.note].flipY*(pitch)*SCREEN_HEIGHT/110)].join(' ')}
+          width={[NoteSVG[this.props.note].flipX * (mesureLength/1.1)].join(' ')}
+          height={[NoteSVG[this.props.note].flipY * (-start/1.6)].join(' ')}
+          fill="none"
+          strokeWidth="1"
+          onPress={() => this.PRESSEDA()}
+        />
+      </G>
+
     )
   }
-}
+
+
+   // onPress={() => this.pressed(this)}
+
+  // render(){
+  //   return (
+  //     <G x="0" stroke="black" stroke-width="0" y="0" fill={[this.color].join(' ')}>
+  //       {this.Notes()}
+  //     </G>
+  //   )
+  // }
+};
 
 
 class EditMusicScreen extends React.Component {
 
   constructor(props) {
       super(props);
-      NotesList = [];
-
-      for (let i = 0; i < sampleJson.notes.length; i++) {
-        NotesList.push(new NoteObjects(sampleJson.notes[i].note, sampleJson.notes[i].length, sampleJson.notes[i].pitch));
-      }
-      console.log(NotesList.length);
       this.state = {
         NotesL: NotesList,
         colorProp: 'black',
+        alert: false,
       };
   }
 
@@ -71,12 +129,15 @@ class EditMusicScreen extends React.Component {
 
   componentDidMount() {}
 
-  // lapsList() {
-  //   let s;
-  //   return NotesList.map((item) => {
-  //     return <ListItem image={item.note}/>
-  //   })
-  // }
+  componentWillMount() {
+    console.log("Component will mount!")
+    NotesList = [];
+    // for (let i = 0; i < sampleJson.notes.length; i++) {
+    for (let i = 0; i < 2; i++) {
+      NotesList.push(<NoteObjects _id={i} update={this.updateFunc} note={sampleJson.notes[i].note} len={sampleJson.notes[i].length} pitch={sampleJson.notes[i].pitch}/>);
+    }
+  }
+
   setTitle(title){
     let start = SCREEN_HEIGHT/8;
     return (
@@ -159,56 +220,45 @@ class EditMusicScreen extends React.Component {
       </Svg>
     )
   }
-// 0 1  2  3  4  5  6  7  8
-// 9 10 11 12 13 14 15 16 17
-  //https://www.online-convert.com/result/12158467-08e6-47c0-9ecc-d809e5f78bbc
-  // note, x, y length, pitch
-  Notes(Note){
-    // console.log(screenSize);
-    let mesureLength = SCREEN_WIDTH/10;
-    let start = SCREEN_HEIGHT/8;
-    let betweenNotes = SCREEN_WIDTH/11;
-    let x = (Note._id%9)
-    let y = Math.ceil(Note._id/9);
-    if(Note._id == 0){
-      y = 1;
-    }else if(Note._id%9 == 0){
-      y++;
+
+  updateFunc(alert){
+    console.log("GWFDigrjejgioperjgreaoyigjaw4og\n")
+    // this.setState({
+    //   alert: alert
+    // })
+  }
+
+  setNotes(){
+      let NotesL = [];
+      for (let i = 0; i < NotesList.length; i++) {
+        NotesL.push(<NoteObjects i = "Bob"/>);
+      }
+      return NotesL;
     }
-    let pitch = Note.pitch;
-    if(pitch == 0)
-     pitch++;
-    // if(x == 0){
-    //   x = 1;
-    // }
-    x++;
-    // console.log("X: " + x + " Y: " + y);
-    // console.log(Note)
+
+  test(x){
+    console.log("RENDERED");
     return (
-        <G x="0" stroke="black" stroke-width="0" y="0" fill={[Note.color].join(' ')}>
-          <Path x={[((x)*(SCREEN_WIDTH/11))+NoteSVG[Note.note].adjustX].join(' ')} y={([((y)*(SCREEN_HEIGHT/8))+ (Note.pitch*SCREEN_HEIGHT/164) + NoteSVG[Note.note].adjustY].join(' '))} transform={['scale(', NoteSVG[Note.note].scale1, NoteSVG[Note.note].scale2, ')'].join(' ')} d={[NoteSVG[Note.note].data].join(' ')}/>
-          <Rect
-            x={[((x)*(SCREEN_WIDTH/11)) + mesureLength*NoteSVG[Note.note].HitBoxX].join(' ')}
-            y={[((y)*(SCREEN_HEIGHT/8)) + NoteSVG[Note.note].HitBoxY + (NoteSVG[Note.note].flipY*(pitch)*SCREEN_HEIGHT/110)].join(' ')}
-            width={[NoteSVG[Note.note].flipX * (mesureLength/1.1)].join(' ')}
-            height={[NoteSVG[Note.note].flipY * (-start/1.6)].join(' ')}
-            fill="none"
-            strokeWidth="0"
-            onPress={this.pressHandler.bind(this, Note)}
+      <G>
+        <Rect
+            x={x}
+            y="0"
+            width="10%"
+            height="10%"
+            fill="blue"
+            strokeWidth="1"
+            onPress={() => alert("Steven")}
           />
-        </G>
+      </G>
     )
   }
 
-  setNotes(Notes){
-    let NotesL = [];
-    for (let i = 0; i < NotesList.length; i++) {
-      NotesL.push(this.Notes(Notes[i]))
-    }
-      return NotesL;
-  }
-
   render(){
+    console.log("First Render in note\n");
+    // NotesList = [];
+    // for (let i = 0; i < sampleJson.notes.length; i++) {
+    //   NotesList.push(<NoteObjects _id={i} update={this.updateFunc} note={sampleJson.notes[i].note} len={sampleJson.notes[i].length} pitch={sampleJson.notes[i].pitch}/>);
+    // }
     totalBeats = 0;
     backButton = require('../assets/back.png')
     let mesureLength = SCREEN_WIDTH/10;
@@ -239,13 +289,10 @@ class EditMusicScreen extends React.Component {
             justifyContent: 'space-around',
           }}
         />
-
         <ScrollView>
           <Svg height={[screenSize].join(' ')}  width="100%">
-            {this.setTitle("Steven is the Best")}
-            {this.lineSection()}
-            {this.lineSection()}
-            {this.setNotes(NotesList)}
+            {this.test(0)}
+            {this.test(50)}
           </Svg>
         </ScrollView>
       </View>
@@ -253,63 +300,12 @@ class EditMusicScreen extends React.Component {
   }
 };
 
-  // class NoteRender extends React.Component {
-//
-//       constructor(props) {
-//           super(props);
-//           console.log("HERE")
-//       }
-//       static navigationOptions = {
-//           title: 'Welcome', header: null
-//       };
-//
-//       componentDidMount() {}
-//
-//       Notes(Note){
-//         // console.log(screenSize);
-//         let mesureLength = SCREEN_WIDTH/10;
-//         let start = SCREEN_HEIGHT/8;
-//         let betweenNotes = SCREEN_WIDTH/11;
-//         let x = (Note._id%9)
-//         let y = Math.ceil(Note._id/9);
-//         if(Note._id == 0){
-//           y = 1;
-//         }else if(Note._id%9 == 0){
-//           y++;
-//         }
-//         let pitch = Note.pitch;
-//         if(pitch == 0)
-//           pitch++;
-//         x++;
-//         return (
-//             <G x="0" stroke="black" stroke-width="0" y="0" fill={[Note.color].join(' ')}>
-//               <Path x={[((x)*(SCREEN_WIDTH/11))+NoteSVG[Note.note].adjustX].join(' ')} y={([((y)*(SCREEN_HEIGHT/8))+ (Note.pitch*SCREEN_HEIGHT/164) + NoteSVG[Note.note].adjustY].join(' '))} transform={['scale(', NoteSVG[Note.note].scale1, NoteSVG[Note.note].scale2, ')'].join(' ')} d={[NoteSVG[Note.note].data].join(' ')}/>
-//               <Rect
-//                 x={[((x)*(SCREEN_WIDTH/11)) + mesureLength*NoteSVG[Note.note].HitBoxX].join(' ')}
-//                 y={[((y)*(SCREEN_HEIGHT/8)) + NoteSVG[Note.note].HitBoxY + (NoteSVG[Note.note].flipY*(pitch)*SCREEN_HEIGHT/110)].join(' ')}
-//                 width={[NoteSVG[Note.note].flipX * (mesureLength/1.1)].join(' ')}
-//                 height={[NoteSVG[Note.note].flipY * (-start/1.6)].join(' ')}
-//                 fill="none"
-//                 strokeWidth="0"
-//                 onPress={this.pressHandler.bind(this, Note)}
-//               />
-//             </G>
-//         )
-//       }
-//
-//       // setNotes(Notes){
-//       //   let NotesL = [];
-//       //   for (let i = 0; i < NotesList.length; i++) {
-//       //     NotesL.push(this.Notes(Notes[i]))
-//       //   }
-//       //     return NotesL;
-//       // }
-//
-//       render(){
-//
-//       }
-//
-// };
+// <Svg height={[screenSize].join(' ')}  width="100%">
+//   {this.setTitle("Steven is the Best")}
+//   {this.lineSection()}
+//   {this.lineSection()}
+//   {NotesList}
+// </Svg>
 
   function mapStateToProps(state) {}
 
@@ -342,19 +338,3 @@ class EditMusicScreen extends React.Component {
   });
 
   export default connect(mapStateToProps, mapDispatchToProps)(EditMusicScreen);
-
-
-  // <G x={[mesureLength].join(' ')} y={[start].join(' ')} onPressIn={this.pressHandler.bind(this,1, 1)}><Path fill="white" d={["M0 0 V", start/2, " H", 4.2*mesureLength," V0 Z"].join(' ')} /></G>
-  // <G x={[mesureLength + 4.2*mesureLength].join(' ')} y={[start].join(' ')} onPressIn={this.pressHandler.bind(this,1, 2)}><Path fill="white" d={["M0 0 V", start/2, " H", 4.2*mesureLength," V0 Z"].join(' ')} /></G>
-  // <G x={[mesureLength].join(' ')} y={[2*start].join(' ')} onPressIn={this.pressHandler.bind(this,2, 1)}><Path fill="white" d={["M0 0 V", start/2, " H", 4.2*mesureLength," V0 Z"].join(' ')} /></G>
-  // <G x={[mesureLength + 4.2*mesureLength].join(' ')} y={[2*start].join(' ')} onPressIn={this.pressHandler.bind(this,2, 2)}><Path fill="white" d={["M0 0 V", start/2, " H", 4.2*mesureLength," V0 Z"].join(' ')} /></G>
-  // <G x={[mesureLength].join(' ')} y={[3*start].join(' ')} onPressIn={this.pressHandler.bind(this,3, 1)}><Path fill="white" d={["M0 0 V", start/2, " H", 4.2*mesureLength," V0 Z"].join(' ')} /></G>
-  // <G x={[mesureLength + 4.2*mesureLength].join(' ')} y={[3*start].join(' ')} onPressIn={this.pressHandler.bind(this,3, 2)}><Path fill="white" d={["M0 0 V", start/2, " H", 4.2*mesureLength," V0 Z"].join(' ')} /></G>
-  // <G x={[mesureLength].join(' ')} y={[4*start].join(' ')} onPressIn={this.pressHandler.bind(this,4, 1)}><Path fill="white" d={["M0 0 V", start/2, " H", 4.2*mesureLength," V0 Z"].join(' ')} /></G>
-  // <G x={[mesureLength + 4.2*mesureLength].join(' ')} y={[4*start].join(' ')} onPressIn={this.pressHandler.bind(this,4, 2)}><Path fill="white" d={["M0 0 V", start/2, " H", 4.2*mesureLength," V0 Z"].join(' ')} /></G>
-  // <G x={[mesureLength].join(' ')} y={[5*start].join(' ')} onPressIn={this.pressHandler.bind(this,5, 1)}><Path fill="white" d={["M0 0 V", start/2, " H", 4.2*mesureLength," V0 Z"].join(' ')} /></G>
-  // <G x={[mesureLength + 4.2*mesureLength].join(' ')} y={[5*start].join(' ')} onPressIn={this.pressHandler.bind(this,5, 2)}><Path fill="white" d={["M0 0 V", start/2, " H", 4.2*mesureLength," V0 Z"].join(' ')} /></G>
-  // <G x={[mesureLength].join(' ')} y={[6*start].join(' ')} onPressIn={this.pressHandler.bind(this,6, 1)}><Path fill="white" d={["M0 0 V", start/2, " H", 4.2*mesureLength," V0 Z"].join(' ')} /></G>
-  // <G x={[mesureLength + 4.2*mesureLength].join(' ')} y={[6*start].join(' ')} onPressIn={this.pressHandler.bind(this,6, 2)}><Path fill="white" d={["M0 0 V", start/2, " H", 4.2*mesureLength," V0 Z"].join(' ')} /></G>
-  // <G x={[mesureLength].join(' ')} y={[7*start].join(' ')} onPressIn={this.pressHandler.bind(this,7, 1)}><Path fill="white" d={["M0 0 V", start/2, " H", 4.2*mesureLength," V0 Z"].join(' ')} /></G>
-  // <G x={[mesureLength + 4.2*mesureLength].join(' ')} y={[7*start].join(' ')} onPressIn={this.pressHandler.bind(this,7, 2)}><Path fill="white" d={["M0 0 V", start/2, " H", 4.2*mesureLength," V0 Z"].join(' ')} /></G>
