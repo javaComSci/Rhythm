@@ -65,7 +65,7 @@ class NoteObjects extends React.Component {
   // </TouchableOpacity>
 
   render(){
-    console.log("RENDERING!!!!!!!!!\n");
+    console.log("RENDERING!!!!!\n");
     console.log(this.props);
     let mesureLength = SCREEN_WIDTH/10;
     let start = SCREEN_HEIGHT/8;
