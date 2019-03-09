@@ -715,7 +715,7 @@ def closest_row(er, staff_lines):
 
 
 if __name__ == "__main__":
-	mask, SOL, sl = full_partition("ExamplePredictions/DATA/file11.jpg")
+	mask, SOL, sl = full_partition("ExamplePredictions/DATA/file15.jpg")
 	print_objects(mask,SOL,sl,path="ExamplePredictions/predictions",staff_lines=True)
 
 
