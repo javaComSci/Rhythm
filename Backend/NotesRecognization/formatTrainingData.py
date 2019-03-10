@@ -22,14 +22,14 @@ def splitData(symbols):
 		symbolName = re.split('/', symbol)[2]
 		translations[count] = symbolName
 
-		trainingIn = np.vstack((trainingIn, symbols[symbol][1:451]))
+		trainingIn = np.vstack((trainingIn, symbols[symbol][1:851]))
 
-		currTrainingOut = np.array(np.ones(450) * count).reshape((450, 1))
+		currTrainingOut = np.array(np.ones(850) * count).reshape((850, 1))
 		trainingOut = np.vstack((trainingOut, currTrainingOut))
 
-		testingIn = np.vstack((testingIn, symbols[symbol][451:]))
+		testingIn = np.vstack((testingIn, symbols[symbol][851:]))
 
-		currTestingOut = np.array((np.ones(len(symbols[symbol])-451) * count)).reshape(len(symbols[symbol])-451, 1)
+		currTestingOut = np.array((np.ones(len(symbols[symbol])-851) * count)).reshape(len(symbols[symbol])-851, 1)
 		testingOut = np.vstack((testingOut, currTestingOut))
 
 		count += 1

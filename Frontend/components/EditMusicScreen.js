@@ -55,8 +55,13 @@ class NoteObjects extends React.Component {
   }
 
   render(){
+<<<<<<< HEAD
     // console.log("Rendering Notes\n");
     // console.log(this.props);
+=======
+    console.log("RENDERING!!!!!\n");
+    console.log(this.props);
+>>>>>>> 173a50ac342918eca55cbf3558f91aa7c6637b38
     let mesureLength = SCREEN_WIDTH/10;
     let start = SCREEN_HEIGHT/8;
     let betweenNotes = SCREEN_WIDTH/11;

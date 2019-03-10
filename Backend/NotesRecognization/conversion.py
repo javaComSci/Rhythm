@@ -11,7 +11,7 @@ class JCpenny:
 		self.pitch = pitch
 
 if __name__ == "__main__":
-	file_path = "ExamplePredictions/DATA/test3.jpg"
+	file_path = "ExamplePredictions/DATA/file19.jpg"
 
 	mask, SOL, staff_lines = partition.full_partition(file_path)
 

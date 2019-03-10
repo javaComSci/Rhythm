@@ -99,15 +99,24 @@ def trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut):
 
 
 	# create the layers that could be used for hyperparameter tuning - categorical cross enrotpy
-	layersForTraining = [ [[50, 'relu'], [20, 'relu'], [2, 'softmax'] ],
-	[ [20, 'relu'], [15, 'tanh'], [2, 'softmax'] ],
-	[ [50, 'relu'], [2, 'softmax'] ],
-	[ [40, 'tanh'], [2, 'softmax'] ],
-	[ [50, 'sigmoid'], [2, 'softmax'] ],
+	# layersForTraining = [ [[50, 'relu'], [20, 'relu'], [2, 'softmax'] ],
+	# [ [20, 'relu'], [15, 'tanh'], [2, 'softmax'] ],
+	# [ [50, 'relu'], [2, 'softmax'] ],
+	# [ [40, 'tanh'], [2, 'softmax'] ],
+	# [ [50, 'sigmoid'], [2, 'softmax'] ],
+	# ]
+
+	# create the layers that could be used for hyperparameter tuning - binary cross enrotpy
+	layersForTraining = [ [[50, 'relu'], [20, 'relu'], [1, 'sigmoid'] ],
+	[ [20, 'relu'], [15, 'tanh'], [1, 'sigmoid'] ],
+	[ [50, 'relu'], [1, 'sigmoid'] ],
+	[ [40, 'tanh'], [1, 'sigmoid'] ],
+	[ [50, 'sigmoid'], [1, 'sigmoid'] ],
 	]
 
 	# perform hyperparameter tuning
-	model = hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam', epochs=8)
+	# model = hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam', epochs=8)
+	model = hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, layersForTraining, 'binary_crossentropy', 'adam', epochs=8)
 
 	# save the best model for the general NN
 	model.save('general_model.h5')
@@ -140,7 +149,15 @@ def testGeneralNN(testingIn, testingOut):
 	overallPredictions = -np.ones((len(testingOut),1))
 
 	for i in range(predictions.shape[0]):
-		overallPredictions[i] = np.argmax(predictions[i])
+		# predictions with categorical cross entorpy
+		# overallPredictions[i] = np.argmax(predictions[i])
+
+		# predictions with binary classification
+		if predictions[i] > .5:
+			overallPredictions[i] = 1
+		else:
+			overallPredictions[i] = 0
+
 		print("Prediction:", overallPredictions[i], "True Label", testingOut[i])
 
 		# showing the incorrect image
@@ -153,12 +170,12 @@ def testGeneralNN(testingIn, testingOut):
 		# 	break
 
 		# show the example of the image and the value wanted
-		# if i % 1000 == 0 and overallPredictions[i] == testingOut[i]:
-		# 	testing = testingIn[i]
-		# 	testing = testing * 255
-		# 	testing = testing.reshape(70, 50)
-		# 	img = Image.fromarray(testing)
-		# 	img.show()
+		if i % 200 == 0 and overallPredictions[i] != testingOut[i]:
+			testing = testingIn[i]
+			testing = testing * 255
+			testing = testing.reshape(70, 50)
+			img = Image.fromarray(testing)
+			img.show()
 
 	print("Accuracy on general testing data:", (np.sum(overallPredictions == testingOut)+0.0)/len(testingOut))
 
@@ -315,7 +332,7 @@ def testClefNN(testingIn, testingOut):
 		# 	break
 
 		# show the example of the image and the value wanted
-		if i % 99 == 0 and overallPredictions[i] == clefTestingOut[i]:
+		if i % 999 == 0 and overallPredictions[i] == clefTestingOut[i]:
 			print("Prediction:", overallPredictions[i], "True Label", clefTestingOut[i])
 			testing = clefTestingIn[i]
 			testing = testing * 255
@@ -486,7 +503,7 @@ def testNoteNN(testingIn, testingOut):
 		print("Prediction:", overallPredictions[i], "True Label", notesTestingOut[i])
 
 		# showing the incorrect image
-		# if overallPredictions[i] != notesTestingOut[i]:
+		# if i % 50 == 0 and overallPredictions[i] != notesTestingOut[i]:
 		# 	testing = notesTestingIn[i]
 		# 	testing = testing * 255
 		# 	testing = testing.reshape(70, 50)
@@ -495,13 +512,13 @@ def testNoteNN(testingIn, testingOut):
 		# 	break
 
 		# show the example of the image and the value wanted
-		if i % 99 == 0 and overallPredictions[i] == notesTestingOut[i]:
-			print("Prediction:", overallPredictions[i], "True Label", notesTestingOut[i])
-			testing = notesTestingIn[i]
-			testing = testing * 255
-			testing = testing.reshape(70, 50)
-			img = Image.fromarray(testing)
-			img.show()
+		# if i % 99 == 0 and overallPredictions[i] == notesTestingOut[i]:
+		# 	print("Prediction:", overallPredictions[i], "True Label", notesTestingOut[i])
+		# 	testing = notesTestingIn[i]
+		# 	testing = testing * 255
+		# 	testing = testing.reshape(70, 50)
+		# 	img = Image.fromarray(testing)
+		# 	img.show()
 			
 
 	print("Accuracy on notes testing data:", (np.sum(overallPredictions == notesTestingOut)+0.0)/len(notesTestingOut))
@@ -566,12 +583,12 @@ def trainExtrasNN(trainingIn, trainingOut, testingIn, testingOut):
 	
 
 	# setup layers for hyperparameter tuning
-	layersForTraining = [ [[50, 'relu'], [20, 'relu'], [3, 'softmax'] ],
-	[ [70, 'relu'], [30, 'relu'], [3, 'softmax'] ],
-	[ [90, 'relu'], [40, 'relu'], [3, 'softmax'] ],
-	[ [100, 'relu'], [50, 'relu'], [3, 'softmax'] ],
-	[ [30, 'relu'], [15, 'relu'], [3, 'softmax'] ],
-	[ [50, 'sigmoid'], [3, 'softmax'] ],
+	layersForTraining = [ [[50, 'relu'], [20, 'relu'], [2, 'softmax'] ],
+	[ [70, 'relu'], [30, 'relu'], [2, 'softmax'] ],
+	[ [90, 'relu'], [40, 'relu'], [2, 'softmax'] ],
+	[ [100, 'relu'], [50, 'relu'], [2, 'softmax'] ],
+	[ [30, 'relu'], [15, 'relu'], [2, 'softmax'] ],
+	[ [50, 'sigmoid'], [2, 'softmax'] ],
 	]
 
 	# obtain the best model from hyperparameter tuning
@@ -722,7 +739,7 @@ def trainRestNN(trainingIn, trainingOut, testingIn, testingOut):
 	]
 
 	# obtain the best model from hyperparameter tuning
-	model = hyperparameterTuning(restTrainingIn, restTrainingOut, restTestingIn, restTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam', epochs=8)
+	model = hyperparameterTuning(restTrainingIn, restTrainingOut, restTestingIn, restTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam', epochs=3)
 
 	# save the model for later use
 	model.save('rest_model.h5')
@@ -784,7 +801,7 @@ def testRestNN(testingIn, testingOut):
 		# 	break
 
 		# show the example of the image and the value wanted
-		if i % 50 == 0 and overallPredictions[i] == restTestingOut[i]:
+		if i % 70 == 0 and overallPredictions[i] == restTestingOut[i]:
 			print("Prediction:", overallPredictions[i], "True Label", restTestingOut[i])
 			testing = restTestingIn[i]
 			testing = testing * 255
@@ -961,22 +978,22 @@ def testRealNoteNN(testingIn, testingOut):
 		print("Prediction:", overallPredictions[i], "True Label", realNoteTestingOut[i])
 
 		# showing the incorrect image
-		# if overallPredictions[i] != realNoteTestingOut[i]:
-		# 	testing = realNoteTestingIn[i]
-		# 	testing = testing * 255
-		# 	testing = testing.reshape(70, 50)
-		# 	img = Image.fromarray(testing)
-		# 	img.show()
-		# 	break
-
-		# show the example of the image and the value wanted
-		if i % 50 == 0 and overallPredictions[i] == realNoteTestingOut[i]:
-			print("Prediction:", overallPredictions[i], "True Label", realNoteTestingOut[i])
+		if i % 1 == 0 and overallPredictions[i] != realNoteTestingOut[i]:
 			testing = realNoteTestingIn[i]
 			testing = testing * 255
 			testing = testing.reshape(70, 50)
 			img = Image.fromarray(testing)
 			img.show()
+			break
+
+		# show the example of the image and the value wanted
+		# if i % 50 == 0 and overallPredictions[i] == realNoteTestingOut[i]:
+		# 	print("Prediction:", overallPredictions[i], "True Label", realNoteTestingOut[i])
+		# 	testing = realNoteTestingIn[i]
+		# 	testing = testing * 255
+		# 	testing = testing.reshape(70, 50)
+		# 	img = Image.fromarray(testing)
+		# 	img.show()
 			
 
 	print("Accuracy on real note testing data:", (np.sum(overallPredictions == realNoteTestingOut)+0.0)/len(realNoteTestingOut))
@@ -1065,18 +1082,19 @@ def checkPredictions(testingInput, testingOut):
 	incorrect = 0
 	correct = 0
 
-	for t in range(0, testingInput.shape[0], 50):
+	for t in range(0, testingInput.shape[0], 30):
 
 		test = testingInput[t].reshape((1, 3500))
 		prediction = predict(test)
 
 		print("PREDICTION: ", prediction[0][0], "ACTUAL:", stringOutputs[t])
 
-		# testing = testingInput[t]
-		# testing = testing * 255
-		# testing = testing.reshape(70, 50)
-		# img = Image.fromarray(testing)
-		# img.show()
+		if prediction[0][0] == stringOutputs[t]:
+			testing = testingInput[t]
+			testing = testing * 255
+			testing = testing.reshape(70, 50)
+			img = Image.fromarray(testing)
+			img.show()
 
 		if prediction[0][0] == stringOutputs[t]:
 			correct += 1
@@ -1119,7 +1137,13 @@ def predict(testingIn):
 			for i in range(generalPredictions.shape[0]):
 
 				# find the value that was predicted
-				overallPredictions[i] = np.argmax(generalPredictions[i])
+				# overallPredictions[i] = np.argmax(generalPredictions[i])
+
+				# find the value that was predicted
+				if generalPredictions[i] < 0.5:
+					overallPredictions[i] = 0
+				else:
+					overallPredictions[i] = 1
 
 				# if it was a clef
 				if overallPredictions[i] == 0:
@@ -1259,7 +1283,7 @@ def predict(testingIn):
 										elif restPrediction == 1:
 											stringPredictions.append('Quarter-Rest')
 										elif restPrediction == 2:
-											stringPredictions.append('Half-Rest')
+											stringPredictions.append('Whole-Half-Rest')
 
 										return stringPredictions, testingIn
 
@@ -1287,4 +1311,4 @@ if __name__ == '__main__':
 	# trainExtrasNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testExtrasNN(testingIn, testingOut)
 
-	checkPredictions(testingIn, testingOut)
+	# checkPredictions(testingIn, testingOut)
