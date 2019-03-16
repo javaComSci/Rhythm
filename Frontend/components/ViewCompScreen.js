@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, TextInput, TouchableHighlight, FlatList, TouchableOpacity, ScrollView, Text, View } from 'react-native';
+import { Button, TextInput, TouchableHighlight, FlatList, TouchableOpacity, ScrollView, Text, View, ImageBackground } from 'react-native';
 import { Icon } from 'react-native-elements'
 import { connect } from 'react-redux';
 import DialogInput from 'react-native-dialog-input';
@@ -8,6 +8,7 @@ import { addEmail } from '../actions/addEmail'
 import { addUser } from '../actions/addUserID';
 import { addComposition } from '../actions/addComposition';
 var styles = require('../style')
+var background = require('../assets/backgroundImage.png')
 
 /*
 Composition class
@@ -42,8 +43,7 @@ class ViewCompScreen extends React.Component {
         this.sheetList = [];
         this.compList = this.props.compositions.map(composition => ({ value: composition.key, label: composition.title, color: "red" }));
         this.compList.forEach(element => {
-            if (element.value == this.props.navigation.getParam('compositionID'))
-            {
+            if (element.value == this.props.navigation.getParam('compositionID')) {
                 this.compList.splice(this.compList.indexOf(element), 1);
             }
         });
@@ -130,7 +130,7 @@ class ViewCompScreen extends React.Component {
             deleteCompo: true,
         });
     }
- //{"comp_id": 146, "sheet_id": 19}
+    //{"comp_id": 146, "sheet_id": 19}
     duplicateComposition() {
         console.log("called")
         console.log(this.state.selectedComposition);
@@ -146,7 +146,7 @@ class ViewCompScreen extends React.Component {
             }),
         }).then((res) => {
             console.log("DUP res", res)
-            this.setState({duplicateVisible: false})
+            this.setState({ duplicateVisible: false })
         }).catch((res) => {
             console.log("err", res)
         });
@@ -309,64 +309,70 @@ class ViewCompScreen extends React.Component {
         const compositionTitle = navigation.getParam('compositionTitle', 'NO_TITLE')
         const compositionDescription = navigation.getParam('compositionDescription', '')
         return (
-            <View style={styles.container}>
-                <DialogInput isDialogVisible={this.state.isDialogVisible}
-                    title={"Edit Sheet Name"}
-                    hintInput={"New Title"}
-                    submitInput={(inputText) => {
-                        // edit title
-                        this.editSheet(inputText, this.state.toEdit[1])
-                        this.setState({ isDialogVisible: false, toEdit: '' })
-                    }}
-                    closeDialog={() => { this.setState({ isDialogVisible: false, toEdit: '' }) }}>
-                </DialogInput>
-                <View>
-                    <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40, width: "80%" }}> {compositionTitle} </Text>
-                    <View style={{ flexDirection: "row" }}>
-                        <TouchableHighlight style={styles.menuButton} onPress={() => this.createComposition()}>
-                            <Text style={styles.buttonText}>Add Music</Text>
-                        </TouchableHighlight>
-                        <TouchableHighlight style={styles.menuButton} onPress={() => this.setState({ "duplicateVisible": true })}>
-                            <Text style={styles.buttonText}>Duplicate Music</Text>
-                        </TouchableHighlight>
-                        <TouchableHighlight style={styles.menuButton} onPress={() => this.deleteComposition()}>
-                            <Text style={styles.buttonText}>Delete Music</Text>
-                        </TouchableHighlight>
+            <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
+                <View style={styles.container}>
+                    <DialogInput isDialogVisible={this.state.isDialogVisible}
+                        title={"Edit Sheet Name"}
+                        hintInput={"New Title"}
+                        submitInput={(inputText) => {
+                            // edit title
+                            this.editSheet(inputText, this.state.toEdit[1])
+                            this.setState({ isDialogVisible: false, toEdit: '' })
+                        }}
+                        closeDialog={() => { this.setState({ isDialogVisible: false, toEdit: '' }) }}>
+                    </DialogInput>
+                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 40, width: "80%" }}> {compositionTitle} </Text>
+                    <View style={styles.operatorContainer}>
+                        <TouchableOpacity
+                            onPress={() => this.createComposition()}
+                            style={styles.addButton}
+                        >
+                            <Text style={styles.menuText}>+</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.neutralButton} onPress={() => this.setState({ "duplicateVisible": true })}>
+                            <Text style={styles.buttonText}>Duplicate</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.neutralButton} onPress={() => this.props.navigation.navigate('EditMusicScreen')}>
+                            <Text style={styles.buttonText}>Edit</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.minusButton} onPress={() => this.deleteComposition()}>
+                            <Text style={styles.menuText}>-</Text>
+                        </TouchableOpacity>
                     </View>
-                    <Button onPress={() => this.props.navigation.navigate('EditMusicScreen')} title="Jesus" />
-                </View>
-                <Text>{compositionDescription}</Text>
-                <ScrollView>
-                    <FlatList
-                        data={this.state.sheet_music}
-                        extraData={this.state}
-                        renderItem={({ item }) =>
-                            <View style={styles.compositionContainer}>
-                                <TouchableOpacity
-                                    style={styles.compositionItem}
-                                    onLongPress={(e) => {
-                                        console.log("pepper")
-                                        this.setState({
-                                            isDialogVisible: true,
-                                            toEdit: [item.getTitle(), item.getID()], // getdescription actually gets the composition id
-                                        })
-                                    }}
-                                >
-                                    <Text style={{ color: '#f19393', fontSize: 40 }}>{item.getTitle()}</Text>
-                                </TouchableOpacity>
-                                <View style={styles.lineBreak} />
-                            </View>}
-                    />
-                </ScrollView>
-                <View style={styles.footer}>
-                    <TouchableOpacity
-                        onPress={() => this.props.navigation.navigate('Composition')}
-                        style={styles.navButton}
-                    >
-                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Back </Text>
-                    </TouchableOpacity>
-                </View>
-            </View >
+
+                    <Text>{compositionDescription}</Text>
+                    <ScrollView>
+                        <FlatList
+                            data={this.state.sheet_music}
+                            extraData={this.state}
+                            renderItem={({ item }) =>
+                                <View style={styles.compositionContainer}>
+                                    <TouchableOpacity
+                                        style={styles.compositionItem}
+                                        onLongPress={(e) => {
+                                            console.log("pepper")
+                                            this.setState({
+                                                isDialogVisible: true,
+                                                toEdit: [item.getTitle(), item.getID()], // getdescription actually gets the composition id
+                                            })
+                                        }}
+                                    >
+                                        <Text style={{ color: 'white', fontSize: 40 }}>{item.getTitle()}</Text>
+                                    </TouchableOpacity>
+                                    <View style={styles.lineBreak} />
+                                </View>}
+                        />
+                    </ScrollView>
+                    <View style={styles.footer}>
+                        <TouchableOpacity
+                            onPress={() => this.props.navigation.navigate('Composition')}
+                            style={styles.navButton}
+                        >
+                            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 40 }}> Back </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View >
+            </ImageBackground>
         );
     }
 };

@@ -1,9 +1,9 @@
 import React from 'react';
-import { TouchableOpacity, ScrollView, StyleSheet, Text, View, Button, KeyboardAvoidingView, TextInput } from 'react-native';
+import { TouchableOpacity, ScrollView, StyleSheet, Text, View, Button, KeyboardAvoidingView, TextInput, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
 
 var styles = require('../style')
-
+var background = require('../assets/backgroundImage.png')
 
 /* Profile Screen */
 // Provides basic info regarding user's email, allows option to change given email
@@ -148,43 +148,69 @@ class ProfileScreen extends React.Component {
     render() {
         if (this.state.edit == true) {
             return (
-                <View style={styles.container}>
-                    <View>
-                        <View style={styles.textHolder}>
-                            <TextInput style={{ marginTop: '70%', height: 40, width: '90%', borderColor: '#f19393', borderWidth: 1, fontWeight: 'bold', }}
-                                placeholder="Name"
-                                onChangeText={(nameText) => this.setState({ nameText })}
-                                value={this.state.nameText} />
-                            <TextInput style={{ marginTop: 10, height: 40, width: '90%', borderColor: '#f19393', borderWidth: 1, fontWeight: 'bold', }}
-                                placeholder="Email"
-                                onChangeText={(emailText) => this.setState({ emailText })}
-                                value={this.state.emailText} />
+                <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
+                    <View style={styles.container}>
+                        <View>
+                            <KeyboardAvoidingView keyboardVerticalOffset={-500} behavior="padding" style={styles.textHolder} enabled>
+                                <TextInput style={{ marginTop: '70%', height: 40, width: '90%', borderColor: '#f19393', borderWidth: 1, fontWeight: 'bold', }}
+                                    placeholder="Name"
+                                    onChangeText={(nameText) => this.setState({ nameText })}
+                                    value={this.state.nameText} />
+                                <TextInput style={{ marginTop: 10, height: 40, width: '90%', borderColor: '#f19393', borderWidth: 1, fontWeight: 'bold', }}
+                                    placeholder="Email"
+                                    onChangeText={(emailText) => this.setState({ emailText })}
+                                    value={this.state.emailText} />
+                            </KeyboardAvoidingView>
+                            <View style={styles.footer}>
+                                <TouchableOpacity
+                                    style={styles.navButton}
+                                    onPress={() => this.doneEdit()}
+                                >
+                                    <Text style={{ color: 'white', fontSize: 40 }}> Submit </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.footer}>
+                                <TouchableOpacity
+                                    onPress={() => { this.setState({ edit: false, }) }}
+                                    style={styles.navButton}
+                                >
+                                    <Text style={{ color: 'white', fontSize: 40 }}> Cancel </Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                        <Button style={{ Color: '#f19393', fontWeight: 'bold', }} onPress={() => this.doneEdit()} title="Done"> </Button>
-                    </View>
-                </View >
+                    </View >
+                </ImageBackground>
             );
         }
 
         return (
-            <View style={styles.container}>
-                <View>
-                    <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 75 }}> Profile </Text>
+            <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
+                <View style={styles.container}>
+                    <View>
+                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 75 }}> Profile </Text>
+                    </View>
+                    <ScrollView style={{ flex: 1, marginLeft: 50 }}>
+                        <Text style={{ color: 'white', fontSize: 40 }}>{this.state.name ? this.state.name != '' : "Unnamed"} </Text>
+                        <Text style={{ color: 'white', fontSize: 20 }}>{this.state.email} </Text>
+                    </ScrollView>
+                    <View style={styles.footer}>
+                        <TouchableOpacity
+                            onPress={() => this.editProfile()}
+                            style={styles.navButton}
+                        >
+                            <Text style={{ color: 'white', fontSize: 40 }}> Edit </Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.footer}>
+                        <TouchableOpacity
+                            onPress={() => this.props.navigation.navigate('Home')}
+                            style={styles.navButton}
+                        >
+                            <Text style={{ color: 'white', fontSize: 40 }}> Home </Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-                <ScrollView>
-                    <Text style={{ color: '#f19393', fontSize: 40 }}>Name: {this.state.name} </Text>
-                    <Text style={{ color: '#f19393', fontSize: 20 }}>Email: {this.state.email} </Text>
-                </ScrollView>
-                <Button onPress={() => this.editProfile()} title="Edit Profile"> </Button>
-                <View style={styles.footer}>
-                    <TouchableOpacity
-                        onPress={() => this.props.navigation.navigate('Home')}
-                        style={styles.navButton}
-                    >
-                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Home </Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+            </ImageBackground>
         );
     }
 };
