@@ -150,35 +150,38 @@ class ProfileScreen extends React.Component {
             return (
                 <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
                     <View style={styles.container}>
+                        <View></View>
+                        <ScrollView>
+                        </ScrollView>
                         <View>
                             <KeyboardAvoidingView keyboardVerticalOffset={-500} behavior="padding" style={styles.textHolder} enabled>
-                                <TextInput style={{ marginTop: '70%', height: 40, width: '90%', borderColor: '#f19393', borderWidth: 1, fontWeight: 'bold', }}
+                                <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1, color: "white" }}
                                     placeholder="Name"
                                     onChangeText={(nameText) => this.setState({ nameText })}
                                     value={this.state.nameText} />
-                                <TextInput style={{ marginTop: 10, height: 40, width: '90%', borderColor: '#f19393', borderWidth: 1, fontWeight: 'bold', }}
+                                <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1, color: "white" }}
                                     placeholder="Email"
                                     onChangeText={(emailText) => this.setState({ emailText })}
                                     value={this.state.emailText} />
                             </KeyboardAvoidingView>
-                            <View style={styles.footer}>
-                                <TouchableOpacity
-                                    style={styles.navButton}
-                                    onPress={() => this.doneEdit()}
-                                >
-                                    <Text style={{ color: 'white', fontSize: 40 }}> Submit </Text>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={styles.footer}>
-                                <TouchableOpacity
-                                    onPress={() => { this.setState({ edit: false, }) }}
-                                    style={styles.navButton}
-                                >
-                                    <Text style={{ color: 'white', fontSize: 40 }}> Cancel </Text>
-                                </TouchableOpacity>
-                            </View>
                         </View>
-                    </View >
+                        <View style={styles.footer}>
+                            <TouchableOpacity
+                                style={styles.navButton}
+                                onPress={() => this.doneEdit()}
+                            >
+                                <Text style={{ color: 'white', fontSize: 40 }}> Submit </Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.footer}>
+                            <TouchableOpacity
+                                onPress={() => { this.setState({ edit: false, }) }}
+                                style={styles.navButton}
+                            >
+                                <Text style={{ color: 'white', fontSize: 40 }}> Cancel </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                 </ImageBackground>
             );
         }
@@ -190,7 +193,7 @@ class ProfileScreen extends React.Component {
                         <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 75 }}> Profile </Text>
                     </View>
                     <ScrollView style={{ flex: 1, marginLeft: 50 }}>
-                        <Text style={{ color: 'white', fontSize: 40 }}>{this.state.name ? this.state.name != '' : "Unnamed"} </Text>
+                        <Text style={{ color: 'white', fontSize: 40 }}>{this.state.name} </Text>
                         <Text style={{ color: 'white', fontSize: 20 }}>{this.state.email} </Text>
                     </ScrollView>
                     <View style={styles.footer}>

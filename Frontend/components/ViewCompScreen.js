@@ -214,25 +214,29 @@ class ViewCompScreen extends React.Component {
         };
         if (this.state.deleteCompo) {
             return (
-                <View style={styles.container}>
-                    <View></View>
-                    <ScrollView>
-                    </ScrollView>
-                    <View>
-                        <View style={styles.textHolder}>
-                            <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1 }}
-                                placeholder="DeleteText"
-                                onChangeText={(deleteText) => this.setState({ deleteText })}
-                                value={this.state.deleteText} />
-                        </View>
-                        <Button onPress={() => this.doneDeleteComposition()} title="Delete Sheet Music" />
-                        <View style={styles.footer}>
-                            <TouchableOpacity onPress={() => this.setState({ deleteCompo: false })} style={styles.navButton}>
-                                <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Back </Text>
-                            </TouchableOpacity>
+                <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
+                    <View style={styles.container}>
+                        <View></View>
+                        <ScrollView>
+                        </ScrollView>
+                        <View>
+                            <View style={styles.textHolder}>
+                                <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1 }}
+                                    placeholder="Sheet to Delete"
+                                    onChangeText={(deleteText) => this.setState({ deleteText })}
+                                    value={this.state.deleteText} />
+                                <TouchableOpacity style={styles.openButton} onPress={() => this.doneDeleteComposition()}>
+                                    <Text style={{ color: 'white', fontSize: 40 }}>Delete</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.footer}>
+                                <TouchableOpacity onPress={() => this.setState({ deleteCompo: false })} style={styles.navButton}>
+                                    <Text style={{ color: 'white', fontSize: 40 }}> Back </Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
-                </View>
+                </ImageBackground>
             );
         }
         //{"comp_id": 146, "sheet_id": 19}
@@ -283,25 +287,29 @@ class ViewCompScreen extends React.Component {
         }
         if (this.state.newCompo) {
             return (
-                <View style={styles.container}>
-                    <View></View>
-                    <ScrollView>
-                    </ScrollView>
-                    <View>
-                        <View style={styles.textHolder}>
-                            <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1 }}
-                                placeholder="Title"
-                                onChangeText={(text) => this.setState({ text })}
-                                value={this.state.text} />
-                        </View>
-                        <Button onPress={() => this.doneComposition()} title="Create Sheet Music" />
-                        <View style={styles.footer}>
-                            <TouchableOpacity onPress={() => this.setState({ newCompo: false })} style={styles.navButton}>
-                                <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Back </Text>
-                            </TouchableOpacity>
+                <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
+                    <View style={styles.container}>
+                        <View></View>
+                        <ScrollView>
+                        </ScrollView>
+                        <View>
+                            <View style={styles.textHolder}>
+                                <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1 }}
+                                    placeholder="Title"
+                                    onChangeText={(text) => this.setState({ text })}
+                                    value={this.state.text} />
+                                <TouchableOpacity style={styles.openButton} onPress={() => this.doneComposition()}>
+                                    <Text style={{ color: 'white', fontSize: 40 }}>Create</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.footer}>
+                                <TouchableOpacity onPress={() => this.setState({ newCompo: false })} style={styles.navButton}>
+                                    <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Back </Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
-                </View>
+                </ImageBackground>
             );
         }
         const { navigation } = this.props;
@@ -340,7 +348,7 @@ class ViewCompScreen extends React.Component {
                         </TouchableOpacity>
                     </View>
 
-                    <Text>{compositionDescription}</Text>
+                    <Text style={{ color: 'white', }}>{compositionDescription}</Text>
                     <ScrollView>
                         <FlatList
                             data={this.state.sheet_music}

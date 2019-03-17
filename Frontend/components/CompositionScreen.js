@@ -174,17 +174,27 @@ class CompositionScreen extends React.Component {
     render() {
         if (this.state.deleteCompo == true) {
             return (
-                <View style={styles.container}>
-                    <View>
-                        <View style={styles.textHolder}>
-                            <TextInput style={{ marginTop: 200, height: 50, width: '80%', borderColor: 'gray', borderWidth: 1 }}
-                                placeholder="DeleteText"
-                                onChangeText={(deleteText) => this.setState({ deleteText })}
-                                value={this.state.deleteText} />
-                            <Button onPress={() => this.doneDeleteComposition()} title="Delete Composition" />
+                <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
+                    <View style={styles.container}>
+                        <View></View>
+                        <View>
+                            <View style={styles.textHolder}>
+                                <TextInput style={{ marginTop: 200, height: 50, width: '80%', borderColor: 'gray', borderWidth: 1 }}
+                                    placeholder="Composition to Delete"
+                                    onChangeText={(deleteText) => this.setState({ deleteText })}
+                                    value={this.state.deleteText} />
+                                <TouchableOpacity style={styles.openButton} onPress={() => this.doneDeleteComposition()}>
+                                    <Text style={{ color: 'white', fontSize: 40 }}>Delete</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
-                </View>
+                    <View style={styles.footer}>
+                        <TouchableOpacity onPress={() => this.setState({ deleteCompo: false })} style={styles.navButton}>
+                            <Text style={{ color: 'white', fontSize: 40 }}> Back </Text>
+                        </TouchableOpacity>
+                    </View>
+                </ImageBackground>
             );
         }
         if (this.state.newCompo == true) {
@@ -204,7 +214,9 @@ class CompositionScreen extends React.Component {
                                     placeholder="Description"
                                     onChangeText={(description) => this.setState({ description })}
                                     value={this.state.description} />
-                                <Button onPress={() => this.doneComposition()} title="Create Composition" />
+                                <TouchableOpacity style={styles.openButton} onPress={() => this.doneComposition()}>
+                                    <Text style={{ color: 'white', fontSize: 40 }}>Create</Text>
+                                </TouchableOpacity>
                             </KeyboardAvoidingView>
                             <View style={styles.footer}>
                                 <TouchableOpacity onPress={() => this.setState({ newCompo: false })} style={styles.navButton}>
