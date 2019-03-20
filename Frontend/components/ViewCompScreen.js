@@ -7,6 +7,10 @@ import RNPickerSelect from 'react-native-picker-select';
 import { addEmail } from '../actions/addEmail'
 import { addUser } from '../actions/addUserID';
 import { addComposition } from '../actions/addComposition';
+import DeleteSheetTemplate from './templates/DeleteSheetTemplate'
+import DuplicateSheetTemplate from './templates/DuplicateSheetTemplate'
+import NewSheetTemplate from './templates/NewSheetTemplate';
+import SheetScreenTemplate from './templates/SheetScreenTemplate';
 var styles = require('../style')
 var background = require('../assets/backgroundImage.png')
 
@@ -202,185 +206,23 @@ class ViewCompScreen extends React.Component {
     }
 
     render() {
-        const placeholder = {
-            label: 'Select sheet music...',
-            value: null,
-            color: "gray"
-        };
-        const placeholder2 = {
-            label: 'Select composition...',
-            value: null,
-            color: "gray"
-        };
         if (this.state.deleteCompo) {
             return (
-                <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
-                    <View style={styles.container}>
-                        <View></View>
-                        <ScrollView>
-                        </ScrollView>
-                        <View>
-                            <View style={styles.textHolder}>
-                                <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1 }}
-                                    placeholder="Sheet to Delete"
-                                    onChangeText={(deleteText) => this.setState({ deleteText })}
-                                    value={this.state.deleteText} />
-                                <TouchableOpacity style={styles.openButton} onPress={() => this.doneDeleteComposition()}>
-                                    <Text style={{ color: 'white', fontSize: 40 }}>Delete</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={styles.footer}>
-                                <TouchableOpacity onPress={() => this.setState({ deleteCompo: false })} style={styles.navButton}>
-                                    <Text style={{ color: 'white', fontSize: 40 }}> Back </Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                </ImageBackground>
+                DeleteSheetTemplate.call(this)
             );
         }
-        //{"comp_id": 146, "sheet_id": 19}
         if (this.state.duplicateVisible) {
             return (
-                <View style={styles.container}>
-                    <View>
-                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40, width: "80%" }}> Duplicate </Text>
-                    </View>
-                    <View>
-                        <RNPickerSelect
-                            placeholder={placeholder}
-                            items={this.sheetList}
-                            onValueChange={(value) => {
-                                this.setState({
-                                    selectedSheet: value,
-                                })
-                            }}>
-                        </RNPickerSelect>
-                    </View>
-                    <View style={styles.lineBreak} />
-                    <View>
-                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 30, width: "80%" }}> Select composition </Text>
-                    </View>
-                    <View>
-                        <RNPickerSelect
-                            placeholder={placeholder2}
-                            items={this.compList}
-                            onValueChange={(value) => {
-                                this.setState({
-                                    selectedComposition: value,
-                                })
-                            }}>
-                        </RNPickerSelect>
-                    </View>
-                    <View style={styles.footer}>
-                        <TouchableOpacity onPress={() => this.duplicateComposition()} style={styles.navButton}>
-                            <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Submit </Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.footer}>
-                        <TouchableOpacity onPress={() => this.setState({ duplicateVisible: false })} style={styles.navButton}>
-                            <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Back </Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                DuplicateSheetTemplate.call(this)
             )
         }
         if (this.state.newCompo) {
             return (
-                <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
-                    <View style={styles.container}>
-                        <View></View>
-                        <ScrollView>
-                        </ScrollView>
-                        <View>
-                            <View style={styles.textHolder}>
-                                <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1 }}
-                                    placeholder="Title"
-                                    onChangeText={(text) => this.setState({ text })}
-                                    value={this.state.text} />
-                                <TouchableOpacity style={styles.openButton} onPress={() => this.doneComposition()}>
-                                    <Text style={{ color: 'white', fontSize: 40 }}>Create</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={styles.footer}>
-                                <TouchableOpacity onPress={() => this.setState({ newCompo: false })} style={styles.navButton}>
-                                    <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Back </Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                </ImageBackground>
+                NewSheetTemplate.call(this)
             );
         }
-        const { navigation } = this.props;
-        const compositionID = navigation.getParam('compositionID', 'NO_ID');
-        const compositionTitle = navigation.getParam('compositionTitle', 'NO_TITLE')
-        const compositionDescription = navigation.getParam('compositionDescription', '')
         return (
-            <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
-                <View style={styles.container}>
-                    <DialogInput isDialogVisible={this.state.isDialogVisible}
-                        title={"Edit Sheet Name"}
-                        hintInput={"New Title"}
-                        submitInput={(inputText) => {
-                            // edit title
-                            this.editSheet(inputText, this.state.toEdit[1])
-                            this.setState({ isDialogVisible: false, toEdit: '' })
-                        }}
-                        closeDialog={() => { this.setState({ isDialogVisible: false, toEdit: '' }) }}>
-                    </DialogInput>
-                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 40, width: "80%" }}> {compositionTitle} </Text>
-                    <View style={styles.operatorContainer}>
-                        <TouchableOpacity
-                            onPress={() => this.createComposition()}
-                            style={styles.addButton}
-                        >
-                            <Text style={styles.menuText}>+</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.neutralButton} onPress={() => this.setState({ "duplicateVisible": true })}>
-                            <Text style={styles.buttonText}>Duplicate</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.neutralButton} onPress={() => this.props.navigation.navigate('EditMusicScreen')}>
-                            <Text style={styles.buttonText}>Edit</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.minusButton} onPress={() => this.deleteComposition()}>
-                            <Text style={styles.menuText}>-</Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    <Text style={{ color: 'white', }}>{compositionDescription}</Text>
-                    <ScrollView>
-                        <FlatList
-                            data={this.state.sheet_music}
-                            extraData={this.state}
-                            renderItem={({ item }) =>
-                                <View style={styles.compositionContainer}>
-                                    <TouchableOpacity
-                                        style={styles.compositionItem}
-                                        onLongPress={(e) => {
-                                            console.log("pepper")
-                                            this.setState({
-                                                isDialogVisible: true,
-                                                toEdit: [item.getTitle(), item.getID()], // getdescription actually gets the composition id
-                                            })
-                                        }}
-                                    >
-                                        <Text style={{ color: 'white', fontSize: 40 }}>{item.getTitle()}</Text>
-                                    </TouchableOpacity>
-                                    <View style={styles.lineBreak} />
-                                </View>}
-                        />
-                    </ScrollView>
-                    <View style={styles.footer}>
-                        <TouchableOpacity
-                            onPress={() => this.props.navigation.navigate('Composition')}
-                            style={styles.navButton}
-                        >
-                            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 40 }}> Back </Text>
-                        </TouchableOpacity>
-                    </View>
-                </View >
-            </ImageBackground>
+            SheetScreenTemplate.call(this)
         );
     }
 };

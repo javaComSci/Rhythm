@@ -2,10 +2,12 @@ import React from 'react';
 import { TextInput, FlatList, TouchableOpacity, Button, ScrollView, StyleSheet, Text, View, KeyboardAvoidingView, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
 import { Header } from 'react-navigation';
-import DialogInput from 'react-native-dialog-input';
 import { addEmail } from '../actions/addEmail'
 import { addUser } from '../actions/addUserID';
 import { addComposition } from '../actions/addComposition';
+import NewCompTemplate from './templates/NewCompTemplate'
+import DeleteCompTemplate from './templates/DeleteCompTemplate'
+import CompScreenTemplate from './templates/CompScreenTemplate'
 var styles = require('../style');
 var background = require('../assets/backgroundImage.png')
 
@@ -174,120 +176,16 @@ class CompositionScreen extends React.Component {
     render() {
         if (this.state.deleteCompo == true) {
             return (
-                <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
-                    <View style={styles.container}>
-                        <View></View>
-                        <View>
-                            <View style={styles.textHolder}>
-                                <TextInput style={{ marginTop: 200, height: 50, width: '80%', borderColor: 'gray', borderWidth: 1 }}
-                                    placeholder="Composition to Delete"
-                                    onChangeText={(deleteText) => this.setState({ deleteText })}
-                                    value={this.state.deleteText} />
-                                <TouchableOpacity style={styles.openButton} onPress={() => this.doneDeleteComposition()}>
-                                    <Text style={{ color: 'white', fontSize: 40 }}>Delete</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                    <View style={styles.footer}>
-                        <TouchableOpacity onPress={() => this.setState({ deleteCompo: false })} style={styles.navButton}>
-                            <Text style={{ color: 'white', fontSize: 40 }}> Back </Text>
-                        </TouchableOpacity>
-                    </View>
-                </ImageBackground>
+                DeleteCompTemplate.call(this)
             );
         }
         if (this.state.newCompo == true) {
             return (
-                <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
-                    <View style={styles.container}>
-                        <View></View>
-                        <ScrollView>
-                        </ScrollView>
-                        <View>
-                            <KeyboardAvoidingView keyboardVerticalOffset={-500} behavior="padding" style={styles.textHolder} enabled>
-                                <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1 }}
-                                    placeholder="Title"
-                                    onChangeText={(text) => this.setState({ text })}
-                                    value={this.state.text} />
-                                <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1 }}
-                                    placeholder="Description"
-                                    onChangeText={(description) => this.setState({ description })}
-                                    value={this.state.description} />
-                                <TouchableOpacity style={styles.openButton} onPress={() => this.doneComposition()}>
-                                    <Text style={{ color: 'white', fontSize: 40 }}>Create</Text>
-                                </TouchableOpacity>
-                            </KeyboardAvoidingView>
-                            <View style={styles.footer}>
-                                <TouchableOpacity onPress={() => this.setState({ newCompo: false })} style={styles.navButton}>
-                                    <Text style={{ color: 'white', fontSize: 40 }}> Back </Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                </ImageBackground>
+                NewCompTemplate.call(this)
             );
         }
         return (
-            <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
-                <View style={styles.container}>
-                    <DialogInput isDialogVisible={this.state.isDialogVisible}
-                        title={"Duplicate Composition"}
-                        hintInput={"New Composition Name"}
-                        submitInput={(inputText) => {
-                            // edit title
-                            // duplicate composition
-                            this.duplicateComposition(inputText)
-                            this.setState({ isDialogVisible: false, toEdit: '' })
-                        }}
-                        closeDialog={() => { this.setState({ isDialogVisible: false, toEdit: '' }) }}>
-                    </DialogInput>
-                    <View style={styles}>
-                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 40 }}> COMPOSITIONS </Text>
-                        <View style={styles.lineBreak} />
-                    </View>
-                    <View style={styles.operatorContainer}>
-                        <TouchableOpacity
-                            onPress={() => this.createComposition()}
-                            style={styles.addButton}
-                        >
-                            <Text style={styles.menuText}>+</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => this.deleteComposition()}
-                            style={styles.minusButton}
-                        >
-                            <Text style={styles.menuText}>-</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <ScrollView>
-                        <FlatList
-                            data={this.state.compositions}
-                            extraData={this.state}
-                            renderItem={({ item }) =>
-                                <View style={styles.compositionContainer}>
-                                    <TouchableOpacity
-                                        onPress={() => this.props.navigation.navigate('ViewCompScreen', { 'compositionID': item.getID(), 'compositionTitle': item.getTitle(), 'compositionDescription': item.getDescription() })}
-                                        style={styles.compositionItem}
-                                        onLongPress={(e) => {
-                                            this.setState({
-                                                isDialogVisible: true,
-                                                toEdit: [item.getTitle(), item.getID()], // getdescription actually gets the composition id
-                                            })
-                                        }}>
-                                        <Text style={{ color: 'white', fontSize: 40 }}>{item.getTitle()}</Text>
-                                    </TouchableOpacity>
-                                    <View style={styles.lineBreak} />
-                                </View>}
-                        />
-                    </ScrollView>
-                    <View style={styles.footer}>
-                        <TouchableOpacity onPress={() => this.props.navigation.navigate('Home')} style={styles.navButton}>
-                            <Text style={styles.menuText}> Home </Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </ImageBackground>
+            CompScreenTemplate.call(this)
         );
     }
 };
