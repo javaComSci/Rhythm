@@ -183,6 +183,8 @@ class EditMusicScreen extends React.Component {
   componentWillMount() {
     console.log("Component will mount!")
     let Extrarows = 0;
+    screenExtendSize = 0;
+    totalBeats = 0;
     NotesList = [];
     // for (let i = 0; i < sampleJson.notes.length; i++) {
     for (let i = 0; i < sampleJson.notes.length; i++) {
@@ -421,6 +423,8 @@ class EditMusicScreen extends React.Component {
 
   render(){
     console.log("First Render in note\n");
+    NotesListByMeasure = [];
+    // screenExtendSize = 0;
     this.initNotesListByMeasure();
     // console.log(NotesListByMeasure.props.note);
     // totalBeats = 0;
@@ -429,6 +433,7 @@ class EditMusicScreen extends React.Component {
     let start = SCREEN_HEIGHT/8;
     let betweenNotes = SCREEN_WIDTH/11;
     Section = 0;
+
     return (
       <View style={styles.container}>
         <Header

@@ -15,7 +15,7 @@ var HomeScreenTemplate = function () {
                 </ScrollView>
                 <View style={styles.footer}>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('Composition')} style={styles.navButton}>
-                        <Text style={styles.menuText}> Compositions </Text>
+                        <Text style={{color: 'white', fontSize: 40}}> Compositions </Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.footer}>
