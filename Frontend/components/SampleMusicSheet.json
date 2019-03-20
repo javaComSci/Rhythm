@@ -9,244 +9,49 @@
 	[
 		{
 			"note": 0,
-			"length": 1,
+			"length": 0,
 			"pitch": 1,
 		},
 		{
 			"note": 1,
-			"length": 1,
-			"pitch": 0,
-		},
-		{
-			"note": 2,
-			"length": 1,
-			"pitch": 1,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 2,
-		},
-		{
-			"note": 5,
-			"length": 1,
-			"pitch": 3,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 4,
-		},
-		{
-			"note": 3,
-			"length": 1,
+			"length": .5,
 			"pitch": 5,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 6,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 7,
-		},
-
-
-
-
-		{
-			"note": 0,
-			"length": 1,
-			"pitch": 1,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 0,
-		},
-		{
-			"note": 5,
-			"length": 1,
-			"pitch": 1,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 2,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 3,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 4,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 5,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 6,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 7,
-		},
-
-
-
-		{
-			"note": 0,
-			"length": 1,
-			"pitch": 1,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 0,
 		},
 		{
 			"note": 1,
-			"length": 1,
-			"pitch": 1,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 2,
-		},
-		{
-			"note": 3,
-			"length": 1,
+			"length": .5,
 			"pitch": 3,
 		},
+    {
+      "note": 1,
+      "length": .5,
+      "pitch": 3,
+    },
 		{
-			"note": 3,
-			"length": 1,
-			"pitch": 4,
-		},
-		{
-			"note": 3,
-			"length": 1,
+			"note": 1,
+			"length": .5,
 			"pitch": 5,
 		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 6,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 7,
-		},
-
-
-
-
-
-		{
-			"note": 0,
-			"length": 1,
-			"pitch": 1,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 0,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 1,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 2,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 3,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 4,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 5,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 6,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 7,
-		},
-
-
-
-		{
-			"note": 0,
-			"length": 1,
-			"pitch": 1,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 0,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 1,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 2,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 3,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 4,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 5,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 6,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 7,
-		},
+    {
+      "note": 3,
+      "length": 2,
+      "pitch": 8,
+    },
+    {
+      "note": 4,
+      "length": 1,
+      "pitch": 0,
+    },
+    {
+      "note": 4,
+      "length": 1,
+      "pitch": 2,
+    },
+    {
+      "note": 3,
+      "length": 2,
+      "pitch": 5,
+    },
 
 
 
@@ -254,196 +59,96 @@
 
 
 
-		{
-			"note": 0,
-			"length": 1,
-			"pitch": 1,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 0,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 1,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 2,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 3,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 4,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 5,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 6,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 7,
-		},
+
+
+
+    {
+      "note": 0,
+      "length": 0,
+      "pitch": 1,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 12,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 1,
+    },
+    {
+      "note": 3,
+      "length": 2,
+      "pitch": 2,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 3,
+    },
+    {
+      "note": 3,
+      "length": 2,
+      "pitch": 4,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 5,
+    },
 
 
 
 
 
+    {
+      "note": 0,
+      "length": 0,
+      "pitch": 1,
+    },
+    {
+      "note": 3,
+      "length": 2,
+      "pitch": 4,
+    },
+    {
+      "note": 3,
+      "length": 2,
+      "pitch": 4,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 4,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 4,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 4,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 4,
+    },
 
-		{
-			"note": 0,
-			"length": 1,
-			"pitch": 1,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 0,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 1,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 2,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 3,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 4,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 5,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 6,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 7,
-		},
-
-
+    {
+      "note": 0,
+      "length": 0,
+      "pitch": 1,
+    },
+    {
+      "note": 3,
+      "length": 2,
+      "pitch": 4,
+    },
 
 
-
-		{
-			"note": 0,
-			"length": 1,
-			"pitch": 1,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 0,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 1,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 2,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 3,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 4,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 5,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 6,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 7,
-		},
-		{
-			"note": 0,
-			"length": 1,
-			"pitch": 1,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 0,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 1,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 2,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 3,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 4,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 5,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 6,
-		},
-		{
-			"note": 3,
-			"length": 1,
-			"pitch": 7,
-		},
 	]
 }
