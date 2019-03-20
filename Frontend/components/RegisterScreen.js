@@ -101,6 +101,11 @@ class RegisterScreen extends React.Component {
         })
     }
 
+    /*
+    This function is called when the user clicks the recover account button
+    On no email given an alert will be displayed
+    On invalid email, an infinite loading screen will be displayed.
+    */
     recoverAccount = function (email) {
         const that = this;
         if (email == '') {
@@ -132,8 +137,9 @@ class RegisterScreen extends React.Component {
                 }
                 else {
                     Alert.alert("Please enter a valid email address")
-                    this.setState({
-                        loading: false
+                    that.setState({
+                        loading: false,
+                        awaitingCode: false,
                     })
                 }
             });

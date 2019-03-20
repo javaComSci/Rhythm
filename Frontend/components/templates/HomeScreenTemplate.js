@@ -1,37 +1,40 @@
 import React from 'react';
-import { Alert, AsyncStorage, TouchableOpacity, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, AsyncStorage, TouchableOpacity, ScrollView, StyleSheet, Text, View, ImageBackground } from 'react-native';
+import { LinearGradient } from 'expo';
 
 var styles = require('../../style')
-
+var background = require('../../assets/backgroundImage.png')
 var HomeScreenTemplate = function () {
     return (
-        <View style={styles.container}>
-            <ScrollView>
-                <View style={styles.textHolder}>
-                    <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 75 }}> Rhythm </Text>
+        <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
+            <View style={styles.container}>
+                <ScrollView>
+                    <View style={styles.textHolder}>
+                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 75 }}> Rhythm </Text>
+                    </View>
+                </ScrollView>
+                <View style={styles.footer}>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Composition')} style={styles.navButton}>
+                        <Text style={styles.menuText}> Compositions </Text>
+                    </TouchableOpacity>
                 </View>
-            </ScrollView>
-            <View style={styles.footer}>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('Composition')} style={styles.navButton}>
-                    <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Compositions </Text>
-                </TouchableOpacity>
+                <View style={styles.footer}>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Profile')} style={styles.navButton}>
+                        <Text style={styles.menuText}> Profile </Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.footer}>
+                    <TouchableOpacity onPress={() => this.takeAndUploadPhotoAsync()} style={styles.navButton}>
+                        <Text style={styles.menuText}> Camera </Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.footer}>
+                    <TouchableOpacity onPress={() => this.clearCache()} style={styles.navButton}>
+                        <Text style={styles.menuText}> Clear Cache </Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-            <View style={styles.footer}>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('Profile')} style={styles.navButton}>
-                    <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Profile </Text>
-                </TouchableOpacity>
-            </View>
-            <View style={styles.footer}>
-                <TouchableOpacity onPress={() => this.takeAndUploadPhotoAsync()} style={styles.navButton}>
-                    <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Camera </Text>
-                </TouchableOpacity>
-            </View>
-            <View style={styles.footer}>
-                <TouchableOpacity onPress={() => this.clearCache()} style={styles.navButton}>
-                    <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Clear Cache </Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+        </ImageBackground>
     );
 };
 
