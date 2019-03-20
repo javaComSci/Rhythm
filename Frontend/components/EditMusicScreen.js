@@ -38,7 +38,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width
 const SCREEN_HEIGHT = Dimensions.get('window').height
 
 /* this is the total amount of beats in the music sheet currently */
-var totalBeats;
+var totalBeats = 0;
 
 /* Setting a varible for the screen_height that can be modified */
 var screenSize = SCREEN_HEIGHT;
@@ -82,14 +82,21 @@ class NoteObjects extends React.Component {
       pitch: this.props.pitch,
       measure: props._id2,
       measureNum: props._id1,
+      editMode: 0,
     }
-    console.log(this.state);
-    console.log("\n\n");
+    // console.log(this.state);
+    // console.log("\n\n");
     /* Binds this to pressed() so it can change state when called */
     this.pressed = this.pressed.bind(this);
     this.props.ChangeColor = this.pressed;
     this.ChangeNotePressed = this.ChangeNotePressed.bind(this);
     this.props.ChangeNote = this.ChangeNotePressed;
+    this.editModePress = this.editModePress.bind(this);
+    this.props.editMode = this.editModePress;
+  }
+
+  editModePress(mode) {
+    console.log("PIZZA IS THE BEST" + mode);
   }
 
   /**
@@ -116,6 +123,11 @@ class NoteObjects extends React.Component {
     }else{
       this.setState({note: n});
     }
+  }
+
+
+  ChangeColor(n){
+    this.setState({color: "red"});
   }
 
   // shouldComponentUpdate(nextProps) {
@@ -172,6 +184,7 @@ class EditMusicScreen extends React.Component {
     // for (let i = 0; i < sampleJson.notes.length; i++) {
     for (let i = 0; i < sampleJson.notes.length; i++) {
       Extrarows += sampleJson.notes[i].length
+      totalBeats += sampleJson.notes[i].length;
       NotesList.push(<NoteObjects _id={i} note={sampleJson.notes[i].note} len={sampleJson.notes[i].length} pitch={sampleJson.notes[i].pitch} color="black"/>);
     }
 
@@ -227,7 +240,7 @@ class EditMusicScreen extends React.Component {
     let start = SCREEN_HEIGHT/8;
     let betweenNotes = SCREEN_WIDTH/11;
 
-    for (let i = 0; i < Math.ceil(totalBeats/9); i++) {
+    for (let i = 0; i < Math.ceil(totalBeats/8); i++) {
       Measures.push(
         <Svg height="100%" width="100%">
           <Path x={[mesureLength].join(' ')} y={[(i+1)*start].join(' ')} transform={['scale(', 1.5, .4, ')'].join(' ')}  style="fill:green"
@@ -237,7 +250,6 @@ class EditMusicScreen extends React.Component {
         </Svg>
       )
     }
-    totalBeats = 0;
     return Measures;
   }
 
@@ -263,76 +275,93 @@ class EditMusicScreen extends React.Component {
     // })
   }
 
-  test(x){
-    // console.log("RENDERED");
-    return (
-        <Rect
-            x="0"
-            y="0"
-            width="10%"
-            height="10%"
-            fill="blue"
-            strokeWidth="1"
-            onPress={() => alert("Steven")}
-          />
-    )
-  }
-
+  /**
+   * @deprecated Look at @renderMeasureBoxes for its replacement
+   * Reason: We do not click on notes anymore you click on measures and
+   * edit the measure instead of an note.
+   */
   renderHitBoxes(i){
-    totalBeats += NotesList[i].props.len;
-
-    /* Settings up vairbles */
-
-    let xLoc = (totalBeats%8)
-    if(NotesList[i].props.len > 1){
-      xLoc -= (NotesList[i].props.len - 1);
-    }
-    let yLoc = Math.ceil(totalBeats/8);
-    /* getting which line to use */
-    if(totalBeats == 0){
-      yLoc = 1;
-    }else if(totalBeats%8 == 0){
-      yLoc++;
-    }
-    let pitch = NotesList[i].props.pitch;
-    if(pitch == 0)
-     pitch++;
-    xLoc++;
-    // console.log("RenderingHitBoxes\n");
     let mesureLength = SCREEN_WIDTH/10;
     let start = SCREEN_HEIGHT/8;
     let betweenNotes = SCREEN_WIDTH/11;
+    let ret = [];
+    for (let j = 0; j < NotesListByMeasure[i].length; j++) {
+      totalBeats += NotesListByMeasure[i][j].props.len;
+      let hitBoxSize = (-1)*Math.log10(.020 * (NotesListByMeasure[i].length))
+      /* Settings up vairbles */
+      let xLoc = NotesListByMeasure[i][j].props._id1;
 
-    if(NotesList[i].props.note == 0){
-      return;
-    }
-    return (
-      <Rect
-        x={[((xLoc)*(SCREEN_WIDTH/11)) + mesureLength*NoteSVG[NotesList[i].props.note].HitBoxX - SCREEN_WIDTH/70].join(' ')}
-        y={[((yLoc)*(SCREEN_HEIGHT/8)) + NoteSVG[NotesList[i].props.note].HitBoxY + (NoteSVG[NotesList[i].props.note].flipY*(pitch)*SCREEN_HEIGHT/110)].join(' ')}
-        width={[NoteSVG[NotesList[i].props.note].flipX * (mesureLength/1.1)].join(' ')}
-        height={[NoteSVG[NotesList[i].props.note].flipY * (-start/1.6)].join(' ')}
-        onPress={() => this.onPressHitBox(i)}
-        fill="blue"
-        strokeWidth="0"
-        fillOpacity="0"
-      />
-    )
-  }
-
-  onPressHitBox(i){
-    NotesList[i].props.ChangeColor();
-    // NotesList[i].props.ChangeNote(1);
-  }
-
-  setHitBoxes(){
-      let NotesL = [];
-      for (let i = 0; i < NotesList.length; i++) {
-        NotesL.push(this.renderHitBoxes(i));
+      let yLoc = Math.floor(NotesListByMeasure[i][j].props._id2 / 2);
+      if(NotesListByMeasure[i][j].props._id2 % 2 != 0){
+        xLoc += 5;
       }
-      // totalBeats = -1;
-      return NotesL;
+
+      yLoc += 1;
+      xLoc += 1;
+      // console.log("HEREREREREW" + yLoc + " : " + xLoc + " Length: " + NotesListByMeasure[i].length + " HitBox: " +  hitBoxSize);
+
+      let pitch = NotesListByMeasure[i][j].props.pitch;
+
+      if(NotesListByMeasure[i][j].props.note != 0){
+        ret.push(
+          <Rect
+            x={[((xLoc)*(SCREEN_WIDTH/11)) + mesureLength*NoteSVG[NotesListByMeasure[i][j].props.note].HitBoxX - SCREEN_WIDTH/70].join(' ')}
+            y={[((yLoc)*(SCREEN_HEIGHT/8)) + NoteSVG[NotesListByMeasure[i][j].props.note].HitBoxY + (NoteSVG[NotesListByMeasure[i][j].props.note].flipY*(pitch)*SCREEN_HEIGHT/110)].join(' ')}
+            width={[NoteSVG[NotesListByMeasure[i][j].props.note].flipX * (mesureLength/1.1) * hitBoxSize].join(' ')}
+            height={[NoteSVG[NotesListByMeasure[i][j].props.note].flipY * (-start/1.6)].join(' ')}
+            onPress={() => this.onPressHitBox(i, j)}
+            fill="blue"
+            strokeWidth="0"
+            fillOpacity="0"
+          />
+        )
+      }
+
     }
+    return ret;
+  }
+
+  renderMeasureBoxes(i, j){
+    let spaceBetween = SCREEN_HEIGHT/82;
+    let mesureLength = SCREEN_WIDTH/10;
+    let start = SCREEN_HEIGHT/8;
+    let betweenNotes = SCREEN_WIDTH/11;
+    if(j == 0){
+      return (
+        <Rect
+          x={[mesureLength * 1].join(' ')}
+          y={[start*(i+1) - spaceBetween].join(' ')}
+          width={[mesureLength*4].join(' ')}
+          height={[spaceBetween*6].join(' ')}
+          onPress={() => this.onPressHitBox(0, i)}
+          fill="blue"
+          strokeWidth="0"
+          fillOpacity=".1"
+        />
+      )
+    }else{
+      return (
+        <Rect
+          x={[mesureLength * 5].join(' ')}
+          y={[start*(i+1) - spaceBetween].join(' ')}
+          width={[mesureLength*4].join(' ')}
+          height={[spaceBetween*6].join(' ')}
+          onPress={() => this.onPressHitBox(1, i)}
+          fill="yellow"
+          strokeWidth="0"
+          fillOpacity=".1"
+        />
+      )
+    }
+  }
+
+  onPressHitBox(x, y){
+    console.log("x: " + x + " y: " + y);
+    // console.log(NotesListByMeasure[(y*2) + x])
+
+    //Send to measure Screen
+    this.props.navigation.navigate('ViewMeasure', {arr: NotesListByMeasure[(y*2) + x]});
+  }
 
   initNotesListByMeasure(){
     let beatsPerMeasure = 0;
@@ -373,11 +402,25 @@ class EditMusicScreen extends React.Component {
     }
   }
 
+  displayNotes(){
+    let ret = [];
+    /* Two loops because we want the boxes to be rendered OVER the notes */
+    for (var i = 0; i < NotesListByMeasure.length; i++) {
+      ret.push(NotesListByMeasure[i])
+      // ret.push(this.renderHitBoxes(i));
+    }
+    for (var i = 0; i < (NotesListByMeasure.length/2); i++) {
+      // ret.push(this.renderMeasureBoxes(i,0))
+      // ret.push(this.renderMeasureBoxes(i,1))
+    }
+    return ret;
+  }
+
   render(){
     console.log("First Render in note\n");
     this.initNotesListByMeasure();
     // console.log(NotesListByMeasure.props.note);
-    totalBeats = 0;
+    // totalBeats = 0;
     backButton = require('../assets/back.png')
     let mesureLength = SCREEN_WIDTH/10;
     let start = SCREEN_HEIGHT/8;
@@ -409,11 +452,10 @@ class EditMusicScreen extends React.Component {
         />
         <ScrollView>
           <Svg height={[screenSize+screenExtendSize].join(' ')}  width="100%">
-            {this.setTitle("Steven is the Best")}
-            {this.setHitBoxes()}
-            {this.lineSection()}
-            {NotesListByMeasure}
+            {this.setTitle("Music Sheet_1")}
 
+            {this.displayNotes()}
+            {this.lineSection()}
           </Svg>
 
         </ScrollView>

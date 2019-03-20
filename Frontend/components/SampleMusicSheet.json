@@ -13,40 +13,50 @@
 			"pitch": 1,
 		},
 		{
-			"note": 2,
-			"length": 1,
-			"pitch": 12,
+			"note": 1,
+			"length": .5,
+			"pitch": 5,
 		},
 		{
-			"note": 2,
-			"length": 1,
-			"pitch": 1,
-		},
-		{
-			"note": 2,
-			"length": 1,
-			"pitch": 2,
-		},
-		{
-			"note": 2,
-			"length": 1,
+			"note": 1,
+			"length": .5,
 			"pitch": 3,
 		},
+    {
+      "note": 1,
+      "length": .5,
+      "pitch": 3,
+    },
 		{
-			"note": 3,
-			"length": 2,
-			"pitch": 4,
-		},
-		{
-			"note": 2,
-			"length": 1,
+			"note": 1,
+			"length": .5,
 			"pitch": 5,
 		},
     {
-      "note": 2,
+      "note": 3,
+      "length": 2,
+      "pitch": 8,
+    },
+    {
+      "note": 4,
       "length": 1,
+      "pitch": 0,
+    },
+    {
+      "note": 4,
+      "length": 1,
+      "pitch": 2,
+    },
+    {
+      "note": 3,
+      "length": 2,
       "pitch": 5,
     },
+
+
+
+
+
 
 
 
@@ -98,58 +108,35 @@
       "pitch": 1,
     },
     {
-      "note": 1,
-      "length": .5,
-      "pitch": 2,
-    },
-    {
-      "note": 1,
-      "length": .5,
-      "pitch": 5,
-    },
-    {
-      "note": 1,
-      "length": .5,
-      "pitch": 1,
-    },
-    {
-      "note": 1,
-      "length": .5,
-      "pitch": 3,
-    },
-    {
-      "note": 1,
-      "length": .5,
-      "pitch": 10,
-    },
-    {
-      "note": 1,
-      "length": .5,
-      "pitch": 12,
-    },
-    {
-      "note": 1,
-      "length": .5,
-      "pitch": 3,
-    },
-    {
-      "note": 1,
-      "length": .5,
-      "pitch": 6,
+      "note": 3,
+      "length": 2,
+      "pitch": 4,
     },
     {
       "note": 3,
       "length": 2,
-      "pitch": 9,
+      "pitch": 4,
     },
     {
-      "note": 3,
-      "length": 2,
-      "pitch": 1,
+      "note": 2,
+      "length": 1,
+      "pitch": 4,
     },
-
-
-
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 4,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 4,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 4,
+    },
 
     {
       "note": 0,
@@ -159,31 +146,6 @@
     {
       "note": 3,
       "length": 2,
-      "pitch": 4,
-    },
-    {
-      "note": 3,
-      "length": 2,
-      "pitch": 4,
-    },
-    {
-      "note": 2,
-      "length": 1,
-      "pitch": 4,
-    },
-    {
-      "note": 2,
-      "length": 1,
-      "pitch": 4,
-    },
-    {
-      "note": 2,
-      "length": 1,
-      "pitch": 4,
-    },
-    {
-      "note": 2,
-      "length": 1,
       "pitch": 4,
     },
 
