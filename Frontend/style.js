@@ -79,7 +79,7 @@ module.exports = StyleSheet.create({
         marginLeft: 100,
         marginRight: -30,
         borderRadius: 10,
-        backgroundColor: 'black',
+        backgroundColor: 'transparent',
         borderColor: 'white',
         borderWidth: 1,
     },
