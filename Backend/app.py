@@ -135,6 +135,13 @@ def duplicateComposition():
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
+@app.route('addSheetFile', methods=['POST'])
+def addSheetFile():
+    if request.method == 'POST':
+        return newMusicSheet.addSheetFile()
+    else:
+        return '\n\nDEBUG: Sollte das nicht sehen'
+
 ##
  # Call this to get info on a specific user from a specific table.
  # This will return a json array of the results
