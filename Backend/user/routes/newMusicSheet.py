@@ -14,10 +14,13 @@ def newMusicSheets():
     return 'newMusicSheets'
 
 def addSheetFile():
-    content = request.json
-    sheetFile = content.files['file']
-    MySQLConnect.cursor.execute("UPDATE sheet_music SET file=%s WHERE id=%s", (sheetFile.read(), content['sheet_id']))
+    sheetFile = request.files['file']
+    sheetID = request.form['sheet_id']
+    MySQLConnect.cursor.execute("UPDATE sheet_music SET file=%s WHERE sheet_id=%s", (sheetFile.read(), sheetID))
     MySQLConnect.db.commit()
+    MySQLConnect.cursor.execute("SELECT file FROM sheet_music WHERE sheet_id=%s", (15))
+    record = MySQLConnect.cursor.fetchall()
+    print record
     return 'addFile'
 
 def duplicateSheet():
