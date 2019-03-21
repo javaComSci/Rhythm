@@ -178,17 +178,33 @@ class EditMusicScreen extends React.Component {
   constructor(props) {
     super(props);
 
-    let ran = Math.floor((Math.random() * 4) + 0);
-    console.log("EAWFAEWFAEW: ");
+    // let ran = Math.floor((Math.random() * 4) + 0);
+    // console.log("EAWFAEWFAEW: ");
     // console.log();
-    if(ran == 0){
-      sampleJson = sampleJson1;
-    }
-    if(ran == 1){
-      sampleJson = sampleJson2;
-    }
-    if(ran == 3){
-      sampleJson = sampleJson0;
+    // if(ran == 0){
+    //   sampleJson = sampleJson1;
+    // }
+    // if(ran == 1){
+    //   sampleJson = sampleJson2;
+    // }
+    // if(ran == 3){
+    //   sampleJson = sampleJson0;
+    // }
+
+    sampleJson = props.navigation.getParam('file')
+    // empty json file if file is null
+    if (sampleJson == null) {
+      sampleJson = {
+        "clef": 1,
+        "notes":
+          [
+            {
+              "note": 0,
+              "length": 0,
+              "pitch": 1
+            }
+          ]
+      }
     }
 
     this.state = {
