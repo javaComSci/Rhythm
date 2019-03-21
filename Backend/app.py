@@ -138,7 +138,7 @@ def duplicateComposition():
 @app.route('/addSheetFile', methods=['POST'])
 def addSheetFile():
     if request.method == 'POST':
-        return newMusicSheet.addSheetFile()
+        return newMusicSheets.addSheetFile()
     else:
         return '\n\nDEBUG: Sollte das nicht sehen'
 
@@ -218,4 +218,4 @@ def checkKey():
  # Simlar to nodemon, it refreshes when you save! Yay!
  ##
 if __name__ == "__main__":
-  app.run(debug=True)
+  app.run(host="0.0.0.0", debug=True)
