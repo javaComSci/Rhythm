@@ -39,68 +39,34 @@ if __name__ == "__main__":
 				ob_prediction = "DEFAULT"
 
 			cv2.imwrite("ExamplePredictions/predictions/ob#{}_label:{}.jpg".format(ob_counter, ob_prediction[0]), im)
+
+			if ob_prediction == 'G-Clef':
+				ob.clef = 1
+			elif ob_prediction == 'C-Clef':
+				ob.clef = 2
+			elif ob_prediction == 'F-Clef':
+				ob.clef = 3
+			elif ob_prediction == 'Sixteenth Note':
+				ob.duration = .0625
+			elif ob_prediction == 'Eighth Note':
+				ob.duration = .125
+			elif ob_prediction == 'Quarter Note':
+				ob.duration = .25
+			elif ob_prediction == 'Half Note':
+				ob.duration = .5
+			elif ob_prediction == 'Whole Note':
+				ob.duration = 1
+			elif ob_prediction == 'Eighth Rest':
+				ob.rest = .125
+			elif ob_prediction == 'Quarter Rest':
+				ob.rest = .25
+			elif ob_prediction == 'Half Rest':
+				ob.rest = .5
+			elif ob_prediction == 'Sharp':
+				ob.accidental = 1
+			elif ob_prediction == 'Flat':
+				ob.accidental = 2
+
 			ob_counter += 1
 	print("Number of objects", ob_counter)
-#
-# 			print("DIMS", flat_arr.shape)
-#
-# 			ob_prediction, im = neuralNet.predict(flat_arr)
-# 			print("OB PREDICTION", ob_prediction)
-# 			im = im.reshape((70,50)) * 255
-#
-# 			t = 0
-#
-# 			if ob_prediction == 'G-Clef':
-# 				t = 0
-# 			elif ob_prediction == 'Eighth Note':
-# 				t = 1
-# 			elif ob_prediction == 'Quarter Note':
-# 				t = 2
-# 			elif ob_prediction == 'Half Note':
-# 				t = 3
-# 			elif ob_prediction == 'Quarter Note':
-# 				t = 4
-# 			elif ob_prediction == 'Sixteenth Note':
-# 				t = 5
-# 			elif ob_prediction == 'Whole Note':
-# 				t = 6
-# 			elif ob_prediction == 'Eighth Rest':
-# 				t = 7
-# 			elif ob_prediction == 'Quarter Rest':
-# 				t = 8
-# 			elif ob_prediction == 'Half Rest':
-# 				t = 9
-# 			elif ob_prediction == 'Sharp':
-# 				t = 10
-# 			elif ob_prediction == 'Flat':
-# 				t = 11
-# 			elif ob_prediction == 'C-Clef':
-# 				t = 12
-# 			elif ob_prediction == 'F-Clef':
-# 				t = 13
-#
-#
-# 			cv2.imwrite("ExamplePredictions/predictions/ob#{}_label:{}.jpg".format(ob_counter, t), im)
-# 			ob_counter += 1
-# 			obby = JCpenny(t,1,ob.run)
-# 			print("OBBY", ob.run)
-#
-# 			dicty["notes"].append(obby.__dict__)
-#
-# 		json.dump(dicty, outfile)
-#
-# 	# for ob in SOL:
-# 	# 	n_arr = partition.SO_to_array(ob)
-#
-# 	# 	print(n_arr.shape)
-#
-# 	# 	flat_arr = n_arr.flatten().reshape((1,3500))
-#
-# 	# 	print("DIMS", flat_arr.shape)
-#
-# 	# 	ob_prediction, im = neuralNet.predict(flat_arr)
-# 	# 	im = im.reshape((70,50)) * 255
-#
-# 	# 	cv2.imwrite("ExamplePredictions/predictions/ob#{}_label:{}.jpg".format(ob_counter, ob_prediction[0]), im)
-# 	# 	ob_counter += 1
-# 	# print("Number of objects", ob_counter)
+
