@@ -3,6 +3,7 @@ import neuralNet
 import numpy as np
 import cv2
 import json
+import MIDImaker
 
 class JCpenny:
 	def __init__(self,note,length,pitch):
@@ -11,7 +12,7 @@ class JCpenny:
 		self.pitch = pitch
 
 if __name__ == "__main__":
-	file_path = "ExamplePredictions/DATA/file19.jpg"
+	file_path = "ExamplePredictions/DATA/file7.jpg"
 
 	mask, SOL, staff_lines = partition.full_partition(file_path)
 
@@ -25,8 +26,8 @@ if __name__ == "__main__":
 
 
 	with open('data.json', 'w') as outfile:
-		for ob in SOL:
-			n_arr = partition.SO_to_array(ob)
+		for i in range(len(SOL)):
+			n_arr = partition.SO_to_array(SOL[i])
 
 			print(n_arr.shape)
 
@@ -40,33 +41,40 @@ if __name__ == "__main__":
 
 			cv2.imwrite("ExamplePredictions/predictions/ob#{}_label:{}.jpg".format(ob_counter, ob_prediction[0]), im)
 
-			if ob_prediction == 'G-Clef':
-				ob.clef = 1
-			elif ob_prediction == 'C-Clef':
-				ob.clef = 2
-			elif ob_prediction == 'F-Clef':
-				ob.clef = 3
-			elif ob_prediction == 'Sixteenth Note':
-				ob.duration = .0625
-			elif ob_prediction == 'Eighth Note':
-				ob.duration = .125
-			elif ob_prediction == 'Quarter Note':
-				ob.duration = .25
-			elif ob_prediction == 'Half Note':
-				ob.duration = .5
-			elif ob_prediction == 'Whole Note':
-				ob.duration = 1
-			elif ob_prediction == 'Eighth Rest':
-				ob.rest = .125
-			elif ob_prediction == 'Quarter Rest':
-				ob.rest = .25
-			elif ob_prediction == 'Half Rest':
-				ob.rest = .5
+			if ob_prediction == 'GClef':
+				SOL[i].clef = 1
+			elif ob_prediction == 'CClef':
+				SOL[i].clef = 2
+			elif ob_prediction == 'FClef':
+				SOL[i].clef = 3
+			elif ob_prediction == 'Sixteenth-Note':
+				SOL[i].duration = .0625
+			elif ob_prediction == 'Eighth-Note':
+				SOL[i].duration = .125
+			elif ob_prediction == 'Quarter-Note':
+				SOL[i].duration = .25
+			elif ob_prediction == 'Half-Note':
+				SOL[i].durationn = .5
+			elif ob_prediction == 'Whole-Note':
+				SOL[i].duration = 1
+			elif ob_prediction == 'Eighth-Rest':
+				SOL[i].rest = .125
+			elif ob_prediction == 'Quarter-Rest':
+				SOL[i].rest = .25
+			elif ob_prediction == 'Whole-Half-Rest':
+				SOL[i].rest = .5
 			elif ob_prediction == 'Sharp':
-				ob.accidental = 1
+				SOL[i].accidental = 1
 			elif ob_prediction == 'Flat':
-				ob.accidental = 2
+				SOL[i].accidental = 2
 
 			ob_counter += 1
-	print("Number of objects", ob_counter)
+
+	MF = MIDImaker.MIDIob(SOL)
+	filey = MF.convert_to_MIDI()
+	MF.MIDI_to_file(filey, "test.mid")
+
+
+
+
 
