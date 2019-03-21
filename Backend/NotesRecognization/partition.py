@@ -19,6 +19,9 @@ class sheet_object:
 		self.run = -1
 		self.staff_line = -1
 		self.duration = -1
+		self.clef = -1
+		self.rest = -1
+		self.accidental = -1
 
 	#tup - (row,column) location of a pixel in specified object
 	#	Add pixel to an object
