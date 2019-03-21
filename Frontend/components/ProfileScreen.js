@@ -1,9 +1,10 @@
 import React from 'react';
-import { TouchableOpacity, ScrollView, StyleSheet, Text, View, Button, KeyboardAvoidingView, TextInput } from 'react-native';
+import { TouchableOpacity, ScrollView, StyleSheet, Text, View, Button, KeyboardAvoidingView, TextInput, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
-
+import ProfileScreenTemplate from './templates/ProfileScreenTemplate'
+import ProfileEditTemplate from './templates/ProfileEditTemplate'
 var styles = require('../style')
-
+var background = require('../assets/backgroundImage.png')
 
 /* Profile Screen */
 // Provides basic info regarding user's email, allows option to change given email
@@ -148,43 +149,12 @@ class ProfileScreen extends React.Component {
     render() {
         if (this.state.edit == true) {
             return (
-                <View style={styles.container}>
-                    <View>
-                        <View style={styles.textHolder}>
-                            <TextInput style={{ marginTop: '70%', height: 40, width: '90%', borderColor: '#f19393', borderWidth: 1, fontWeight: 'bold', }}
-                                placeholder="Name"
-                                onChangeText={(nameText) => this.setState({ nameText })}
-                                value={this.state.nameText} />
-                            <TextInput style={{ marginTop: 10, height: 40, width: '90%', borderColor: '#f19393', borderWidth: 1, fontWeight: 'bold', }}
-                                placeholder="Email"
-                                onChangeText={(emailText) => this.setState({ emailText })}
-                                value={this.state.emailText} />
-                        </View>
-                        <Button style={{ Color: '#f19393', fontWeight: 'bold', }} onPress={() => this.doneEdit()} title="Done"> </Button>
-                    </View>
-                </View >
+                ProfileEditTemplate.call(this)
             );
         }
 
         return (
-            <View style={styles.container}>
-                <View>
-                    <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 75 }}> Profile </Text>
-                </View>
-                <ScrollView>
-                    <Text style={{ color: '#f19393', fontSize: 40 }}>Name: {this.state.name} </Text>
-                    <Text style={{ color: '#f19393', fontSize: 20 }}>Email: {this.state.email} </Text>
-                </ScrollView>
-                <Button onPress={() => this.editProfile()} title="Edit Profile"> </Button>
-                <View style={styles.footer}>
-                    <TouchableOpacity
-                        onPress={() => this.props.navigation.navigate('Home')}
-                        style={styles.navButton}
-                    >
-                        <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Home </Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+            ProfileScreenTemplate.call(this)
         );
     }
 };

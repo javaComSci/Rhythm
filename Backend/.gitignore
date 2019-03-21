@@ -5,3 +5,4 @@
 /lib
 /config
 *.pyc
+.DS_Store

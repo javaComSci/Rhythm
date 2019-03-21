@@ -19,7 +19,10 @@ def AccountRecovery(mail):
 
 def checkKey():
     content = request.json
-    check = MySQLConnect.findVerf("user", content['code'])
+    try:
+        check = MySQLConnect.findVerf("user", content['code'])
+    except MySQLConnect.cursor.InternalError:
+        check = '' # length 0
     if len(check) == 0:
         result = {
             "ok": "false",
