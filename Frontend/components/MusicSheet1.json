@@ -1,0 +1,152 @@
+/*
+ note: What note it is (int)
+ length: How many beats
+ pitch: Where it is on that line [0-13]
+*/
+{
+	"clef": 1,
+	"notes":
+	[
+		{
+			"note": 0,
+			"length": 0,
+			"pitch": 1,
+		},
+		{
+			"note": 3,
+			"length": 2,
+			"pitch": 5,
+		},
+		{
+			"note": 3,
+			"length": 2,
+			"pitch": 3,
+		},
+    {
+      "note": 3,
+      "length": 2,
+      "pitch": 2,
+    },
+    {
+      "note": 3,
+      "length": 2,
+      "pitch": 1,
+    },
+
+
+
+
+
+    {
+      "note": 0,
+      "length": 0,
+      "pitch": 1,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 5,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 3,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 3,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 5,
+    },
+    {
+      "note": 3,
+      "length": 2,
+      "pitch": 8,
+    },
+    {
+      "note": 3,
+      "length": 2,
+      "pitch": 0,
+    },
+
+
+
+    {
+      "note": 0,
+      "length": 0,
+      "pitch": 1,
+    },
+    {
+      "note": 5,
+      "length": .25,
+      "pitch": 2,
+    },
+    {
+      "note": 5,
+      "length": .25,
+      "pitch": 1,
+    },
+    {
+      "note": 5,
+      "length": .25,
+      "pitch": 5,
+    },
+    {
+      "note": 5,
+      "length": .25,
+      "pitch": 3,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 10,
+    },
+    {
+      "note": 3,
+      "length": 2,
+      "pitch": 8,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 5,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 10,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 7,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 5,
+    },
+
+
+    {
+      "note": 0,
+      "length": 0,
+      "pitch": 1,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 1,
+    },
+    {
+      "note": 2,
+      "length": 1,
+      "pitch": 3,
+    },
+
+	]
+}
