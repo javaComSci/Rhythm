@@ -13,7 +13,7 @@ def newMusicSheets():
     MySQLConnect.insert("sheet_music", ",".join(col), ",".join(values));
     return 'newMusicSheets'
 
-def addFile():
+def addSheetFile():
     content = request.json
     sheetFile = content.files['file']
     MySQLConnect.cursor.execute("UPDATE sheet_music SET file=%s WHERE id=%s", (sheetFile.read(), content['sheet_id']))

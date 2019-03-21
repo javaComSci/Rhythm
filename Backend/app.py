@@ -135,7 +135,7 @@ def duplicateComposition():
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
-@app.route('addSheetFile', methods=['POST'])
+@app.route('/addSheetFile', methods=['POST'])
 def addSheetFile():
     if request.method == 'POST':
         return newMusicSheet.addSheetFile()
