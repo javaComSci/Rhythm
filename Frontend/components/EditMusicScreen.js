@@ -387,7 +387,7 @@ class EditMusicScreen extends React.Component {
         xCord = 0;
       }
 
-      measureNotes.push(<NoteObjects _id1={xCord} _id2={NotesListByMeasure.length - 1} note={sampleJson.notes[i].note} len={sampleJson.notes[i].length} pitch={sampleJson.notes[i].pitch} color="black" />);
+      measureNotes.push(<NoteObjects key={i} _id1={xCord} _id2={NotesListByMeasure.length - 1} note={sampleJson.notes[i].note} len={sampleJson.notes[i].length} pitch={sampleJson.notes[i].pitch} color="black" />);
       beatsPerMeasure += sampleJson.notes[i].length;
       if (NoteSVG[sampleJson.notes[i].note].title == "clef") {
         xCord = 1;
