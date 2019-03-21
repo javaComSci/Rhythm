@@ -177,8 +177,10 @@ class EditMusicScreen extends React.Component {
 
   constructor(props) {
     super(props);
+
     let ran = Math.floor((Math.random() * 4) + 0);
-    console.log("EAWFAEWFAEW: " + ran);
+    console.log("EAWFAEWFAEW: ");
+    // console.log();
     if(ran == 0){
       sampleJson = sampleJson1;
     }
@@ -484,7 +486,7 @@ class EditMusicScreen extends React.Component {
         <PinchZoomView maxScale={2} minScale={1}>
           <ScrollView>
             <Svg height={[screenSize + screenExtendSize].join(' ')} width="100%">
-              {this.setTitle("Music Sheet_1")}
+              {this.setTitle(this.props.navigation.getParam("title", "MusicSheet"))}
 
               {this.displayNotes()}
               {this.lineSection()}
