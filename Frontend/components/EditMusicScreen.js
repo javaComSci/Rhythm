@@ -248,7 +248,7 @@ class EditMusicScreen extends React.Component {
     for (let i = 0; i < Math.ceil(totalBeats / 8); i++) {
       Measures.push(
         <G height="100%" width="100%" key={i}>
-          <Path x={[mesureLength].join(' ')} y={[(i + 1) * start].join(' ')} transform={['scale(', mesureLength / 25, mesureLength / 107, ')'].join(' ')} style="fill:green"
+          <Path x={[mesureLength].join(' ')} y={[(i + 1) * start].join(' ')} transform={['scale(', mesureLength / 25, spaceBetween / 24.5, ')'].join(' ')} style="fill:green"
             d={[MiscJson[0].data].join(' ')} />
           {this.VerticalSection(mesureLength, start * (i + 1))}
           {this.VerticalSection(mesureLength * 9, start * (i + 1))}
@@ -458,15 +458,17 @@ class EditMusicScreen extends React.Component {
             justifyContent: 'space-around',
           }}
         />
-        <ScrollView>
-          <Svg height={[screenSize + screenExtendSize].join(' ')} width="100%">
-            {this.setTitle("Music Sheet_1")}
+        <PinchZoomView maxScale={2} minScale={1}>
+          <ScrollView>
+            <Svg height={[screenSize + screenExtendSize].join(' ')} width="100%">
+              {this.setTitle("Music Sheet_1")}
 
-            {this.displayNotes()}
-            {this.lineSection()}
-          </Svg>
+              {this.displayNotes()}
+              {this.lineSection()}
+            </Svg>
 
-        </ScrollView>
+          </ScrollView>
+        </PinchZoomView>
       </View>
     )
   }
