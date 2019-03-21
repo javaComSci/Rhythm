@@ -26,7 +26,12 @@ const { Circle, Rect, Path, Line, Text, G, Defs, Use } = Svg;
 var NoteSVG = require('./NotesData.json');
 var MiscJson = require('./EditMisc.json');
 
-var sampleJson = require('./MusicSheet1.json');
+var sampleJson = require('./MusicSheet0.json');
+
+var sampleJson0 = require('./MusicSheet0.json');
+var sampleJson1 = require('./MusicSheet1.json');
+var sampleJson2 = require('./MusicSheet2.json');
+// var sampleJson3 = require('./MusicSheet3.json');
 // var sampleJson = require('./SampleMusicSheet.json');
 // var sampleJson = require('./SampleMusicSheet.json');
 
@@ -61,6 +66,7 @@ class NoteObjects extends React.Component {
    */
   constructor(props) {
     super(props);
+
     // console.log(NotesListByMeasure[props._id2][props._id1]);
 
     /* Settings up vairbles */
@@ -171,6 +177,18 @@ class EditMusicScreen extends React.Component {
 
   constructor(props) {
     super(props);
+    let ran = Math.floor((Math.random() * 4) + 0);
+    console.log("EAWFAEWFAEW: " + ran);
+    if(ran == 0){
+      sampleJson = sampleJson1;
+    }
+    if(ran == 1){
+      sampleJson = sampleJson2;
+    }
+    if(ran == 3){
+      sampleJson = sampleJson0;
+    }
+
     this.state = {
       NotesL: NotesList,
       colorProp: 'black',
@@ -406,9 +424,9 @@ class EditMusicScreen extends React.Component {
     NotesListByMeasure.splice(0, 1);
     for (let i = 0; i < NotesListByMeasure.length; i++) {
       for (let j = 0; j < NotesListByMeasure[i].length; j++) {
-        console.log(NotesListByMeasure[i][j].props.note);
+        // console.log(NotesListByMeasure[i][j].props.note);
       }
-      console.log("\n");
+      // console.log("\n");
     }
   }
 
