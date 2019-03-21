@@ -34,9 +34,9 @@ var SheetScreenTemplate = function () {
                     <TouchableOpacity style={styles.neutralButton} onPress={() => this.setState({ "duplicateVisible": true })}>
                         <Text style={styles.buttonText}>Duplicate</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.neutralButton} onPress={() => this.props.navigation.navigate('EditMusicScreen')}>
+                    {/* <TouchableOpacity style={styles.neutralButton} onPress={() => this.props.navigation.navigate('EditMusicScreen', {title: ""})}>
                         <Text style={styles.buttonText}>Edit</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <TouchableOpacity style={styles.minusButton} onPress={() => this.deleteComposition()}>
                         <Text style={styles.menuText}>-</Text>
                     </TouchableOpacity>
@@ -51,6 +51,9 @@ var SheetScreenTemplate = function () {
                             <View style={styles.compositionContainer}>
                                 <TouchableOpacity
                                     style={styles.compositionItem}
+                                    onPress={(e) => {
+                                        this.props.navigation.navigate('EditMusicScreen', {title: item.getTitle()})
+                                    }}
                                     onLongPress={(e) => {
                                         console.log("pepper")
                                         this.setState({

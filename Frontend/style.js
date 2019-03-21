@@ -9,7 +9,6 @@ var {
 module.exports = StyleSheet.create({
     header: {
         flex: 1,
-        backgroundColor: '#ffeceb',
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -77,11 +76,10 @@ module.exports = StyleSheet.create({
         marginTop: 10,
         marginBottom: 30,
         paddingTop: 15,
-        // paddingBottom: 50,
         marginLeft: 100,
         marginRight: -30,
         borderRadius: 10,
-        backgroundColor: 'black',
+        backgroundColor: 'transparent',
         borderColor: 'white',
         borderWidth: 1,
     },

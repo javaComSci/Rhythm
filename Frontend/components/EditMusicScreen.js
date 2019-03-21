@@ -22,9 +22,18 @@ const { Circle, Rect, Path, Line, Text, G, Defs, Use } = Svg;
 // https://oblador.github.io/react-native-vector-icons/
 
 // var sampleJson = require('./testRichard.json');
-var sampleJson = require('./SampleMusicSheet.json');
+// var sampleJson = require('./SampleMusicSheet.json');
 var NoteSVG = require('./NotesData.json');
 var MiscJson = require('./EditMisc.json');
+
+var sampleJson = require('./MusicSheet0.json');
+
+var sampleJson0 = require('./MusicSheet0.json');
+var sampleJson1 = require('./MusicSheet1.json');
+var sampleJson2 = require('./MusicSheet2.json');
+// var sampleJson3 = require('./MusicSheet3.json');
+// var sampleJson = require('./SampleMusicSheet.json');
+// var sampleJson = require('./SampleMusicSheet.json');
 
 var NotesList = [];
 
@@ -57,6 +66,7 @@ class NoteObjects extends React.Component {
    */
   constructor(props) {
     super(props);
+
     // console.log(NotesListByMeasure[props._id2][props._id1]);
 
     /* Settings up vairbles */
@@ -167,6 +177,18 @@ class EditMusicScreen extends React.Component {
 
   constructor(props) {
     super(props);
+    let ran = Math.floor((Math.random() * 4) + 0);
+    console.log("EAWFAEWFAEW: " + ran);
+    if(ran == 0){
+      sampleJson = sampleJson1;
+    }
+    if(ran == 1){
+      sampleJson = sampleJson2;
+    }
+    if(ran == 3){
+      sampleJson = sampleJson0;
+    }
+
     this.state = {
       NotesL: NotesList,
       colorProp: 'black',
@@ -252,6 +274,7 @@ class EditMusicScreen extends React.Component {
             d={[MiscJson[0].data].join(' ')} />
           {this.VerticalSection(mesureLength, start * (i + 1))}
           {this.VerticalSection(mesureLength * 9, start * (i + 1))}
+          {this.VerticalSection(mesureLength * 5, start * (i + 1))}
         </G>
       )
     }
@@ -401,9 +424,9 @@ class EditMusicScreen extends React.Component {
     NotesListByMeasure.splice(0, 1);
     for (let i = 0; i < NotesListByMeasure.length; i++) {
       for (let j = 0; j < NotesListByMeasure[i].length; j++) {
-        console.log(NotesListByMeasure[i][j].props.note);
+        // console.log(NotesListByMeasure[i][j].props.note);
       }
-      console.log("\n");
+      // console.log("\n");
     }
   }
 
@@ -458,15 +481,17 @@ class EditMusicScreen extends React.Component {
             justifyContent: 'space-around',
           }}
         />
-        <ScrollView>
-          <Svg height={[screenSize + screenExtendSize].join(' ')} width="100%">
-            {this.setTitle("Music Sheet_1")}
+        <PinchZoomView maxScale={2} minScale={1}>
+          <ScrollView>
+            <Svg height={[screenSize + screenExtendSize].join(' ')} width="100%">
+              {this.setTitle("Music Sheet_1")}
 
-            {this.displayNotes()}
-            {this.lineSection()}
-          </Svg>
+              {this.displayNotes()}
+              {this.lineSection()}
+            </Svg>
 
-        </ScrollView>
+          </ScrollView>
+        </PinchZoomView>
       </View>
     )
   }
