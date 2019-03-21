@@ -22,9 +22,13 @@ const { Circle, Rect, Path, Line, Text, G, Defs, Use } = Svg;
 // https://oblador.github.io/react-native-vector-icons/
 
 // var sampleJson = require('./testRichard.json');
-var sampleJson = require('./SampleMusicSheet.json');
+// var sampleJson = require('./SampleMusicSheet.json');
 var NoteSVG = require('./NotesData.json');
 var MiscJson = require('./EditMisc.json');
+
+var sampleJson = require('./MusicSheet1.json');
+// var sampleJson = require('./SampleMusicSheet.json');
+// var sampleJson = require('./SampleMusicSheet.json');
 
 var NotesList = [];
 
@@ -252,6 +256,7 @@ class EditMusicScreen extends React.Component {
             d={[MiscJson[0].data].join(' ')} />
           {this.VerticalSection(mesureLength, start * (i + 1))}
           {this.VerticalSection(mesureLength * 9, start * (i + 1))}
+          {this.VerticalSection(mesureLength * 5, start * (i + 1))}
         </G>
       )
     }
