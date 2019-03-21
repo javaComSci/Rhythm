@@ -18,6 +18,7 @@ class sheet_object:
 		#run and staff line object is attached to
 		self.run = -1
 		self.staff_line = -1
+		self.duration = -1
 
 	#tup - (row,column) location of a pixel in specified object
 	#	Add pixel to an object

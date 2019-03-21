@@ -33,7 +33,7 @@ class MIDIob:
 		self.labels.append(label)
 
 	#Converts all MIDIob information into MIDI format, returning MIDI_File object
-	def covnert_to_MIDI(self, track=0, channel=0, time=1, tempo=100, volume=100):
+	def convert_to_MIDI(self, degrees, track=0, channel=0, time=1, tempo=100, volume=100):
 		MIDI_File = MIDIFile(1)
 
 		MIDI_File.addTempo(track,time,tempo)
