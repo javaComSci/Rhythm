@@ -1,14 +1,14 @@
 ##
- # Steps to make this thing run:
- # 1. export FLASK_APP=app.py => Ran in Backend/ => This will make it so you
- #    auto connect to the Virtual box/container
- # 2. pip install -r requirements.txt => This downloads all the dependencies
- # 3. Go check out the google docs folder and make sure you have Backend/config/mysql.json file
- # 4. Flask run => This should start up the server... maybe..
- # Note: I dont know if you need mysql downloaded since it is being run of a AWS instance, but
- # if you run into problems try to download mySQL.
- # Test: To make sure its running type localhost:5000/ into your browser!
- ##
+# Steps to make this thing run:
+# 1. export FLASK_APP=app.py => Ran in Backend/ => This will make it so you
+#    auto connect to the Virtual box/container
+# 2. pip install -r requirements.txt => This downloads all the dependencies
+# 3. Go check out the google docs folder and make sure you have Backend/config/mysql.json file
+# 4. Flask run => This should start up the server... maybe..
+# Note: I dont know if you need mysql downloaded since it is being run of a AWS instance, but
+# if you run into problems try to download mySQL.
+# Test: To make sure its running type localhost:5000/ into your browser!
+##
 
 # Importing Flask dependencies
 from flask import Flask, render_template, json, url_for, request
@@ -28,9 +28,9 @@ import user.routes.AccountRecovery as AccountRecoverys
 import user.routes.getInfo as getInfos
 from flask_mail import Mail, Message
 ##
- # Creates an instance of the exisiting class/module
- # __name__ is the name of the module I beleive
- ##
+# Creates an instance of the exisiting class/module
+# __name__ is the name of the module I beleive
+##
 app = Flask(__name__)
 
 mail_settings = {
@@ -46,15 +46,14 @@ app.config.update(mail_settings)
 mail = Mail(app)
 
 
+##
+# Registers a new user
+# EXAMPLE json
+# {
+#     "email": "Steve@IsTheBest.com"
+# }
 
 ##
- # Registers a new user
- # EXAMPLE json
- # {
- #     "email": "Steve@IsTheBest.com"
- # }
-
- ##
 @app.route('/register', methods=['POST'])
 def register():
     if request.method == 'POST':
@@ -71,6 +70,8 @@ def register():
  #     "delete": ["name", "MyFirstCompo"]
  # }
  ##
+
+
 @app.route('/delete', methods=['POST'])
 def delete():
     if request.method == 'POST':
@@ -82,6 +83,8 @@ def delete():
  # Deletes a user (This really just puts the user into ghost mode)
  # NOT FUNCTIONAL
  ##
+
+
 @app.route('/deleteUser', methods=['POST'])
 def deleteUser():
     if request.method == 'POST':
@@ -93,18 +96,19 @@ def deleteUser():
  # Call this to create a new composition for a user
  # EXAMPLE json
   # {
- 	#     "id": "1",    <- User_id
- 	#     "description": "I Like pancakes",
- 	#     "name": "MyFirstCompo"
+        #     "id": "1",    <- User_id
+        #     "description": "I Like pancakes",
+        #     "name": "MyFirstCompo"
   # }
  ##
+
+
 @app.route('/newComposition', methods=['POST'])
 def newComposition():
     if request.method == 'POST':
         return newCompositions.newCompo()
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
-
 
 
 @app.route('/newMusicSheet', methods=['POST'])
@@ -114,6 +118,7 @@ def newMusicSheet():
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
+
 @app.route('/duplicateSheet', methods=['POST'])
 def duplicateSheet():
     if request.method == 'POST':
@@ -121,19 +126,40 @@ def duplicateSheet():
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
-# '''
-# duplicateComposition
-# takes:
-# "title" - title of duplicated composition
-# "user_id" - user's ID
-# "comp_id" - id of composition to be duplicated
-# '''
+
+'''
+duplicateComposition
+takes:
+"title" - title of duplicated composition
+"user_id" - user's ID
+"comp_id" - id of composition to be duplicated
+'''
+
+
 @app.route('/duplicateComposition', methods=['POST'])
 def duplicateComposition():
     if request.method == 'POST':
         return newCompositions.duplicateComposition()
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
+
+##
+ # Specifically takes in form data with keys file and sheet_id
+ # Sets sheet_id blob to given file in form data
+ # EXAMPLE
+ # {
+ #      "file": BINARY DATA HERE,
+ #      "sheet_id": 147
+ # }
+##
+
+
+@app.route('/addSheetFile', methods=['POST'])
+def addSheetFile():
+    if request.method == 'POST':
+        return newMusicSheets.addSheetFile()
+    else:
+        return '\n\nDEBUG: Sollte das nicht sehen'
 
 ##
  # Call this to get info on a specific user from a specific table.
@@ -144,6 +170,8 @@ def duplicateComposition():
  #     "table": "user"
  # }
  ##
+
+
 @app.route('/getInfo', methods=['POST'])
 def getInfo():
     if request.method == 'POST':
@@ -151,12 +179,14 @@ def getInfo():
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
+
 @app.route('/getInfoByEmail', methods=['POST'])
 def getInfoByEmail():
     if request.method == 'POST':
         return getInfos.getInfoByEmail()
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
+
 
 @app.route('/getInfoBySheet', methods=['POST'])
 def getInfoBySheet():
@@ -181,6 +211,7 @@ def update():
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
+
 @app.route('/updateMulti', methods=['POST'])
 def updateMulti():
     if request.method == 'POST':
@@ -192,13 +223,17 @@ def updateMulti():
 # 	"email": "dellamoresteven@gmail.com"
 # }
 # UPDATE user SET verf_code=NULL WHERE email='Hhh';
+
+
 @app.route('/recoverEmail', methods=['POST'])
 def recoverEmail():
-    return AccountRecoverys.AccountRecovery(mail);
+    return AccountRecoverys.AccountRecovery(mail)
 
 # {
 # 	"code": 92477971865
 # }
+
+
 @app.route('/checkKey', methods=['POST'])
 def checkKey():
     if request.method == 'POST':
@@ -206,9 +241,10 @@ def checkKey():
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
+
 ##
  # This runs the server with debug=on so we can see outputs in the terminal.
  # Simlar to nodemon, it refreshes when you save! Yay!
  ##
 if __name__ == "__main__":
-  app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True)

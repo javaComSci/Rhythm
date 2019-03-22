@@ -24,22 +24,24 @@ var SheetScreenTemplate = function () {
                     closeDialog={() => { this.setState({ isDialogVisible: false, toEdit: '' }) }}>
                 </DialogInput>
                 <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 40, width: "80%" }}> {compositionTitle} </Text>
-                <View style={styles.operatorContainer}>
-                    <TouchableOpacity
-                        onPress={() => this.createComposition()}
-                        style={styles.addButton}
-                    >
-                        <Text style={styles.menuText}>+</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.neutralButton} onPress={() => this.setState({ "duplicateVisible": true })}>
-                        <Text style={styles.buttonText}>Duplicate</Text>
-                    </TouchableOpacity>
-                    {/* <TouchableOpacity style={styles.neutralButton} onPress={() => this.props.navigation.navigate('EditMusicScreen', {title: ""})}>
-                        <Text style={styles.buttonText}>Edit</Text>
-                    </TouchableOpacity> */}
-                    <TouchableOpacity style={styles.minusButton} onPress={() => this.deleteComposition()}>
-                        <Text style={styles.menuText}>-</Text>
-                    </TouchableOpacity>
+                <View style={{height: 100}}>
+                    <View style={styles.operatorContainer}>
+                        <TouchableOpacity
+                            onPress={() => this.createComposition()}
+                            style={styles.addButton}
+                        >
+                            <Text style={styles.menuText}>+</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.neutralButton} onPress={() => this.setState({ "duplicateVisible": true })}>
+                            <Text style={styles.buttonText}>Duplicate</Text>
+                        </TouchableOpacity>
+                        {/* <TouchableOpacity style={styles.neutralButton} onPress={() => this.props.navigation.navigate('EditMusicScreen', {title: ""})}>
+                            <Text style={styles.buttonText}>Edit</Text>
+                        </TouchableOpacity> */}
+                        <TouchableOpacity style={styles.minusButton} onPress={() => this.deleteComposition()}>
+                            <Text style={styles.menuText}>-</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 <Text style={{ color: 'white', }}>{compositionDescription}</Text>
@@ -52,7 +54,7 @@ var SheetScreenTemplate = function () {
                                 <TouchableOpacity
                                     style={styles.compositionItem}
                                     onPress={(e) => {
-                                        this.props.navigation.navigate('EditMusicScreen', {title: item.getTitle()})
+                                        this.props.navigation.navigate('EditMusicScreen', {title: item.getTitle(), file: item.getFile()})
                                     }}
                                     onLongPress={(e) => {
                                         console.log("pepper")
