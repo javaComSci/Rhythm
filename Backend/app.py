@@ -121,13 +121,13 @@ def duplicateSheet():
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
-'''
-duplicateComposition
-takes:
-"title" - title of duplicated composition
-"user_id" - user's ID
-"comp_id" - id of composition to be duplicated
-'''
+# '''
+# duplicateComposition
+# takes:
+# "title" - title of duplicated composition
+# "user_id" - user's ID
+# "comp_id" - id of composition to be duplicated
+# '''
 @app.route('/duplicateComposition', methods=['POST'])
 def duplicateComposition():
     if request.method == 'POST':

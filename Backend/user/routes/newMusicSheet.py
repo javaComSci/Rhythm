@@ -14,7 +14,21 @@ def newMusicSheets():
     return 'newMusicSheets'
 
 def duplicateSheet():
+    # print("WTF");
     content = request.json
+    # print(content['comp_id'])
+    if(content['comp_id'] < 0):
+        # print("GOT HERE");
+        return "false"
+    if(content['sheet_id'] < 0):
+        return "false"
+    if(content['comp_id'] > 1000):
+        # print("GOT HERE");
+        return "false"
+    if(content['sheet_id'] > 1000):
+        # print("GOT HERE");
+        return "false"
+
     MySQLConnect.cursor.execute("INSERT INTO sheet_music(file,composition_id,name) SELECT file, %s, name from `sheet_music` where sheet_id=%s", (content['comp_id'], content['sheet_id']))
     MySQLConnect.db.commit()
     return 'duplicateSheet'
