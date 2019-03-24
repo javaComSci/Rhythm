@@ -5,8 +5,9 @@ import cv2
 import json
 import MIDImaker
 import json
-from 
+import sendToCloud
 
+# from .. import MySQL
 
 if __name__ == "__main__":
 	file_path = "ExamplePredictions/DATA/file16.jpg"
@@ -152,6 +153,7 @@ if __name__ == "__main__":
 		with open('data.txt', 'w') as outfile:  
 			json.dump(jsonData, outfile)
 
+		sendToCloud.cloud(jsonData)
 
 	MF = MIDImaker.MIDIob(SOL)
 	filey = MF.convert_to_MIDI()
