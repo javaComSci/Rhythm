@@ -20,7 +20,7 @@ def addSheetFile():
     MySQLConnect.db.commit()
     MySQLConnect.cursor.execute("SELECT file FROM sheet_music WHERE sheet_id=%s", (15))
     record = MySQLConnect.cursor.fetchall()
-    print record
+    print(record)
     return 'addFile'
 
 def duplicateSheet():

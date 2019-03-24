@@ -61,6 +61,10 @@ var CleffLines;
 var troubleCleffSplit = [];
 var baseCleffSplit = [];
 
+var keyvalue;
+
+var firstRender = 1;
+
 /*
  * This is the Component that holds all the notes and
  * renders each note depending on the note num, pitch, and length
@@ -181,6 +185,8 @@ class EditMusicScreen extends React.Component {
       colorProp: 'black',
       alert: false,
       SheetType: 1,
+      troubleCleff: troubleCleffSplit,
+      baseCleff: baseCleffSplit,
     };
   }
 
@@ -261,20 +267,23 @@ class EditMusicScreen extends React.Component {
     if(this.state.SheetType == 0){
       for (let i = 0; i < Rows; i++) {
         Measures.push(
-          <G height="100%" width="100%">
+          <G height="100%" width="100%" key={keyvalue++}>
             <Path x={[mesureLength].join(' ')} y={[(i + 1) * start].join(' ')} transform={['scale(', mesureLength / 25, spaceBetween / 24.5, ')'].join(' ')} style="fill:green"
               d={[MiscJson[0].data].join(' ')} />
             {this.VerticalSection(mesureLength, start * (i + 1))}
             {this.VerticalSection(mesureLength * 9, start * (i + 1))}
             {this.VerticalSection(mesureLength * 5.3, start * (i + 1))}
+            {/*this.renderMeasureBoxes(i,0)*/}
+            {/*this.renderMeasureBoxes(i,1)*/}
           </G>
         )
       }
     }
+
     if(this.state.SheetType == 1){
       for (let i = 0; i < Rows*2; i++) {
         Measures.push(
-          <G height="100%" width="100%" key={i+555}>
+          <G height="100%" width="100%" key={keyvalue++}>
             <Path x={[mesureLength].join(' ')} y={[(i + 1) * start].join(' ')} transform={['scale(', mesureLength / 25, spaceBetween / 24.5, ')'].join(' ')} style="fill:green"
               d={[MiscJson[0].data].join(' ')} />
             {this.VerticalSection(mesureLength, start * (i + 1))}
@@ -284,7 +293,7 @@ class EditMusicScreen extends React.Component {
         )
         if(i%2 == 0){
           Measures.push(
-            <G height="100%" width="100%" key={i*1001}>
+            <G height="100%" width="100%" key={keyvalue++}>
               <Path x={[mesureLength].join(' ')} y={[(i + 1) * start].join(' ')} transform={['scale(', (-1*mesureLength / 3000), spaceBetween / 650, ')'].join(' ')} style="fill:green"
                 d={[MiscJson[1].data].join(' ')} />
             </G>
@@ -372,9 +381,10 @@ class EditMusicScreen extends React.Component {
     if (j == 0) {
       return (
         <Rect
+          key={keyvalue++}
           x={[mesureLength * 1].join(' ')}
           y={[start * (i + 1) - spaceBetween].join(' ')}
-          width={[mesureLength * 4].join(' ')}
+          width={[mesureLength * 4.2].join(' ')}
           height={[spaceBetween * 6].join(' ')}
           onPress={() => this.onPressHitBox(0, i)}
           fill="blue"
@@ -385,12 +395,13 @@ class EditMusicScreen extends React.Component {
     } else {
       return (
         <Rect
-          x={[mesureLength * 5].join(' ')}
+          key={keyvalue++}
+          x={[mesureLength * 5.2].join(' ')}
           y={[start * (i + 1) - spaceBetween].join(' ')}
           width={[mesureLength * 4].join(' ')}
           height={[spaceBetween * 6].join(' ')}
           onPress={() => this.onPressHitBox(1, i)}
-          fill="yellow"
+          fill="red"
           strokeWidth="0"
           fillOpacity=".1"
         />
@@ -401,9 +412,36 @@ class EditMusicScreen extends React.Component {
   onPressHitBox(x, y) {
     console.log("x: " + x + " y: " + y);
     // console.log(NotesListByMeasure[(y*2) + x])
+    // troubleCleffSplit[x+y].splice(0,1);
+    // console.log(troubleCleffSplit[x+y]);
+    // this.setState({
+    //   troubleCleff: troubleCleffSplit,
+    // });
+    // Send to measure Screen
+    if(this.state.SheetType == 0){
+      if(((y * 2) + x) >= troubleCleffSplit.length){
+        this.props.navigation.navigate('ViewMeasure', { arr: [] });
+      }else{
+        this.props.navigation.navigate('ViewMeasure', { arr: troubleCleffSplit[(y * 2) + x] });
+      }
+    } else if(this.state.SheetType == 1){
+      if(y % 2 == 0){
+        console.log("x+y: " + (x+y));
+        console.log("length: " + troubleCleffSplit.length);
+        if((y+x) >= troubleCleffSplit.length){
+          this.props.navigation.navigate('ViewMeasure', { arr: [] });
+        } else {
+          this.props.navigation.navigate('ViewMeasure', { arr: troubleCleffSplit[(y) + x] });
+        }
+      }else{
+        if(((y-1)+x) >= troubleCleffSplit.length){
+          this.props.navigation.navigate('ViewMeasure', { arr: [] });
+        }else{
+          this.props.navigation.navigate('ViewMeasure', { arr: baseCleffSplit[(y-1) + x] });
+        }
+      }
+    }
 
-    //Send to measure Screen
-    this.props.navigation.navigate('ViewMeasure', { arr: NotesListByMeasure[(y * 2) + x] });
   }
 
   splitUp(troubleCleff, baseCleff, altoCleff){
@@ -416,7 +454,7 @@ class EditMusicScreen extends React.Component {
       let tempy = [];
       let measure = 0;
       let oldbeat = 0;
-      tempy.push(<NoteObjects key={98765} x={1} y={Math.ceil((measure/2) + .01)} length={0} note={0} color="black" pitch={1} />);
+      tempy.push(<NoteObjects key={keyvalue++} x={1} y={Math.ceil((measure/2) + .01)} length={0} note={0} color="black" pitch={1} />);
       for (let i = 0; i < troubleCleff.length; i++) {
         beats += troubleCleff[i].length;
         if(beats > 4){
@@ -425,11 +463,11 @@ class EditMusicScreen extends React.Component {
           beats = troubleCleff[i].length;
           measure++;
           if(measure%2 == 0){
-            tempy.push(<NoteObjects key={i*5000} x={1} y={Math.ceil((measure/2) + .01)} length={0} note={0} color="black" pitch={1} />);
+            tempy.push(<NoteObjects key={keyvalue++} x={1} y={Math.ceil((measure/2) + .01)} length={0} note={0} color="black" pitch={1} />);
           }
         }
         // console.log("beats: " + beats);
-        tempy.push(<NoteObjects key={i} x={2 + (beats - troubleCleff[i].length) + (4*(measure%2))} y={Math.ceil((measure/2) + .01)} length={troubleCleff[i].length} note={troubleCleff[i].note} color="black" pitch={troubleCleff[i].pitch} />);
+        tempy.push(<NoteObjects key={keyvalue++} x={2 + (beats - troubleCleff[i].length) + (4*(measure%2))} y={Math.ceil((measure/2) + .01)} length={troubleCleff[i].length} note={troubleCleff[i].note} color="black" pitch={troubleCleff[i].pitch} />);
         // oldbeat = troubleCleff[i].length;
       }
       if(tempy.length != 0){
@@ -443,7 +481,7 @@ class EditMusicScreen extends React.Component {
       let tempy = [];
       let measure = 0;
       let oldbeat = 0;
-      tempy.push(<NoteObjects key={98765} x={1} y={Math.ceil((measure/2) + .01)} length={0} note={0} color="black" pitch={1} />);
+      tempy.push(<NoteObjects key={keyvalue++} x={1} y={Math.ceil((measure/2) + .01)} length={0} note={0} color="black" pitch={1} />);
       for (let i = 0; i < troubleCleff.length; i++) {
         beats += troubleCleff[i].length;
         if(beats > 4){
@@ -453,24 +491,22 @@ class EditMusicScreen extends React.Component {
           measure++;
           if(measure%2 == 0){
             measure += 2;
-            tempy.push(<NoteObjects key={i*3300} x={1} y={Math.ceil((measure/2) + .01)} length={0} note={0} color="black" pitch={1} />);
+            tempy.push(<NoteObjects key={keyvalue++} x={1} y={Math.ceil((measure/2) + .01)} length={0} note={0} color="black" pitch={1} />);
           }
         }
         // console.log("beats: " + beats);
-        tempy.push(<NoteObjects key={i*12492} x={2 + (beats - troubleCleff[i].length) + (4*(measure%2))} y={Math.ceil((measure/2) + .01)} length={troubleCleff[i].length} note={troubleCleff[i].note} color="black" pitch={troubleCleff[i].pitch} />);
+        tempy.push(<NoteObjects key={keyvalue++} x={2 + (beats - troubleCleff[i].length) + (4*(measure%2))} y={Math.ceil((measure/2) + .01)} length={troubleCleff[i].length} note={troubleCleff[i].note} color="black" pitch={troubleCleff[i].pitch} />);
         // oldbeat = troubleCleff[i].length;
       }
       if(tempy.length != 0){
         troubleCleffSplit.push(tempy);
       }
 
-
       beats = 0;
       tempy = [];
       measure = 2;
       oldbeat = 0;
-      console.log("BASECLEFF LENGTH" + baseCleff.length);
-      tempy.push(<NoteObjects key={98765} x={1} y={Math.ceil((measure/2) + .01)} length={0} note={6} color="black" pitch={1} />);
+      tempy.push(<NoteObjects key={keyvalue++} x={1} y={Math.ceil((measure/2) + .01)} length={0} note={6} color="black" pitch={1} />);
       for (let i = 0; i < baseCleff.length; i++) {
         beats += baseCleff[i].length;
         if(beats > 4){
@@ -480,20 +516,16 @@ class EditMusicScreen extends React.Component {
           measure++;
           if(measure%2 == 0){
             measure += 2;
-            tempy.push(<NoteObjects key={i*5000} x={1} y={Math.ceil((measure/2) + .01)} length={0} note={6} color="black" pitch={1} />);
+            tempy.push(<NoteObjects key={keyvalue++} x={1} y={Math.ceil((measure/2) + .01)} length={0} note={6} color="black" pitch={1} />);
           }
         }
         // console.log("beats: " + beats);
-        tempy.push(<NoteObjects key={i} x={2 + (beats - baseCleff[i].length) + (4*(measure%2))} y={Math.ceil((measure/2) + .01)} length={baseCleff[i].length} note={baseCleff[i].note} color="black" pitch={baseCleff[i].pitch} />);
+        tempy.push(<NoteObjects key={keyvalue++} x={2 + (beats - baseCleff[i].length) + (4*(measure%2))} y={Math.ceil((measure/2) + .01)} length={baseCleff[i].length} note={baseCleff[i].note} color="black" pitch={baseCleff[i].pitch} />);
         // oldbeat = troubleCleff[i].length;
       }
       if(tempy.length != 0){
         baseCleffSplit.push(tempy);
       }
-
-      console.log("\n\nDone\n\n");
-
-      console.log(baseCleffSplit);
     }
   }
 
@@ -507,9 +539,6 @@ class EditMusicScreen extends React.Component {
     let titles = NoteSVG[sampleJson.notes[0].note].title;
     // console.log("First Note is: " + titles);
     for (let i = 0; i < sampleJson.notes.length; i++) {
-      console.log("title: " + titles);
-      // console.log("nextNote: ");
-      // console.log(NoteSVG[sampleJson.notes[i].note]);
       if(NoteSVG[sampleJson.notes[i].note].title == "troubleCleff"){
         titles = "troubleCleff";
       } else if(NoteSVG[sampleJson.notes[i].note].title == "baseCleff"){
@@ -535,13 +564,12 @@ class EditMusicScreen extends React.Component {
     this.splitUp(troubleCleff, baseCleff, altoCleff);
   }
 
-  displayNotes() {
+  displayHitBoxes() {
     let ret = [];
-    /* Two loops because we want the boxes to be rendered OVER the notes */
-    for (var i = 0; i < NotesListByMeasure.length; i++) {
-      ret.push(NotesListByMeasure[i])
-    }
-    for (var i = 0; i < (NotesListByMeasure.length / 2); i++) {
+    let Rows = Math.ceil(totalBeats / 8);
+    if(Rows == 0)
+      Rows++;
+    for (var i = 0; i < Rows+1; i++) {
       ret.push(this.renderMeasureBoxes(i,0))
       ret.push(this.renderMeasureBoxes(i,1))
     }
@@ -549,9 +577,18 @@ class EditMusicScreen extends React.Component {
   }
 
   render() {
-    console.log("First Render in note\n");
+    // console.log("First Render in note\n");
+    keyvalue = 0;
     // screenExtendSize = 0;
-    this.initNotesListByMeasure();
+    if(firstRender == 1){
+      console.log("First Render in note\n");
+      this.initNotesListByMeasure();
+      firstRender = 0;
+    }else{
+      console.log(troubleCleffSplit);
+      console.log("ReRendering main\n");
+    }
+
     // console.log(NotesListByMeasure.props.note);
     // totalBeats = 0;
     backButton = require('../assets/back.png')
@@ -588,11 +625,11 @@ class EditMusicScreen extends React.Component {
           <ScrollView>
             <Svg height={[screenSize + screenExtendSize].join(' ')} width="100%">
               {this.setTitle(this.props.navigation.getParam("title", "MusicSheet"))}
-
-              {/*this.displayNotes()*/}
               {troubleCleffSplit}
               {baseCleffSplit}
+
               {this.lineSection()}
+              {this.displayHitBoxes()}
             </Svg>
 
           </ScrollView>
