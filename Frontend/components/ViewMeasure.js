@@ -21,8 +21,8 @@ import React from 'react';
 const SCREEN_WIDTH = Dimensions.get('window').width
 const SCREEN_HEIGHT = Dimensions.get('window').height
 
-var NoteSVG = require('./NotesData.json');
-var MiscJson = require('./EditMisc.json');
+var NoteSVG = require('./jsons/NotesData.json');
+var MiscJson = require('./jsons/EditMisc.json');
 
 let MeasureNoteList = [];
 
