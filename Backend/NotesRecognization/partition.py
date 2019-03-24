@@ -566,6 +566,9 @@ def full_partition(path):
 	#locate row and staff lines
 	locate_note_run(SOL, staff_lines)
 
+	#sort SOL
+	sort_SOL(SOL)
+
 	return mask, SOL, staff_lines
 
 #@ pr - a list of pruned runs
@@ -717,9 +720,12 @@ def closest_row(er, staff_lines):
 
 	return cr, mes
 
+def sort_SOL(SOL):
+	SOL.sort(key = lambda ob: (ob.R2 - ob.R1, ob.C2 - ob.C1))
+
 
 if __name__ == "__main__":
-	mask, SOL, sl = full_partition("ExamplePredictions/DATA/file15.jpg")
+	mask, SOL, sl = full_partition("ExamplePredictions/DATA/test3.jpg")
 	print_objects(mask,SOL,sl,path="ExamplePredictions/predictions",staff_lines=True)
 
 
