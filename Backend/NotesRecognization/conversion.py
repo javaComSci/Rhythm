@@ -4,15 +4,12 @@ import numpy as np
 import cv2
 import json
 import MIDImaker
+import json
+from 
 
-class JCpenny:
-	def __init__(self,note,length,pitch):
-		self.note = 1
-		self.length = 1
-		self.pitch = pitch
 
 if __name__ == "__main__":
-	file_path = "ExamplePredictions/DATA/file7.jpg"
+	file_path = "ExamplePredictions/DATA/file16.jpg"
 
 	mask, SOL, staff_lines = partition.full_partition(file_path)
 
@@ -26,6 +23,16 @@ if __name__ == "__main__":
 
 
 	with open('data.json', 'w') as outfile:
+
+		bigData = {}
+
+		bigData['clef'] = 1
+		bigData['notes'] = []
+
+		gclef = False
+		cclef = False
+		fclef = False
+
 		for i in range(len(SOL)):
 			n_arr = partition.SO_to_array(SOL[i])
 
@@ -41,38 +48,114 @@ if __name__ == "__main__":
 
 			cv2.imwrite("ExamplePredictions/predictions/ob#{}_label:{}.jpg".format(ob_counter, ob_prediction[0]), im)
 
-			if ob_prediction == 'GClef':
+			data = {}
+
+			clefCount = 0
+
+			print("OB PREDICTION", ob_prediction[0])
+
+			if ob_prediction[0] == 'GClef':
 				SOL[i].clef = 1
-			elif ob_prediction == 'CClef':
+				data['note'] = 0
+				data['pitch'] = 1
+				data['length'] = 0
+				gclef = True
+			elif ob_prediction[0] == 'CClef':
 				SOL[i].clef = 2
-			elif ob_prediction == 'FClef':
+				data['note'] = 6
+				data['pitch'] = 1
+				data['length'] = 0
+				cclef = True
+			elif ob_prediction[0] == 'FClef':
 				SOL[i].clef = 3
-			elif ob_prediction == 'Sixteenth-Note':
-				SOL[i].duration = .0625
-			elif ob_prediction == 'Eighth-Note':
+				data['note'] = 7
+				data['pitch'] = 1
+				data['length'] = 0
+				fclef = True
+			elif ob_prediction[0] == 'Sixteenth-Note':
 				SOL[i].duration = .125
-			elif ob_prediction == 'Quarter-Note':
-				SOL[i].duration = .25
-			elif ob_prediction == 'Half-Note':
-				SOL[i].durationn = .5
-			elif ob_prediction == 'Whole-Note':
+				data['note'] = 5
+				data['pitch'] = SOL[i].run
+				data['length'] = .125
+			elif ob_prediction[0] == 'Eighth-Note':
+				SOL[i].duration = .5
+				data['note'] = 1
+				data['pitch'] = SOL[i].run
+				data['length'] = .5
+			elif ob_prediction[0] == 'Quarter-Note':
 				SOL[i].duration = 1
-			elif ob_prediction == 'Eighth-Rest':
-				SOL[i].rest = .125
-			elif ob_prediction == 'Quarter-Rest':
-				SOL[i].rest = .25
-			elif ob_prediction == 'Whole-Half-Rest':
+				data['note'] = 2
+				data['pitch'] = SOL[i].run
+				data['length'] = 1
+			elif ob_prediction[0] == 'Half-Note':
+				SOL[i].durationn = 2
+				data['note'] = 3
+				data['pitch'] = SOL[i].run
+				data['length'] = 2
+			elif ob_prediction[0] == 'Whole-Note':
+				SOL[i].duration = 4
+				data['note'] = 8
+				data['pitch'] = SOL[i].run
+				data['length'] = 4
+			elif ob_prediction[0] == 'Eighth-Rest':
 				SOL[i].rest = .5
-			elif ob_prediction == 'Sharp':
+				data['note'] = 9
+				data['pitch'] = SOL[i].run
+				data['length'] = .5
+			elif ob_prediction[0] == 'Quarter-Rest':
+				SOL[i].rest = 1
+				data['note'] = 10
+				data['pitch'] = SOL[i].run
+				data['length'] = 1
+			elif ob_prediction[0] == 'Whole-Half-Rest':
+				SOL[i].rest = 2
+				data['note'] = 11
+				data['pitch'] = SOL[i].run
+				data['length'] = 2
+			elif ob_prediction[0] == 'Sharp':
 				SOL[i].accidental = 1
-			elif ob_prediction == 'Flat':
+				data['note'] = 13
+				data['pitch'] = SOL[i].run
+				data['length'] = 0
+			elif ob_prediction[0] == 'Flat':
 				SOL[i].accidental = 2
+				data['note'] = 14
+				data['pitch'] = SOL[i].run
+				data['length'] = 0
+
+			print(SOL[i].duration, SOL[i].accidental)
 
 			ob_counter += 1
 
+			bigData['notes'].append(data)
+
+			print("NOTES", bigData["notes"])
+
+			print("DATA", data)
+
+		if gclef == True and fclef == True:
+			bigData['clef'] = 1
+		elif gclef == True:
+			bigData['clef'] = 0
+		elif fclef == True:
+			bigData['clef'] = 2
+		elif cclef == True:
+			bigData['clef'] = 3
+
+		print("BIG DATA", bigData)
+
+		jsonData = json.dumps(bigData)
+
+		print("bigData")
+		print(bigData)
+
+		with open('data.txt', 'w') as outfile:  
+			json.dump(jsonData, outfile)
+
+
 	MF = MIDImaker.MIDIob(SOL)
 	filey = MF.convert_to_MIDI()
-	MF.MIDI_to_file(filey, "test.mid")
+	MF.MIDI_to_file(filey, "test1.mid")
 
 
 
