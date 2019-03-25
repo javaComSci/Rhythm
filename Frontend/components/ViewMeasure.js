@@ -21,11 +21,12 @@ import React from 'react';
 const SCREEN_WIDTH = Dimensions.get('window').width
 const SCREEN_HEIGHT = Dimensions.get('window').height
 
-var NoteSVG = require('./NotesData.json');
-var MiscJson = require('./EditMisc.json');
+var NoteSVG = require('./jsons/NotesData.json');
+var MiscJson = require('./jsons/EditMisc.json');
 
 let MeasureNoteList = [];
 
+var keyvalue;
 
 class ViewMeasure extends React.Component {
 
@@ -33,6 +34,7 @@ class ViewMeasure extends React.Component {
       super(props);
       console.log("constructor: ");
       MeasureNoteList = this.props.navigation.getParam('arr');
+      console.log("constructor: " + MeasureNoteList);
       this.state = {
       };
   }
@@ -47,7 +49,7 @@ class ViewMeasure extends React.Component {
 
   VerticalSection(x, y){
     return (
-      <Svg height="100%" width="100%">
+      <Svg height="100%" width="100%" key={keyvalue++}>
         <Line
             x1={[x].join(' ')}
             y1={[y].join(' ')}
@@ -68,7 +70,7 @@ class ViewMeasure extends React.Component {
     let start = SCREEN_HEIGHT/8;
     let betweenNotes = SCREEN_WIDTH/11;
     return (
-      <Svg height="100%" width="100%">
+      <Svg height="100%" width="100%" key={keyvalue}>
         <Path x={[mesureLength].join(' ')} y={[SCREEN_HEIGHT/3].join(' ')} transform={['scale(', 1.5, .9, ')'].join(' ')}  style="fill:green"
         d={[MiscJson[0].data].join(' ')}/>
         {this.VerticalSection(SCREEN_WIDTH/10,SCREEN_HEIGHT/3)}
@@ -78,19 +80,27 @@ class ViewMeasure extends React.Component {
   }
 
   NotesEditRender(){
+    let s = 0;
+    if(MeasureNoteList[0].props.note == 0 || MeasureNoteList[0].props.note == 6){
+      s++;
+    }
     let FirstNote = SCREEN_WIDTH/9;
+    let halfHeight = SCREEN_HEIGHT/3;
+    // halfHeight += SCREEN_HEIGHT/80;
     let start = SCREEN_HEIGHT/8;
-    let betweenNotes = (SCREEN_WIDTH/(MeasureNoteList.length+.2));
+    let betweenNotes = (SCREEN_WIDTH/(MeasureNoteList.length+1));
     let Notes = [];
-    for (var i = 0; i < MeasureNoteList.length; i++) {
+
+    for (var i = s; i < MeasureNoteList.length; i++) {
     // for (let i = 0; i < 1; i++) {
-      let x = FirstNote + (i * betweenNotes + (NoteSVG[MeasureNoteList[i].props.note].adjustX * 2));
+      let x = FirstNote + ((i-s) * betweenNotes + (NoteSVG[MeasureNoteList[i].props.note].adjustX * 2));
+      let y = halfHeight + (NoteSVG[MeasureNoteList[i].props.note].adjustY * 2) + (MeasureNoteList[i].props.pitch * SCREEN_HEIGHT/80);
       // let x = (i * betweenNotes + (NoteSVG[MeasureNoteList[i].props.note].adjustX * 2));
       // MeasureNoteList[i].props
       /* rendering the path of the note num */
       Notes.push(
-        <G stroke="black" stroke-width="0" fill="black">
-          <Path x={[x].join(' ')} y={([280].join(' '))} transform={['scale(', NoteSVG[MeasureNoteList[i].props.note].scale1 * 2, NoteSVG[MeasureNoteList[i].props.note].scale2 * 2, ')'].join(' ')} d={[NoteSVG[MeasureNoteList[i].props.note].data].join(' ')}/>
+        <G stroke="black" stroke-width="0" fill="black" key={keyvalue++}>
+          <Path x={[x].join(' ')} y={([y].join(' '))} transform={['scale(', NoteSVG[MeasureNoteList[i].props.note].scale1 * 2, NoteSVG[MeasureNoteList[i].props.note].scale2 * 2, ')'].join(' ')} d={[NoteSVG[MeasureNoteList[i].props.note].data].join(' ')}/>
         </G>
       )
     }
@@ -99,6 +109,7 @@ class ViewMeasure extends React.Component {
 
   render(){
     console.log("viewMeasure Render\n");
+    keyvalue = 0;
     return (
       <View style={styles.container}>
         <Header
@@ -125,7 +136,6 @@ class ViewMeasure extends React.Component {
         />
         <Svg height="100%"  width="100%">
           {this.lineSection()}
-          {this.lineSection()}
           {this.NotesEditRender()}
         </Svg>
       </View>
@@ -133,9 +143,13 @@ class ViewMeasure extends React.Component {
   }
 };
 
-  function mapStateToProps(state) {}
+  function mapStateToProps(state) {
+    return {}
+  }
 
-  function mapDispatchToProps(dispatch) {}
+  function mapDispatchToProps(dispatch) {
+    return {}
+  }
 
   const styles = StyleSheet.create({
     container: {

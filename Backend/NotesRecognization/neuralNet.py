@@ -1089,7 +1089,7 @@ def checkPredictions(testingInput, testingOut):
 
 		print("PREDICTION: ", prediction[0][0], "ACTUAL:", stringOutputs[t])
 
-		if prediction[0][0] == stringOutputs[t]:
+		if prediction[0][0] == stringOutputs[t] and t % 60 == 0:
 			testing = testingInput[t]
 			testing = testing * 255
 			testing = testing.reshape(70, 50)
@@ -1311,4 +1311,4 @@ if __name__ == '__main__':
 	# trainExtrasNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testExtrasNN(testingIn, testingOut)
 
-	# checkPredictions(testingIn, testingOut)
+	checkPredictions(testingIn, testingOut)

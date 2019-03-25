@@ -410,7 +410,12 @@ def check_area(ob):
 # @return - True if area is too many pixels in image are of the object, false otherwise
 #	checks the pixel area of an object, returning true if it is too large
 def check_object_area(ob):
-	if len(ob.pixel_list) / (1.00 * (ob.R2 - ob.R1) * (ob.C2 - ob.C1)) >= 0.8:
+	ar = len(ob.pixel_list) / (1.00 * (ob.R2 - ob.R1) * (ob.C2 - ob.C1))
+	if ar >= 0.8:
+		return True
+
+	ar1 = len(ob.pixel_list) / ((1.00 * 3500))
+	if ar1 <= 0.1:
 		return True
 	return False
 
@@ -446,6 +451,7 @@ def print_objects(mask,SOL,sl,path="",staff_lines=False):
 		path = path + "/"
 
 	full_img = np.zeros(mask.shape)
+	county = 0
 
 	#for every object in sheet object list
 	for ob in SOL:
@@ -462,9 +468,9 @@ def print_objects(mask,SOL,sl,path="",staff_lines=False):
 		new_img = SO_to_array(ob)
 
 		#Write object to specified path
-		cv2.imwrite("{}ob_{}_R{}SL{}.jpg".format(path,ob.object_number,ob.run,ob.staff_line), new_img)
+		cv2.imwrite("{}{}ob_{}_R{}SL{}.jpg".format(path,county,ob.object_number,ob.run,ob.staff_line), new_img)
 
-
+		county += 1
 	if staff_lines:
 		for s in sl:
 			for r in s:
@@ -565,6 +571,9 @@ def full_partition(path):
 
 	#locate row and staff lines
 	locate_note_run(SOL, staff_lines)
+
+	#sort SOL
+	sort_SOL(SOL)
 
 	return mask, SOL, staff_lines
 
@@ -717,9 +726,13 @@ def closest_row(er, staff_lines):
 
 	return cr, mes
 
+def sort_SOL(SOL):
+
+	SOL.sort(key = lambda ob: (ob.staff_line, ob.C1))
+
 
 if __name__ == "__main__":
-	mask, SOL, sl = full_partition("ExamplePredictions/DATA/file15.jpg")
+	mask, SOL, sl = full_partition("ExamplePredictions/DATA/test3.jpg")
 	print_objects(mask,SOL,sl,path="ExamplePredictions/predictions",staff_lines=True)
 
 
