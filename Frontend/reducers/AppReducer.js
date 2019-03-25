@@ -30,6 +30,14 @@ function nav(state = initialNavState, action) {
 
 const initalRegisterState = { isRegistered: false, id: "26342", compositions: [] };
 
+function containsComp(obj, list) {
+    for (var i = 0; i < list.length; i++) {
+        if (list[i].key == obj.key)
+            return true;
+    }
+    return false;
+}
+
 function auth(state = initalRegisterState, action) {
     switch (action.type) {
         case 'ADD_EMAIL':
@@ -38,10 +46,10 @@ function auth(state = initalRegisterState, action) {
             console.log('user id route auth')
             return { ...state, id: action.id }
         case 'ADD_COMPOSITION':
-            console.log("compasdfasdf")
-            return {
-                ...state, compositions: [...state.compositions, action.composition]
-            };
+            if (!containsComp(action.composition, state.compositions))
+                return {
+                    ...state, compositions: [...state.compositions, action.composition]
+                };
         default:
             return state;
     }

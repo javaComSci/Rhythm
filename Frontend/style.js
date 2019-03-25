@@ -81,7 +81,7 @@ module.exports = StyleSheet.create({
         borderRadius: 10,
         backgroundColor: 'transparent',
         borderColor: 'white',
-        borderWidth: 1,
+        borderWidth: 3,
     },
     openButton: {
         height: 75,

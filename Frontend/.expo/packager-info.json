@@ -1,9 +1,9 @@
 {
-  "expoServerNgrokUrl": "https://2q-3zb.anonymous.frontend.exp.direct",
-  "packagerNgrokUrl": "https://packager.2q-3zb.anonymous.frontend.exp.direct",
-  "ngrokPid": 11478,
-  "packagerPort": 19001,
-  "packagerPid": 11457,
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null,
+  "packagerPort": null,
+  "packagerPid": null,
   "devToolsPort": 19002,
-  "expoServerPort": 19000
+  "expoServerPort": null
 }

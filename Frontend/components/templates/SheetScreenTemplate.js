@@ -54,7 +54,7 @@ var SheetScreenTemplate = function () {
                                 <TouchableOpacity
                                     style={styles.compositionItem}
                                     onPress={(e) => {
-                                        this.props.navigation.navigate('EditMusicScreen', {title: item.getTitle()})
+                                        this.props.navigation.navigate('EditMusicScreen', {title: item.getTitle(), file: item.getFile()})
                                     }}
                                     onLongPress={(e) => {
                                         console.log("pepper")
