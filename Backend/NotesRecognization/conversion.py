@@ -10,7 +10,7 @@ import sendToCloud
 # from .. import MySQL
 
 if __name__ == "__main__":
-	file_path = "ExamplePredictions/DATA/file16.jpg"
+	file_path = "ExamplePredictions/DATA/file21.jpg"
 
 	mask, SOL, staff_lines = partition.full_partition(file_path)
 
@@ -157,7 +157,6 @@ if __name__ == "__main__":
 
 	MF = MIDImaker.MIDIob(SOL)
 	filey = MF.convert_to_MIDI()
-	MF.MIDI_to_file(filey, "test1.mid")
 
 
 
