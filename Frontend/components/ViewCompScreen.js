@@ -87,7 +87,8 @@ class ViewCompScreen extends React.Component {
                 var dummyList = [] // temp list to hold compositions before being added to state
                 JSON.parse(res).forEach(element => {
                     // title, id, compid
-                    dummyList.push(new Composition(element[3], element[0], element[2], JSON.parse(element[1])));
+                    // console.log(JSON.parse(element[4]))
+                    dummyList.push(new Composition(element[3], element[0], element[2], JSON.parse(element[4])));
                 });
                 that.setState({ "sheet_music": dummyList })
                 that.sheetList = dummyList.map(sheet => ({ value: sheet.getID(), label: sheet.getTitle(), color: "red" }))

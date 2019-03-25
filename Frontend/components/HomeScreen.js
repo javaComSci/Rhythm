@@ -8,7 +8,8 @@ import { addUser } from '../actions/addUserID';
 import HomeScreenTemplate from './templates/HomeScreenTemplate';
 import LoadingScreen from './LoadingScreen';
 var styles = require('../style')
-
+var sampleJson = require('./MusicSheet0.json');
+console.log(sampleJson instanceof Blob);
 /*
 todo: load generated music files from local storage
 todo:
@@ -28,8 +29,24 @@ class HomeScreen extends React.Component {
         // clears local storage for debugging purposes
 
         // AsyncStorage.clear().then(() => {
-        this.props.navigation.navigate("EditMusicScreen"); //Change this
+        //this.props.navigation.navigate("EditMusicScreen"); //Change this
         // });
+        var formData = new FormData();
+        formData.append('sheet_id', 147);
+        formData.append('file', JSON.stringify(sampleJson));
+        const options = {
+            method: 'POST',
+            body: formData,
+            formData: formData,
+            headers: {'Content-Type':'multipart/form-data', 'Accept-Encoding': 'gzip, deflate', 'Cache-Control': 'no-cache'},
+        }
+        fetch("http://18.237.79.152:5000/addSheetFile", options).then(result => {
+            result.text().then(res => {
+                console.log("camera res", res)
+            }).catch(err => {
+                console.log("camera err", err)
+            })
+        });
         console.log("cleared");
     }
 
