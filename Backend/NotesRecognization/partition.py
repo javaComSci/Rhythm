@@ -294,10 +294,10 @@ def scan_unidentified_pixel(image,mask,row,col):
 #	Scans around an identified pixel to determine if it is touching another object
 def scan_identified_pixel(mask,row,col):
 	#intialize the start and ending rows to be scanned
-	startRow = max(row-2,0)
-	startCol = max(col-2,0)
-	endRow = min(mask.shape[0], row+2)
-	endCol = min(mask.shape[1], col+2)
+	startRow = max(row-3,0)
+	startCol = max(col-3,0)
+	endRow = min(mask.shape[0], row+3)
+	endCol = min(mask.shape[1], col+3)
 
 	#label of current pixel
 	o1 = mask[row][col]
@@ -565,8 +565,10 @@ def full_partition(path):
 	remove_vertical_dividers_and_fill(im_bw, dividers)
 	#print "Completed 'divider segmenting'"
 
+	thick_mask = thickener(im_bw)
+
 	#locate objects in the image
-	mask, SOL = locate_objects(im_bw)
+	mask, SOL = locate_objects(thick_mask)
 	#print "Completed 'object location'"
 
 	#locate row and staff lines
@@ -576,6 +578,28 @@ def full_partition(path):
 	sort_SOL(SOL)
 
 	return mask, SOL, staff_lines
+
+def thickener(im_bw):
+	thick_mask = np.ones(im_bw.shape)*255
+
+	for row in range(im_bw.shape[0]):
+		for col in range(im_bw.shape[1]):
+			if im_bw[row][col] == 0:
+				expand_pixel(thick_mask, row, col)
+
+	return thick_mask
+
+
+def expand_pixel(mask, row, col):
+	startRow = max(row-1,0)
+	startCol = max(col-1,0)
+	endRow = min(mask.shape[0], row+1)
+	endCol = min(mask.shape[1], col+1)
+
+	for r in range(startRow,endRow+1):
+		for c in range(startCol, endCol+1):
+			mask[r][c] = 0
+
 
 #@ pr - a list of pruned runs
 #@ return - a list of all the staff lines and the rows that are present in the staff lines
@@ -726,13 +750,16 @@ def closest_row(er, staff_lines):
 
 	return cr, mes
 
+#@ SOL - list of sheet objects
+#@ return - None
+# Sorts the SOL by notes from top left to bottom right
 def sort_SOL(SOL):
 
 	SOL.sort(key = lambda ob: (ob.staff_line, ob.C1))
 
 
 if __name__ == "__main__":
-	mask, SOL, sl = full_partition("ExamplePredictions/DATA/test3.jpg")
+	mask, SOL, sl = full_partition("ExamplePredictions/DATA/test2.jpg")
 	print_objects(mask,SOL,sl,path="ExamplePredictions/predictions",staff_lines=True)
 
 
