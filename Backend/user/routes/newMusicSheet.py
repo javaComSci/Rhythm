@@ -1,5 +1,6 @@
 from flask import Flask, render_template, json, url_for, request, jsonify
 from MySQL import MySQLConnect
+import StringIO
 
 ##
  # When a composition is made this will init all the data of that new composition
@@ -14,13 +15,12 @@ def newMusicSheets():
     return 'newMusicSheets'
 
 def addSheetFile():
-    sheetFile = request.files['file']
+    sheetFile = request.form['file']
     sheetID = request.form['sheet_id']
-    MySQLConnect.cursor.execute("UPDATE sheet_music SET file=%s WHERE sheet_id=%s", (sheetFile.read(), sheetID))
+    MySQLConnect.cursor.execute("UPDATE sheet_music SET song_json=%s WHERE sheet_id=%s", (sheetFile, sheetID))
     MySQLConnect.db.commit()
     MySQLConnect.cursor.execute("SELECT file FROM sheet_music WHERE sheet_id=%s", (15))
     record = MySQLConnect.cursor.fetchall()
-    print(record)
     return 'addFile'
 
 def duplicateSheet():
