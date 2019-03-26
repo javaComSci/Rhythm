@@ -3,14 +3,14 @@ import { Alert, AsyncStorage, TouchableOpacity, ScrollView, StyleSheet, Text, Vi
 import { LinearGradient } from 'expo';
 
 var styles = require('../../style')
-var background = require('../../assets/backgroundImage.png')
+var background = require('../../assets/white.png')
 var HomeScreenTemplate = function () {
     return (
         <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
             <View style={styles.container}>
                 <ScrollView>
                     <View style={styles.textHolder}>
-                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 75 }}> Rhythm </Text>
+                        <Text style={{ color: 'black', fontWeight: 'bold', fontSize: 75 }}> Rhythm </Text>
                     </View>
                 </ScrollView>
                 <View style={styles.footer}>

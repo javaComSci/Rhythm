@@ -60,6 +60,7 @@ var CleffLines;
 
 var troubleCleffSplit = [];
 var baseCleffSplit = [];
+var altoCleffSplit = [];
 
 var keyvalue;
 
@@ -422,22 +423,34 @@ class EditMusicScreen extends React.Component {
       if(((y * 2) + x) >= troubleCleffSplit.length){
         this.props.navigation.navigate('ViewMeasure', { arr: [] });
       }else{
-        this.props.navigation.navigate('ViewMeasure', { arr: troubleCleffSplit[(y * 2) + x] });
+        this.props.navigation.navigate('ViewMeasure', {
+          arr: troubleCleffSplit[(y * 2) + x],
+          fullT: troubleCleffSplit,
+          num: ((y * 2) + x),
+         });
       }
     } else if(this.state.SheetType == 1){
       if(y % 2 == 0){
-        console.log("x+y: " + (x+y));
-        console.log("length: " + troubleCleffSplit.length);
+        // console.log("x+y: " + (x+y));
+        // console.log("length: " + troubleCleffSplit.length);
         if((y+x) >= troubleCleffSplit.length){
           this.props.navigation.navigate('ViewMeasure', { arr: [] });
         } else {
-          this.props.navigation.navigate('ViewMeasure', { arr: troubleCleffSplit[(y) + x] });
+          this.props.navigation.navigate('ViewMeasure', {
+             arr: troubleCleffSplit[(y) + x],
+             full: troubleCleffSplit,
+             num: ((y) + x),
+           });
         }
       }else{
         if(((y-1)+x) >= troubleCleffSplit.length){
           this.props.navigation.navigate('ViewMeasure', { arr: [] });
         }else{
-          this.props.navigation.navigate('ViewMeasure', { arr: baseCleffSplit[(y-1) + x] });
+          this.props.navigation.navigate('ViewMeasure', { arr:
+            baseCleffSplit[(y-1) + x],
+            full: baseCleffSplit,
+            num: ((y-1) + x),
+           });
         }
       }
     }
