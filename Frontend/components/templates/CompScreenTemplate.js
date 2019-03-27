@@ -17,7 +17,7 @@ var CompScreenTemplate = function () {
                         // edit title
                         // duplicate composition
                         this.duplicateComposition(inputText)
-                        this.setState({ isDialogVisible: false, toEdit: '' })
+                        this.setState({ isDialogVisible: false})
                     }}
                     closeDialog={() => { this.setState({ isDialogVisible: false, toEdit: '' }) }}>
                 </DialogInput>

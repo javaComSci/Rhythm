@@ -109,8 +109,9 @@ class CompositionScreen extends React.Component {
                 'name': this.state.text,
             }),
         }).then((res) => {
-            this.getInfo()
-            this.state.newCompo = false;
+            console.log("res: ", res)
+            that.getInfo()
+            that.state.newCompo = false;
         }).catch((res) => {
             console.log("err", res)
         });
@@ -118,19 +119,19 @@ class CompositionScreen extends React.Component {
 
     duplicateComposition(newName) {
         const that = this;
+        params = {
+            'user_id': parseInt(that.props.id),
+            'title': newName,
+            'comp_id': parseInt(that.state.toEdit[1]),
+        }
         fetch('http://18.237.79.152:5000/duplicateComposition', {
             method: 'POST',
             headers: {
-                Accept: 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                'user_id': that.props.id,
-                'title': newName,
-                'comp_id': this.state.toEdit[1],
-            }),
+            body: JSON.stringify(params),
         }).then((res) => {
-            this.getInfo()
+            that.getInfo()
         }).catch((res) => {
             console.log("err", res)
         });
@@ -154,6 +155,7 @@ class CompositionScreen extends React.Component {
 
     doneDeleteComposition() {
         deleteArr = ['name']
+        const that = this;
         deleteArr.push(this.state.deleteText)
         fetch('http://18.237.79.152:5000/delete', {
             method: 'POST',
@@ -166,8 +168,8 @@ class CompositionScreen extends React.Component {
                 'delete': deleteArr,
             }),
         }).then((res) => {
-            this.getInfo()
-            this.state.deleteCompo = false;
+            that.getInfo()
+            that.state.deleteCompo = false;
         }).catch((res) => {
             console.log("err", res)
         });

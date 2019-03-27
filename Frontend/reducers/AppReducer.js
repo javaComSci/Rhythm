@@ -10,7 +10,7 @@ const initialNavState = RootNavigator.router.getStateForAction(
 
 function nav(state = initialNavState, action) {
     let nextState;
-    console.log(action); //debug
+    //console.log(action); //debug
     switch (action.type) {
         case 'ADD_EMAIL':
             return {
