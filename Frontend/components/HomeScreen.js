@@ -8,7 +8,7 @@ import { addUser } from '../actions/addUserID';
 import HomeScreenTemplate from './templates/HomeScreenTemplate';
 import LoadingScreen from './LoadingScreen';
 var styles = require('../style')
-var sampleJson = require('./MusicSheet0.json');
+var sampleJson = require('./jsons/MusicSheet0.json');
 console.log(sampleJson instanceof Blob);
 /*
 todo: load generated music files from local storage
@@ -29,7 +29,8 @@ class HomeScreen extends React.Component {
         // clears local storage for debugging purposes
 
         // AsyncStorage.clear().then(() => {
-        //this.props.navigation.navigate("EditMusicScreen"); //Change this
+        this.props.navigation.navigate("EditMusicScreen"); //Change this
+        return;
         // });
         var formData = new FormData();
         formData.append('sheet_id', 147);

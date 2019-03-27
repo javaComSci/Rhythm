@@ -3,24 +3,29 @@
 from midiutil import MIDIFile
 import math
 
-# degrees  = [36, 38, 40, 42, 44, 46, 48, 50, 48, 46, 44, 42, 38, 36]  # MIDI note number
-# track    = 0
-# channel  = 0
-# time     = 4    # In beats
-# duration = 5    # In beats
-# tempo    = 100   # In BPM
-# volume   = 100  # 0-127, as per the MIDI standard
+degrees  = [36, 38, 40, 42, 44, 46, 48, 50, 48, 46, 44, 42, 38, 36, 34, 42, 32, 32, 44, 48, 50, 36, 36, 12]  # MIDI note number
+track    = 0
+channel  = 0
+time     = 4    # In beats
+duration = 5    # In beats
+tempo    = 100   # In BPM
+volume   = 100  # 0-127, as per the MIDI standard
 
-# # MyMIDI = MIDIFile(1)  # One track, defaults to format 1 (tempo track is created
-# #                       # automatically)
-# # MyMIDI.addTempo(track, time, tempo)
+MyMIDI = MIDIFile(2, adjust_origin=False)  # One track, defaults to format 1 (tempo track is created
+                      # automatically)
 
-# for i, pitch in enumerate(degrees):
-# 	# print(i,pitch)
-#     MyMIDI.addNote(track, channel, pitch, time + i, duration, volume)
+MyMIDI.addTempo(track, time, tempo)
+MyMIDI.addProgramChange(0,0,0,123)
+MyMIDI.addProgramChange(0,1,0,41)
 
-# with open("major-scale.mid", "wb") as output_file:
-#     MyMIDI.writeFile(output_file)
+
+
+for i, pitch in enumerate(degrees):
+	# print(i,pitch)
+    MyMIDI.addNote(i % 2, channel, pitch, time + i, 1, volume)
+
+with open("major-scale.mid", "wb") as output_file:
+    MyMIDI.writeFile(output_file)
 
 class MIDIob:
 	def __init__(self, SOL):
@@ -75,7 +80,7 @@ class MIDIob:
 				pitch = self.calculate_pitch(noteName, prevAccidental)
 				prevAccidental = -1
 			elif currOctave == 2:
-				noteName = letters[ob.run + 1] + str(numbers[ob.run] - 2)
+				noteName = letters[ob.run + 1] + str(numbers[ob.run] - 1)
 				pitch = self.calculate_pitch(noteName, prevAccidental)
 				prevAccidental = -1
 			elif currOctave == 3:
