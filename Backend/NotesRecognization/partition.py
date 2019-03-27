@@ -16,12 +16,12 @@ class sheet_object:
 		self.C1 = self.C2 = tup[1]
 
 		#run and staff line object is attached to
-		self.run = -1
-		self.staff_line = -1
-		self.duration = -1
-		self.clef = -1
-		self.rest = -1
-		self.accidental = -1
+		self.run = -1 #which row the object is on
+		self.staff_line = -1 #which measure the object is on
+		self.duration = -1 #duration of the note
+		self.clef = -1 #if the object is a clef
+		self.rest = -1 #if the object is a rest
+		self.accidental = -1 #if the object is a sharp
 
 	#tup - (row,column) location of a pixel in specified object
 	#	Add pixel to an object
@@ -40,17 +40,16 @@ class sheet_object:
 			self.C2 = tup[1]
 
 	#Update bounds of object
-	def update_bounds(self):
+	def update_bounds(self, ob):
 		#for every pixel in list, check to see if bounds have changed
-		for p in self.pixel_list:
-			if p[0] < self.R1:
-				self.R1 = p[0]
-			if p[0] > self.R2:
-				self.R2 = p[0]
-			if p[1] < self.C1:
-				self.C1 = p[1]
-			if p[1] > self.C2:
-				self.C2 = p[1]
+		if ob.R1 < self.R1:
+			self.R1 = ob.R1
+		if ob.R2 > self.R2:
+			self.R2 = ob.R2
+		if ob.C1 < self.C1:
+			self.C1 = ob.C1
+		if ob.C2 > self.C2:
+			self.C2 = ob.C2
 
 # @image - 2d numpy array
 # @return - list of rows that contain run blocks
@@ -129,6 +128,9 @@ def locate_vertical_dividers(image):
 	#For every column in the image
 	for col in range(image.shape[1]):
 
+		minCol = max(0, col-2)
+		maxCol = min(col+2,image.shape[1]-1)
+
 		#Sum of pixels found in a given column stretch
 		pixel_sum = 0
 
@@ -145,6 +147,18 @@ def locate_vertical_dividers(image):
 				else:
 					black_flag = True
 					pixel_sum += 1
+			elif image[row][minCol] == 0:
+				if black_flag:
+					pixel_sum += 1
+				else:
+					black_flag = True
+					pixel_sum += 1
+			elif image[row][maxCol] == 0:
+				if black_flag:
+					pixel_sum += 1
+				else:
+					black_flag = True
+					pixel_sum += 1
 			else:
 				pixel_sum = 0;
 				black_flag = False
@@ -153,8 +167,13 @@ def locate_vertical_dividers(image):
 			#If the pixel sum is greater than 10% of the image length, consider it a run
 			# and add it to a list of rows to be removed
 			if pixel_sum / (image.shape[0] * 1.00) >= 0.1:
-				if col not in dividers:
-					dividers.append(col)
+				for c in range(minCol, maxCol+1):
+					if c not in dividers:
+						dividers.append(c)
+				# if minCol not in dividers:
+				# 	dividers.append(minCol)
+				# if maxCol not in dividers:
+				# 	dividers.append(maxCol)
 
 	return dividers
 
@@ -328,7 +347,7 @@ def merge_sheet_objects(o1_label,o2_label,mask,SOL):
 	SOL[ob1].pixel_list = SOL[ob1].pixel_list + SOL[ob2].pixel_list
 
 	#update the image bounds for SOL[ob1}
-	SOL[ob1].update_bounds()
+	SOL[ob1].update_bounds(SOL[ob2])
 
 	#update the mask, replace SL[ob2] pixels with o1_label
 	update_mask(mask,SOL[ob2],SOL[ob1].object_number)
@@ -554,8 +573,6 @@ def full_partition(path):
 	#group runs by measures, add in-between rows for runs
 	staff_lines = augment_runs(pruned_runs)
 
-	#remove runs in the image
-	remove_runs_and_fill(im_bw, runs)
 	#print "Completed 'run segmenting'"
 
 	#locate dividers in the image
@@ -563,8 +580,11 @@ def full_partition(path):
 
 	#remove dividers in the image
 	remove_vertical_dividers_and_fill(im_bw, dividers)
+	#remove runs in the image
+	remove_runs_and_fill(im_bw, runs)
 	#print "Completed 'divider segmenting'"
 
+	#Thickens the iamge around black pixels
 	thick_mask = thickener(im_bw)
 
 	#locate objects in the image
@@ -601,11 +621,11 @@ def thickener(im_bw):
 def expand_pixel(mask, row, col):
 	startRow = max(row-1,0)
 	startCol = max(col-1,0)
-	endRow = min(mask.shape[0], row+1)
-	endCol = min(mask.shape[1], col+1)
+	endRow = min(mask.shape[0], row+2)
+	endCol = min(mask.shape[1], col+2)
 
-	for r in range(startRow,endRow+1):
-		for c in range(startCol, endCol+1):
+	for r in range(startRow,endRow):
+		for c in range(startCol, endCol):
 			mask[r][c] = 0
 
 
