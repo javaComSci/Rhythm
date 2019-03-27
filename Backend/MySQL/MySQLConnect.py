@@ -73,6 +73,15 @@ def findSheet(table, email):
     result = cursor.fetchall()
     return result;
 
+
+def findSheetBySheetID(table, email):
+    sql = "SELECT * FROM {} WHERE sheet_id = '{}';".format(table, email);
+    print("MYSQL COMMAND: {}".format(sql));
+    cursor.execute(sql)
+    db.commit()
+    result = cursor.fetchall()
+    return result;
+
 ##
  # This will find everything in a specific table and matching the id with the user_id
  #
@@ -116,3 +125,6 @@ def insert(table, query, value):
     cursor.execute(sql)
     db.commit()
     return;
+
+def jsonToCloud(data):
+	print("DATA", data)
