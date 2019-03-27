@@ -579,6 +579,10 @@ def full_partition(path):
 
 	return mask, SOL, staff_lines
 
+#@ im_bw - A binary image
+#@ return - A binary image where black pixels have been expanded
+#	Returns an image that has each black pixel expanded into 9 pixels, making lines thicler
+#	and more defined
 def thickener(im_bw):
 	thick_mask = np.ones(im_bw.shape)*255
 
@@ -589,7 +593,11 @@ def thickener(im_bw):
 
 	return thick_mask
 
-
+#@ mask - mask to have expanded pixels added to
+#@ row - row of current pixel
+#@ col - col of current pixel
+#@ return - None
+#	Given a row and col, put black pixels at each of the surrounding indices
 def expand_pixel(mask, row, col):
 	startRow = max(row-1,0)
 	startCol = max(col-1,0)
@@ -754,7 +762,6 @@ def closest_row(er, staff_lines):
 #@ return - None
 # Sorts the SOL by notes from top left to bottom right
 def sort_SOL(SOL):
-
 	SOL.sort(key = lambda ob: (ob.staff_line, ob.C1))
 
 
