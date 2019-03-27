@@ -559,6 +559,8 @@ def full_partition(path):
 	(thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 	#print "Completed 'image load'"
 
+	cv2.imwrite("{}FullImage_binary.jpg".format(path), im_bw)
+
 	#resize image if it is too large
 	# if (im_bw.shape[0] > 2000 and im_bw.shape[1] > 2000):
 	# 	im_bw = cv2.resize(im_bw, (1500, 1500)) 
