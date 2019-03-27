@@ -25,7 +25,7 @@ var NoteSVG = require('./jsons/NotesData.json');
 var MiscJson = require('./jsons/EditMisc.json');
 
 var MeasureNoteList = [];
-var NewMeasureNoteList = [];
+var NewMeasureNoteList;
 var fullList = [];
 var measureNum;
 
@@ -105,7 +105,7 @@ class NoteObjects extends React.Component {
    * Renders the note with its path
    */
   render() {
-
+    console.log("FEAWFAEWF");
     // console.log("Rendering Notes\n");
     // console.log(this.props);
     let mesureLength = SCREEN_WIDTH / 10;
@@ -119,7 +119,6 @@ class NoteObjects extends React.Component {
     )
   }
 };
-
 
 
 class ViewMeasure extends React.Component {
@@ -144,6 +143,7 @@ class ViewMeasure extends React.Component {
   componentWillMount() {
     keyvalue = 0;
     NewMeasureNoteList = [];
+    MeasureNoteList = [];
   }
 
   VerticalSection(x, y){
@@ -178,31 +178,33 @@ class ViewMeasure extends React.Component {
     )
   }
 
-  NotesEditRender(){
-    let s = 0;
-    let betweenNotes = (SCREEN_WIDTH/(MeasureNoteList.length+2));
-    if(MeasureNoteList[0].props.note == 0 || MeasureNoteList[0].props.note == 6){
-      s++;
-      betweenNotes = (SCREEN_WIDTH/(MeasureNoteList.length+1));
+  NotesEditRender(notes, color, fill){
+    console.log("STARTING NOTESEDITRENDER");
+    console.log(notes);
+    if (notes.length == 0) {
+      console.log("Da fuck?");
+      return;
     }
-    let FirstNote = SCREEN_WIDTH/9;
+    let s = 0;
+    let betweenNotes = (SCREEN_WIDTH/(notes.length+2));
+    if(notes[0].props.note == 0 || notes[0].props.note == 6){
+      s++;
+      betweenNotes = (SCREEN_WIDTH/(notes.length+1));
+    }
+    let FirstNote = SCREEN_WIDTH/8;
     let halfHeight = SCREEN_HEIGHT/3;
     // halfHeight += SCREEN_HEIGHT/80;
     let start = SCREEN_HEIGHT/8;
 
     let Notes = [];
 
-    for (var i = s; i < MeasureNoteList.length; i++) {
-    // for (let i = 0; i < 1; i++) {
-      // console.log("PIZZAMNA: " + (betweenNotes + (NoteSVG[MeasureNoteList[i].props.note].adjustX * 2)));
-      let x = FirstNote + ((i-s) * betweenNotes + (NoteSVG[MeasureNoteList[i].props.note].adjustX * 2));
-      let y = halfHeight + (NoteSVG[MeasureNoteList[i].props.note].adjustY * 2) + (MeasureNoteList[i].props.pitch * SCREEN_HEIGHT/75);
-      // let x = (i * betweenNotes + (NoteSVG[MeasureNoteList[i].props.note].adjustX * 2));
-      // MeasureNoteList[i].props
+    for (var i = s; i < notes.length; i++) {
+      let x = FirstNote + (notes[i].props.length * (((i-s) * betweenNotes + (NoteSVG[notes[i].props.note].adjustX * 2))));
+      let y = halfHeight + (NoteSVG[notes[i].props.note].adjustY * 2) + (notes[i].props.pitch * SCREEN_HEIGHT/75);
       /* rendering the path of the note num */
       Notes.push(
-        <G stroke="black" stroke-width="0" fill="black" key={keyvalue++} fillOpacity=".4" fill="red">
-          <Path x={[x].join(' ')} y={([y].join(' '))} transform={['scale(', NoteSVG[MeasureNoteList[i].props.note].scale1 * 2, NoteSVG[MeasureNoteList[i].props.note].scale2 * 2, ')'].join(' ')} d={[NoteSVG[MeasureNoteList[i].props.note].data].join(' ')}/>
+        <G stroke="black" stroke-width="0" fill="black" key={keyvalue++} fillOpacity={fill} fill={color}>
+          <Path x={[x].join(' ')} y={([y].join(' '))} transform={['scale(', NoteSVG[notes[i].props.note].scale1 * 2, NoteSVG[notes[i].props.note].scale2 * 2, ')'].join(' ')} d={[NoteSVG[notes[i].props.note].data].join(' ')}/>
         </G>
       )
     }
@@ -212,19 +214,18 @@ class ViewMeasure extends React.Component {
   checkIntegraty(){
     let check = [];
     fullList[measureNum] = NewMeasureNoteList;
+    console.log(NewMeasureNoteList);
     for (let i = measureNum; i < fullList.length; i++) {
       for (let j = measureNum; j < fullList[i].length; j++) {
         check.push(fullList[i][j]);
       }
     }
-    console.log("\n\nDone\n\n");
-    console.log(check);
-    console.log("\n\n\nNext Phase\n\n\n");
     let NewfullList = [];
     let beats = 0;
     let tempy = [];
     for (let i = measureNum; i < check.length; i++) {
       if(!(check[i].props.note == 0 || check[i].props.note == 6 || check[i].props.note == 7)){
+        console.log("beats: " + beats);
         if(beats == 4){
           NewfullList.push(tempy);
           tempy = [];
@@ -233,7 +234,7 @@ class ViewMeasure extends React.Component {
             this.setState({
               verfColor: "gray",
             });
-            console.log("Stopped on measure: " + i);
+            // NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={1} y={1} length={.25} note={2} color="black" pitch={1} />);
             return;
         }
         beats += check[i].props.length;
@@ -243,23 +244,47 @@ class ViewMeasure extends React.Component {
     this.setState({
       verfColor: "green",
     });
-    console.log("\n\n NEW LIST\n\n");
-    console.log(NewfullList);
-    NewMeasureNoteList.push();
+    // console.log("\n\n NEW LIST\n\n");
+    // console.log(NewfullList);
+    // NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={1} y={1} length={.25} note={2} color="black" pitch={1} />);
+    // NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={1} y={1} length={1} note={2} color="black" pitch={1} />);
+    // NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={1} y={1} length={1} note={2} color="black" pitch={1} />);
+    // NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={1} y={1} length={1} note={2} color="black" pitch={1} />);
     return;
   }
 
   verfyButtonPress(){
+    NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={1} y={1} length={1} note={2} color="black" pitch={1} />);
     this.checkIntegraty();
-    // this.setState({
-    //   verfColor: "gray",
-    // });
-    // if(this.state.verfColor == "green"){
-    //
-    // }
   }
 
-  render(){
+  editNewMeasure(){
+
+    let Notes = [];
+    let FirstNote = SCREEN_WIDTH/8;
+    let halfHeight = (SCREEN_HEIGHT - (SCREEN_HEIGHT/2.4));
+    let betweenNotes = (SCREEN_WIDTH/7);
+    let x = FirstNote;
+    let y = halfHeight;
+    /* rendering the path of the note num */
+    return (
+      <G stroke="black" stroke-width="0" fill="black" key={keyvalue++} fillOpacity={1} >
+        <Path x={[x + (0 * betweenNotes) + (NoteSVG[1].adjustX * 2)].join(' ')} y={([y + (NoteSVG[1].adjustY * 2) + (SCREEN_HEIGHT/140)].join(' '))} transform={['scale(', NoteSVG[1].scale1 * 1.2, NoteSVG[1].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[1].data].join(' ')}/>
+        <Path x={[x + (1 * betweenNotes) + (NoteSVG[2].adjustX * 2)].join(' ')} y={([y + (NoteSVG[2].adjustY * 2) + (SCREEN_HEIGHT/250)].join(' '))} transform={['scale(', NoteSVG[2].scale1 * 1.2, NoteSVG[2].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[2].data].join(' ')}/>
+        <Path x={[x + (2 * betweenNotes) + (NoteSVG[3].adjustX * 2)].join(' ')} y={([y + (NoteSVG[3].adjustY * 2) + (SCREEN_HEIGHT/150)].join(' '))} transform={['scale(', NoteSVG[3].scale1 * 1.2, NoteSVG[3].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[3].data].join(' ')}/>
+        <Path x={[x + (3 * betweenNotes) + (NoteSVG[5].adjustX * 2)].join(' ')} y={([y + (NoteSVG[5].adjustY * 2)].join(' '))} transform={['scale(', NoteSVG[5].scale1 * 1.2, NoteSVG[5].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[5].data].join(' ')}/>
+        <Path x={[x + (4 * betweenNotes) + (NoteSVG[8].adjustX * 2)].join(' ')} y={([y + (NoteSVG[8].adjustY * 2)].join(' '))} transform={['scale(', NoteSVG[8].scale1 * 1.2, NoteSVG[8].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[8].data].join(' ')}/>
+        <Path x={[x + (5 * betweenNotes) + (NoteSVG[9].adjustX * 2)].join(' ')} y={([y + (NoteSVG[9].adjustY * 2)].join(' '))} transform={['scale(', NoteSVG[9].scale1 * 1.2, NoteSVG[9].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[9].data].join(' ')}/>
+        <Path x={[x + (.5 * betweenNotes) + (NoteSVG[10].adjustX * 2)].join(' ')} y={([y + (NoteSVG[10].adjustY * 2) + (SCREEN_HEIGHT/13)].join(' '))} transform={['scale(', NoteSVG[10].scale1 * 1.2, NoteSVG[10].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[10].data].join(' ')}/>
+        <Path x={[x + (1.5 * betweenNotes) + (NoteSVG[11].adjustX * 2)].join(' ')} y={([y + (NoteSVG[11].adjustY * 2)+ (SCREEN_HEIGHT/13)].join(' '))} transform={['scale(', NoteSVG[11].scale1 * 1.2, NoteSVG[11].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[11].data].join(' ')}/>
+        <Path x={[x + (2.5 * betweenNotes) + (NoteSVG[12].adjustX * 2)].join(' ')} y={([y + (NoteSVG[12].adjustY * 2)+ (SCREEN_HEIGHT/13)].join(' '))} transform={['scale(', NoteSVG[12].scale1 * 1.2, NoteSVG[12].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[12].data].join(' ')}/>
+        <Path x={[x + (3.5 * betweenNotes) + (NoteSVG[13].adjustX * 2)].join(' ')} y={([y + (NoteSVG[13].adjustY * 2)+ (SCREEN_HEIGHT/13)].join(' '))} transform={['scale(', NoteSVG[13].scale1 * 1.2, NoteSVG[13].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[13].data].join(' ')}/>
+        <Path x={[x + (4.5 * betweenNotes) + (NoteSVG[14].adjustX * 2)].join(' ')} y={([y + (NoteSVG[14].adjustY * 2)+ (SCREEN_HEIGHT/13)].join(' '))} transform={['scale(', NoteSVG[14].scale1 * 1.2, NoteSVG[14].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[14].data].join(' ')}/>
+      </G>
+    )
+  }
+
+  render() {
     console.log("viewMeasure Render\n");
 
     // this.checkIntegraty();
@@ -291,22 +316,17 @@ class ViewMeasure extends React.Component {
         <Svg height="100%"  width="100%">
           <Rect x={SCREEN_WIDTH/2 - ((SCREEN_WIDTH/4)/2)} y={SCREEN_HEIGHT - (SCREEN_HEIGHT/4) - ((SCREEN_HEIGHT/15)/2)} width={SCREEN_WIDTH/4} height={SCREEN_HEIGHT/15} rx="15" ry="15" fill={this.state.verfColor} onPress={() => this.verfyButtonPress()} />
           {this.lineSection()}
-          {this.NotesEditRender()}
+          {this.NotesEditRender(MeasureNoteList, "gray", .7)}
+          {this.NotesEditRender(NewMeasureNoteList, "black", 1)}
+          {this.editNewMeasure()}
         </Svg>
 
       </View>
     )
   }
 };
-// <TouchableOpacity onPress={this.verfyButtonPress() style={styles.VerfButtoncontainer}>
-//   <Text
-//     stroke="black"
-//     fontSize="25"
-//     x={[SCREEN_WIDTH / 2].join(' ')}
-//     y={[start / 2].join(' ')}
-//     textAnchor="middle"
-//   >yellow</Text>
-// </TouchableOpacity>
+//http://www.petercollingridge.co.uk/tutorials/svg/interactive/dragging/
+
   function mapStateToProps(state) {
     return {}
   }
