@@ -26,10 +26,8 @@ def duplicateComposition():
     if(content['title'] == "NotARealCompo"):
         return "false"
     #MySQLConnect.cursor.execute("INSERT INTO sheet_music(file,composition_id,name) SELECT file, %s, name from `sheet_music` where sheet_id=%s", (content['comp_id'], content['sheet_id']))
-    query = "INSERT INTO composition(name,description,user_id) SELECT %s, description, %s from `composition` where composition_id=%s", (content['title'], content['user_id'], content['comp_id'])
-    lastrowid = MySQLConnect.runQuery(query)
+    lastrowid = MySQLConnect.runQuery("INSERT INTO composition(name,description,user_id) SELECT %s, description, %s from `composition` where composition_id=%s", (content['title'], content['user_id'], content['comp_id']))
     oldCompID = content['comp_id']
     newCompID = lastrowid
-    query = "INSERT INTO sheet_music(file,composition_id,name) SELECT file, %s, name from `sheet_music` where composition_id=%s", (newCompID, oldCompID)
-    MySQLConnect.runQuery(query)
+    MySQLConnect.runQuery("INSERT INTO sheet_music(file,composition_id,name) SELECT file, %s, name from `sheet_music` where composition_id=%s", (newCompID, oldCompID))
     return 'duplicatedComposition'

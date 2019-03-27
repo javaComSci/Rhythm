@@ -15,9 +15,10 @@ with open("config/mysql.json") as json_file:
  ##
 db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
 
-def runQuery(query):
+# takes string and a tuple
+def runQuery(query, args):
     cursor = db.cursor()
-    cursor.execute(query)
+    cursor.execute(query, args)
     db.commit()
     lastrowid = cursor.lastrowid
     cursor.close()
