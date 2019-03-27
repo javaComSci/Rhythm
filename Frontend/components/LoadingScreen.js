@@ -39,7 +39,7 @@ class LoadingScreen extends React.Component {
     render() {
         return (
             <View style={styles.header}>
-                <ActivityIndicator size="small" color="#f19393" />
+                <ActivityIndicator size="large" color="#f19393" />
             </View>
         )
     }
