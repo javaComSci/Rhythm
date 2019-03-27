@@ -40,7 +40,7 @@ class MIDIob:
 
 
 	#Converts all MIDIob information into MIDI format, returning MIDI_File object
-	def convert_to_MIDI(self, track=0, channel=0, time=1, tempo=80, volume=100):
+	def convert_to_MIDI(self, track=0, channel=0, time=4, tempo=120, volume=100):
 		print("SOL")
 		print(self.SOL)
 		MIDI_File = MIDIFile(1)
@@ -85,12 +85,17 @@ class MIDIob:
 
 
 			print("OB DURATION", ob.duration, track, pitch, time, volume)
-			if ob.duration == -1:
-				MIDI_File.addNote(track, channel, pitch, time + 1, 1, volume)
+
+			if ob.duration > 0:
+				print("Adding with duration")
+				MIDI_File.addNote(track, channel, pitch, time + ob.duration, ob.duration, volume)
 				time = time + 1
+				# time = time + ob.duration
 			elif ob.rest > 0:
-				MIDI_File.addNote(track, channel, 36, time + ob.rest, 0, volume)
-				time = time + ob.rest
+				print("Adding with rest")
+				MIDI_File.addNote(track, channel, 2, time +1, 0.01, volume)
+				time = time + 1
+				# time = time + ob.rest
 
 				
 			# time += 1
@@ -99,10 +104,38 @@ class MIDIob:
 
 		# for time_inc, pitch in enumerate(degrees):
 			# MIDI_File.addNote(track, channel, pitch, time + time_inc, duration volume)
-
+		filename = "hello.mid"
+		with open(filename, "wb") as op:
+			# print("WAS OPENED")
+			# print(op)
+			MIDI_File.writeFile(op)
 		return MIDI_File
 
+
 	#Writes a MIDI object to a corresponding MIDI file
-	def MIDI_to_file(self, MIDI_File, filename):
-		with open(filename, "wb") as op:
-			MIDI_File.writeFile(op)
+	# def MIDI_to_file(self, MIDI_File, filename):
+	# 	print("MIDIFILE")
+	# 	print(MIDI_File)
+
+	# 	degrees  = [36, 38, 40, 42, 44, 46, 48, 50, 48, 46, 44, 42, 38, 36]  # MIDI note number
+	# 	track    = 0
+	# 	channel  = 0
+	# 	time     = 4    # In beats
+	# 	duration = 5    # In beats
+	# 	tempo    = 100   # In BPM
+	# 	volume   = 100  # 0-127, as per the MIDI standard
+
+	# 	MyMIDI = MIDIFile(1)  # One track, defaults to format 1 (tempo track is created
+	# 	#                       # automatically)
+	# 	MyMIDI.addTempo(track, time, tempo)
+
+	# 	for i, pitch in enumerate(degrees):
+	# 		# print(i,pitch)
+	# 	    MyMIDI.addNote(track, channel, pitch, time + i, duration, volume)
+
+	# 	with open("major-scale.mid", "wb") as output_file:
+	# 	    MyMIDI.writeFile(output_file)
+		# with open(filename, "wb") as op:
+		# 	print("WAS OPENED")
+		# 	print(op)
+		# 	MIDI_File.writeFile(op)

@@ -294,10 +294,10 @@ def scan_unidentified_pixel(image,mask,row,col):
 #	Scans around an identified pixel to determine if it is touching another object
 def scan_identified_pixel(mask,row,col):
 	#intialize the start and ending rows to be scanned
-	startRow = max(row-2,0)
-	startCol = max(col-2,0)
-	endRow = min(mask.shape[0], row+2)
-	endCol = min(mask.shape[1], col+2)
+	startRow = max(row-3,0)
+	startCol = max(col-3,0)
+	endRow = min(mask.shape[0], row+3)
+	endCol = min(mask.shape[1], col+3)
 
 	#label of current pixel
 	o1 = mask[row][col]
@@ -539,6 +539,8 @@ def full_partition(path):
 	#convert image to binary
 	(thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 	#print "Completed 'image load'"
+
+	cv2.imwrite("{}FullImage_binary.jpg".format(path), im_bw)
 
 	#resize image if it is too large
 	# if (im_bw.shape[0] > 2000 and im_bw.shape[1] > 2000):
