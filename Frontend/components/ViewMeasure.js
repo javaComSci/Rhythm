@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-  import { ListItem, PanResponder, Dimensions,TextInput, Alert, FlatList, TouchableOpacity, ScrollView, StyleSheet, View, KeyboardAvoidingView, Image, ImageBackground, Button as Butt } from 'react-native';
+  import { ListItem, Animated, PanResponder, Dimensions,TextInput, Alert, FlatList, TouchableOpacity, ScrollView, StyleSheet, View, KeyboardAvoidingView, Image, ImageBackground, Button as Butt } from 'react-native';
   // import { Header } from 'react-navigation';
   import { connect } from 'react-redux';
   import { Button, Header } from 'react-native-elements';
@@ -27,6 +27,7 @@ var MiscJson = require('./jsons/EditMisc.json');
 var MeasureNoteList = [];
 var NewMeasureNoteList;
 var fullList = [];
+let CIRCLE_RADIUS = 60;
 var measureNum;
 
 
@@ -130,20 +131,42 @@ class ViewMeasure extends React.Component {
       measureNum = this.props.navigation.getParam('num');
       this.state = {
         verfColor: "green",
+        showDraggable   : true,
+        dropZoneValues  : null,
+        pan             : new Animated.ValueXY()
       };
-
+      this.panResponder = PanResponder.create({
+          onStartShouldSetPanResponder    : () => true,
+          onPanResponderMove              : Animated.event([null,{
+              dx  : this.state.pan.x,
+              dy  : this.state.pan.y
+          }]),
+          onPanResponderRelease           : (e, gesture) => {
+              if(this.isDropZone(gesture)){
+                  this.setState({
+                      showDraggable : false
+                  });
+              }else{
+                  Animated.spring(
+                      this.state.pan,
+                      {toValue:{x:0,y:0}}
+                  ).start();
+              }
+          }
+      });
   }
 
   static navigationOptions = {
       title: 'Welcome', header: null
   };
 
-  componentDidMount() {}
+  componentDidMount() {
+    MeasureNoteList = [];
+  }
 
   componentWillMount() {
     keyvalue = 0;
     NewMeasureNoteList = [];
-    MeasureNoteList = [];
   }
 
   VerticalSection(x, y){
@@ -258,8 +281,11 @@ class ViewMeasure extends React.Component {
     this.checkIntegraty();
   }
 
-  editNewMeasure(){
+  onPressEditNote(note){
+    console.log(note);
+  }
 
+  editNewMeasure(){
     let Notes = [];
     let FirstNote = SCREEN_WIDTH/8;
     let halfHeight = (SCREEN_HEIGHT - (SCREEN_HEIGHT/2.4));
@@ -270,18 +296,59 @@ class ViewMeasure extends React.Component {
     return (
       <G stroke="black" stroke-width="0" fill="black" key={keyvalue++} fillOpacity={1} >
         <Path x={[x + (0 * betweenNotes) + (NoteSVG[1].adjustX * 2)].join(' ')} y={([y + (NoteSVG[1].adjustY * 2) + (SCREEN_HEIGHT/140)].join(' '))} transform={['scale(', NoteSVG[1].scale1 * 1.2, NoteSVG[1].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[1].data].join(' ')}/>
+        <Rect x={[x + (0 * betweenNotes) + (NoteSVG[1].adjustX * 2) - (SCREEN_WIDTH/40)].join(' ')} y={([y + (NoteSVG[1].adjustY * 2) - (SCREEN_HEIGHT/20)].join(' '))} width={SCREEN_WIDTH/9} height={SCREEN_HEIGHT/15} fillOpacity=".05" onPress={() => this.onPressEditNote(1)}/>
         <Path x={[x + (1 * betweenNotes) + (NoteSVG[2].adjustX * 2)].join(' ')} y={([y + (NoteSVG[2].adjustY * 2) + (SCREEN_HEIGHT/250)].join(' '))} transform={['scale(', NoteSVG[2].scale1 * 1.2, NoteSVG[2].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[2].data].join(' ')}/>
+        <Rect x={[x + (1 * betweenNotes) + (NoteSVG[1].adjustX * 2) - (SCREEN_WIDTH/40)].join(' ')} y={([y + (NoteSVG[1].adjustY * 2) - (SCREEN_HEIGHT/20)].join(' '))} width={SCREEN_WIDTH/9} height={SCREEN_HEIGHT/15} fillOpacity=".05" onPress={() => this.onPressEditNote(2)}/>
         <Path x={[x + (2 * betweenNotes) + (NoteSVG[3].adjustX * 2)].join(' ')} y={([y + (NoteSVG[3].adjustY * 2) + (SCREEN_HEIGHT/150)].join(' '))} transform={['scale(', NoteSVG[3].scale1 * 1.2, NoteSVG[3].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[3].data].join(' ')}/>
+        <Rect x={[x + (2 * betweenNotes) + (NoteSVG[1].adjustX * 2) - (SCREEN_WIDTH/40)].join(' ')} y={([y + (NoteSVG[1].adjustY * 2) - (SCREEN_HEIGHT/20)].join(' '))} width={SCREEN_WIDTH/9} height={SCREEN_HEIGHT/15} fillOpacity=".05" onPress={() => this.onPressEditNote(3)}/>
         <Path x={[x + (3 * betweenNotes) + (NoteSVG[5].adjustX * 2)].join(' ')} y={([y + (NoteSVG[5].adjustY * 2)].join(' '))} transform={['scale(', NoteSVG[5].scale1 * 1.2, NoteSVG[5].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[5].data].join(' ')}/>
+        <Rect x={[x + (3 * betweenNotes) + (NoteSVG[1].adjustX * 2) - (SCREEN_WIDTH/40)].join(' ')} y={([y + (NoteSVG[1].adjustY * 2) - (SCREEN_HEIGHT/20)].join(' '))} width={SCREEN_WIDTH/9} height={SCREEN_HEIGHT/15} fillOpacity=".05" onPress={() => this.onPressEditNote(5)}/>
         <Path x={[x + (4 * betweenNotes) + (NoteSVG[8].adjustX * 2)].join(' ')} y={([y + (NoteSVG[8].adjustY * 2)].join(' '))} transform={['scale(', NoteSVG[8].scale1 * 1.2, NoteSVG[8].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[8].data].join(' ')}/>
+        <Rect x={[x + (4 * betweenNotes) + (NoteSVG[1].adjustX * 2) - (SCREEN_WIDTH/40)].join(' ')} y={([y + (NoteSVG[1].adjustY * 2) - (SCREEN_HEIGHT/20)].join(' '))} width={SCREEN_WIDTH/9} height={SCREEN_HEIGHT/15} fillOpacity=".05" onPress={() => this.onPressEditNote(8)}/>
         <Path x={[x + (5 * betweenNotes) + (NoteSVG[9].adjustX * 2)].join(' ')} y={([y + (NoteSVG[9].adjustY * 2)].join(' '))} transform={['scale(', NoteSVG[9].scale1 * 1.2, NoteSVG[9].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[9].data].join(' ')}/>
+        <Rect x={[x + (5 * betweenNotes) + (NoteSVG[1].adjustX * 2) - (SCREEN_WIDTH/40)].join(' ')} y={([y + (NoteSVG[1].adjustY * 2) - (SCREEN_HEIGHT/20)].join(' '))} width={SCREEN_WIDTH/9} height={SCREEN_HEIGHT/15} fillOpacity=".05" onPress={() => this.onPressEditNote(9)}/>
         <Path x={[x + (.5 * betweenNotes) + (NoteSVG[10].adjustX * 2)].join(' ')} y={([y + (NoteSVG[10].adjustY * 2) + (SCREEN_HEIGHT/13)].join(' '))} transform={['scale(', NoteSVG[10].scale1 * 1.2, NoteSVG[10].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[10].data].join(' ')}/>
+        <Rect x={[x + (.5 * betweenNotes) + (NoteSVG[1].adjustX * 2) - (SCREEN_WIDTH/40)].join(' ')} y={([y + (NoteSVG[1].adjustY * 2) - (SCREEN_HEIGHT/20) + (SCREEN_HEIGHT/13)].join(' '))} width={SCREEN_WIDTH/9} height={SCREEN_HEIGHT/15} fillOpacity=".3" onPress={() => this.onPressEditNote(10)}/>
         <Path x={[x + (1.5 * betweenNotes) + (NoteSVG[11].adjustX * 2)].join(' ')} y={([y + (NoteSVG[11].adjustY * 2)+ (SCREEN_HEIGHT/13)].join(' '))} transform={['scale(', NoteSVG[11].scale1 * 1.2, NoteSVG[11].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[11].data].join(' ')}/>
+        <Rect x={[x + (1.5 * betweenNotes) + (NoteSVG[1].adjustX * 2) - (SCREEN_WIDTH/40)].join(' ')} y={([y + (NoteSVG[1].adjustY * 2) - (SCREEN_HEIGHT/20)+ (SCREEN_HEIGHT/13)].join(' '))} width={SCREEN_WIDTH/9} height={SCREEN_HEIGHT/15} fillOpacity=".3" onPress={() => this.onPressEditNote(11)}/>
         <Path x={[x + (2.5 * betweenNotes) + (NoteSVG[12].adjustX * 2)].join(' ')} y={([y + (NoteSVG[12].adjustY * 2)+ (SCREEN_HEIGHT/13)].join(' '))} transform={['scale(', NoteSVG[12].scale1 * 1.2, NoteSVG[12].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[12].data].join(' ')}/>
+        <Rect x={[x + (2.5 * betweenNotes) + (NoteSVG[1].adjustX * 2) - (SCREEN_WIDTH/40)].join(' ')} y={([y + (NoteSVG[1].adjustY * 2) - (SCREEN_HEIGHT/20)+ (SCREEN_HEIGHT/13)].join(' '))} width={SCREEN_WIDTH/9} height={SCREEN_HEIGHT/15} fillOpacity=".3" onPress={() => this.onPressEditNote(12)}/>
         <Path x={[x + (3.5 * betweenNotes) + (NoteSVG[13].adjustX * 2)].join(' ')} y={([y + (NoteSVG[13].adjustY * 2)+ (SCREEN_HEIGHT/13)].join(' '))} transform={['scale(', NoteSVG[13].scale1 * 1.2, NoteSVG[13].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[13].data].join(' ')}/>
+        <Rect x={[x + (3.5 * betweenNotes) + (NoteSVG[1].adjustX * 2) - (SCREEN_WIDTH/40)].join(' ')} y={([y + (NoteSVG[1].adjustY * 2) - (SCREEN_HEIGHT/20)+ (SCREEN_HEIGHT/13)].join(' '))} width={SCREEN_WIDTH/9} height={SCREEN_HEIGHT/15} fillOpacity=".3" onPress={() => this.onPressEditNote(13)}/>
         <Path x={[x + (4.5 * betweenNotes) + (NoteSVG[14].adjustX * 2)].join(' ')} y={([y + (NoteSVG[14].adjustY * 2)+ (SCREEN_HEIGHT/13)].join(' '))} transform={['scale(', NoteSVG[14].scale1 * 1.2, NoteSVG[14].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[14].data].join(' ')}/>
+        <Rect x={[x + (4.5 * betweenNotes) + (NoteSVG[1].adjustX * 2) - (SCREEN_WIDTH/40)].join(' ')} y={([y + (NoteSVG[1].adjustY * 2) - (SCREEN_HEIGHT/20)+ (SCREEN_HEIGHT/13)].join(' '))} width={SCREEN_WIDTH/9} height={SCREEN_HEIGHT/15} fillOpacity=".3" onPress={() => this.onPressEditNote(14)}/>
       </G>
     )
+  }
+
+  isDropZone(gesture){
+      var dz = this.state.dropZoneValues;
+      // return gesture.moveY > dz.y && gesture.moveY < dz.y + dz.height;
+      return false;
+  }
+
+  setDropZoneValues(event){
+      this.setState({
+          dropZoneValues : event.nativeEvent.layout
+      });
+  }
+
+  renderDraggable2(){
+      if(this.state.showDraggable){
+          return (
+              <View style={{position: 'absolute', top: SCREEN_HEIGHT/2, left: SCREEN_WIDTH/2}}>
+                <Animated.View
+                    {...this.panResponder.panHandlers}
+                    style={[this.state.pan.getLayout(),
+                    {backgroundColor: 'yellow', width: CIRCLE_RADIUS, height: CIRCLE_RADIUS, borderRadius: CIRCLE_RADIUS}]}
+                    >
+                    <Svg height="100%"  width="100%">
+                      <Path x={[CIRCLE_RADIUS/2.8].join(' ')} y={([CIRCLE_RADIUS/1.3].join(' '))} transform={['scale(', NoteSVG[1].scale1 * 1.2, NoteSVG[1].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[1].data].join(' ')}/>
+                    </Svg>
+                </Animated.View>
+              </View>
+          );
+      }
   }
 
   render() {
@@ -313,13 +380,16 @@ class ViewMeasure extends React.Component {
             justifyContent: 'space-around',
           }}
         />
+
         <Svg height="100%"  width="100%">
           <Rect x={SCREEN_WIDTH/2 - ((SCREEN_WIDTH/4)/2)} y={SCREEN_HEIGHT - (SCREEN_HEIGHT/4) - ((SCREEN_HEIGHT/15)/2)} width={SCREEN_WIDTH/4} height={SCREEN_HEIGHT/15} rx="15" ry="15" fill={this.state.verfColor} onPress={() => this.verfyButtonPress()} />
           {this.lineSection()}
           {this.NotesEditRender(MeasureNoteList, "gray", .7)}
           {this.NotesEditRender(NewMeasureNoteList, "black", 1)}
           {this.editNewMeasure()}
+
         </Svg>
+        {this.renderDraggable2()}
 
       </View>
     )
@@ -362,6 +432,39 @@ class ViewMeasure extends React.Component {
       flexDirection: 'column',
       backgroundColor: 'pink',
     },
+    dropZone    : {
+        height  : SCREEN_HEIGHT/3,
+        backgroundColor:'transparent'
+    },
+    text        : {
+        marginTop   : 25,
+        marginLeft  : 5,
+        marginRight : 5,
+        textAlign   : 'center',
+        color       : 'black'
+    },
+    draggableContainer: {
+        position    : 'absolute',
+        top         : 50,
+        left        : 50,
+    },
+    draggableContainer2: {
+      position    : 'absolute',
+      top         : 50,
+      left        : 50,
+    },
+    circle      : {
+        backgroundColor: 'blue',
+        width               : CIRCLE_RADIUS*2,
+        height              : CIRCLE_RADIUS*2,
+        borderRadius        : CIRCLE_RADIUS
+    },
+    circle2      : {
+        backgroundColor: 'yellow',
+        width               : CIRCLE_RADIUS,
+        height              : CIRCLE_RADIUS,
+        borderRadius        : CIRCLE_RADIUS
+    }
   });
 
   export default connect(mapStateToProps, mapDispatchToProps)(ViewMeasure);
@@ -372,118 +475,166 @@ class ViewMeasure extends React.Component {
 // import {
 //     StyleSheet,
 //     View,
-//     Text,
 //     PanResponder,
 //     Animated,
 //     Easing,
 //     Dimensions
 // } from 'react-native';
-//
+
+// import { Svg } from 'expo';
+// const { Circle, Rect, Path, Line, G, Defs, Use } = Svg;
+
+// const SCREEN_WIDTH = Dimensions.get('window').width
+// const SCREEN_HEIGHT = Dimensions.get('window').height
+// let CIRCLE_RADIUS = 100;
+
+// var NoteSVG = require('./jsons/NotesData.json');
+// var MiscJson = require('./jsons/EditMisc.json');
+
 // class ViewMeasure extends Component{
-//     constructor(props){
-//         super(props);
-//
-//         this.state = {
-//             showDraggable   : true,
-//             dropZoneValues  : null,
-//             pan             : new Animated.ValueXY()
-//         };
-//
-//         this.panResponder = PanResponder.create({
-//             onStartShouldSetPanResponder    : () => true,
-//             onPanResponderMove              : Animated.event([null,{
-//                 dx  : this.state.pan.x,
-//                 dy  : this.state.pan.y
-//             }]),
-//             onPanResponderRelease           : (e, gesture) => {
-//                 if(this.isDropZone(gesture)){
-//                     this.setState({
-//                         showDraggable : false
-//                     });
-//                 }else{
-//                     Animated.spring(
-//                         this.state.pan,
-//                         {toValue:{x:0,y:0}}
-//                     ).start();
-//                 }
-//             }
-//         });
-//     }
-//
-//
-//     isDropZone(gesture){
-//         var dz = this.state.dropZoneValues;
-//         return gesture.moveY > dz.y && gesture.moveY < dz.y + dz.height;
-//     }
-//
-//     setDropZoneValues(event){
-//         this.setState({
-//             dropZoneValues : event.nativeEvent.layout
-//         });
-//     }
-//
-//     render(){
-//         return (
-//             <View style={styles.mainContainer}>
-//                 <View
-//                     onLayout={this.setDropZoneValues.bind(this)}
-//                     style={styles.dropZone}>
-//                     <Text style={styles.text}>Drop me here!</Text>
-//                 </View>
-//
-//                 {this.renderDraggable()}
-//             </View>
-//         );
-//     }
-//
-//     renderDraggable(){
-//         if(this.state.showDraggable){
-//             return (
-//                 <View style={styles.draggableContainer}>
-//                     <Animated.View
-//                         {...this.panResponder.panHandlers}
-//                         style={[this.state.pan.getLayout(), styles.circle]}>
-//                         <Text style={styles.text}>Drag me!</Text>
-//                     </Animated.View>
-//                 </View>
-//             );
-//         }
-//     }
+    // constructor(props){
+    //     super(props);
+    //
+    //     this.state = {
+    //         showDraggable   : true,
+    //         dropZoneValues  : null,
+    //         pan             : new Animated.ValueXY()
+    //     };
+
+        // this.panResponder = PanResponder.create({
+        //     onStartShouldSetPanResponder    : () => true,
+        //     onPanResponderMove              : Animated.event([null,{
+        //         dx  : this.state.pan.x,
+        //         dy  : this.state.pan.y
+        //     }]),
+        //     onPanResponderRelease           : (e, gesture) => {
+        //         if(this.isDropZone(gesture)){
+        //             this.setState({
+        //                 showDraggable : false
+        //             });
+        //         }else{
+        //             Animated.spring(
+        //                 this.state.pan,
+        //                 {toValue:{x:0,y:0}}
+        //             ).start();
+        //         }
+        //     }
+        // });
+    // }
+    //   static navigationOptions = {
+    //       title: 'Welcome', header: null
+    //   };
+
+
+    // isDropZone(gesture){
+    //     var dz = this.state.dropZoneValues;
+    //     return gesture.moveY > dz.y && gesture.moveY < dz.y + dz.height;
+    // }
+    //
+    // setDropZoneValues(event){
+    //     this.setState({
+    //         dropZoneValues : event.nativeEvent.layout
+    //     });
+    // }
+    // <G stroke="black" stroke-width="0" fill="black" key={keyvalue++} fillOpacity={1} >
+// <Rect x={[x + (0 * betweenNotes) + (NoteSVG[1].adjustX * 2) - (SCREEN_WIDTH/40)].join(' ')} y={([y + (NoteSVG[1].adjustY * 2) - (SCREEN_HEIGHT/20)].join(' '))} width={SCREEN_WIDTH/9} height={SCREEN_HEIGHT/15} fillOpacity=".3" onPress={() => this.onPressEditNote(1)}/>
+  // </G>
+    // render(){
+    //     return (
+    //         <View style={styles.mainContainer}>
+    //             <View
+    //                 onLayout={this.setDropZoneValues.bind(this)}
+    //                 style={styles.dropZone}>
+    //                 <Text style={styles.text}>Drop me here!</Text>
+    //             </View>
+    //             {/*this.renderDraggable()*/}
+    //             {this.renderDraggable2()}
+    //         </View>
+    //     );
+    // }
+    // <Svg height="100%"  width="100%">
+    //   <Path x={[50].join(' ')} y={([50].join(' '))} transform={['scale(', NoteSVG[1].scale1 * 1.2, NoteSVG[1].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[1].data].join(' ')}/>
+    // </Svg>
+    // renderDraggable(){
+    //     if(this.state.showDraggable){
+    //         return (
+    //             <View style={styles.draggableContainer}>
+    //                 <Animated.View
+    //                     {...this.panResponder.panHandlers}
+    //
+    //                     style={[this.state.pan.getLayout(),
+    //                       styles.circle
+    //                     ]}>
+    //
+    //
+    //                 </Animated.View>
+    //             </View>
+    //         );
+    //     }
+    // }
+    // renderDraggable2(){
+    //     if(this.state.showDraggable){
+    //         return (
+    //             <View style={styles.draggableContainer2}>
+    //                 <Animated.View
+    //                     {...this.panResponder.panHandlers}
+    //                     style={[this.state.pan.getLayout(),
+    //                     {backgroundColor: 'yellow', width: CIRCLE_RADIUS, height: CIRCLE_RADIUS, borderRadius: CIRCLE_RADIUS}]}
+    //                     >
+    //                     <Svg height="100%"  width="100%">
+    //                       <Path x={[50].join(' ')} y={([50].join(' '))} transform={['scale(', NoteSVG[1].scale1 * 1.2, NoteSVG[1].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[1].data].join(' ')}/>
+    //                     </Svg>
+    //                 </Animated.View>
+    //             </View>
+    //         );
+    //     }
+    // }
 // }
 //
 // function mapStateToProps(state) {}
 //
 // function mapDispatchToProps(dispatch) {}
-//
-//
-// let CIRCLE_RADIUS = 36;
+
+
+
 // let Window = Dimensions.get('window');
 // let styles = StyleSheet.create({
 //     mainContainer: {
 //         flex    : 1
 //     },
 //     dropZone    : {
-//         height  : 100,
-//         backgroundColor:'#2c3e50'
+//         height  : SCREEN_HEIGHT/3,
+//         backgroundColor:'transparent'
 //     },
 //     text        : {
 //         marginTop   : 25,
 //         marginLeft  : 5,
 //         marginRight : 5,
 //         textAlign   : 'center',
-//         color       : '#fff'
+//         color       : 'black'
 //     },
 //     draggableContainer: {
 //         position    : 'absolute',
-//         top         : Window.height/2 - CIRCLE_RADIUS,
-//         left        : Window.width/2 - CIRCLE_RADIUS,
+//         top         : 50,
+//         left        : 50,
+//     },
+//     draggableContainer2: {
+//         position    : 'absolute',
+//         top         : SCREEN_HEIGHT,
+//         left        : 50,
 //     },
 //     circle      : {
-//         backgroundColor     : '#1abc9c',
+//         backgroundColor: 'blue',
 //         width               : CIRCLE_RADIUS*2,
 //         height              : CIRCLE_RADIUS*2,
 //         borderRadius        : CIRCLE_RADIUS
+//     },
+//     circle2      : {
+//         backgroundColor: 'yellow',
+//         width               : CIRCLE_RADIUS,
+//         height              : CIRCLE_RADIUS,
+//         borderRadius        : CIRCLE_RADIUS
 //     }
 // });
-//
+
 // export default connect(mapStateToProps, mapDispatchToProps)(ViewMeasure);
