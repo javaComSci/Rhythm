@@ -94,9 +94,24 @@ def findSheet(table, email):
     return result
 
 
-def findSheetBySheetID(table, email):
+def findSheetBySheetID(table, sheet_id):
     cursor = db.cursor()
-    sql = "SELECT * FROM {} WHERE sheet_id = '{}';".format(table, email)
+    sql = "SELECT * FROM {} WHERE sheet_id = '{}';".format(table, sheet_id)
+    print("MYSQL COMMAND: {}".format(sql))
+    cursor.execute(sql)
+    db.commit()
+    result = cursor.fetchall()
+    cursor.close()
+    return result
+
+
+# when given the sheet id, the instrument is updated for the selection
+def updateInstrumentById(table, sheet_id, instrument):
+    cursor = db.cursor()
+
+    # NEED TO FILL THIS THING!!!!!!
+    sql = "SELECT * FROM {} WHERE sheet_id = '{}';".format(table, sheet_id)
+
     print("MYSQL COMMAND: {}".format(sql))
     cursor.execute(sql)
     db.commit()

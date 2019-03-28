@@ -28,14 +28,17 @@ class ViewExportScreen extends React.Component{
   		console.log(this.state.email)
   		if (this.state.email != '') {
             // has entered email
-            updateInfo = ['name'];
-            updateInfo.push(this.state.nameText);
+            console.log("IN HERE");
             fetch('http://18.237.79.152:5000/createPDF', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify({
+                	'sheet_ids': this.state.sheet_ids,
+                	'email': this.state.email,
+                }),
             }).then((res) => {
                 this.props.navigation.navigate('EditMusicScreen')
             }).catch((res) => {
@@ -67,24 +70,6 @@ class ViewExportScreen extends React.Component{
 
 }
 
-
-	// <View>
-	// 			<View style={styles.operatorContainer}>                            
-	// 				<TextInput
-	// 						style={{height: 40}}
-	// 						onChangeText={(email) => this.setState({email})}
-	// 						value={this.state.email}
-	// 				/>
-
-	// 				<Button
- //                            onPress={() => this.exportSheets()}
- //                            title="Email PDF Version"
- //                            style={styles.button}
- //                    />
-
-	//             </View>	
-
-	// 		</View>
 
 export default ViewExportScreen
 
