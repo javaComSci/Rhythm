@@ -28,10 +28,10 @@ class HomeScreen extends React.Component {
         console.log("clearing storage");
         // clears local storage for debugging purposes
 
-        AsyncStorage.clear().then(() => {
-        //this.props.navigation.navigate("EditMusicScreen"); //Change this
-        return;
-        });
+        // AsyncStorage.clear().then(() => {
+        this.props.navigation.navigate("EditMusicScreen"); //Change this
+        // return;
+        // });
         /*
         var formData = new FormData();
         formData.append('sheet_id', 147);

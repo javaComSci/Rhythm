@@ -396,9 +396,8 @@ class EditMusicScreen extends React.Component {
           width={[mesureLength * 4.2].join(' ')}
           height={[spaceBetween * 6].join(' ')}
           onPress={() => this.onPressHitBox(0, i)}
-          fill="blue"
           strokeWidth="0"
-          fillOpacity=".1"
+          fillOpacity="0"
         />
       )
     } else {
@@ -410,9 +409,8 @@ class EditMusicScreen extends React.Component {
           width={[mesureLength * 4].join(' ')}
           height={[spaceBetween * 6].join(' ')}
           onPress={() => this.onPressHitBox(1, i)}
-          fill="red"
           strokeWidth="0"
-          fillOpacity=".1"
+          fillOpacity="0"
         />
       )
     }
