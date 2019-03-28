@@ -182,12 +182,20 @@ class EditMusicScreen extends React.Component {
     // }
     sampleJson = sampleJson3;
 
+
+    console.log("ALL IDS IN EDIT SCREEN", this.props.sheet_id, this.props.email, this.props.title);
+
+    ids = [];
+    ids.push(this.props.sheet_id);
+
     this.state = {
       colorProp: 'black',
       alert: false,
       SheetType: 1,
       troubleCleff: troubleCleffSplit,
       baseCleff: baseCleffSplit,
+      sheet_ids: ids,
+      email: this.props.email,
     };
   }
 
@@ -388,9 +396,8 @@ class EditMusicScreen extends React.Component {
           width={[mesureLength * 4.2].join(' ')}
           height={[spaceBetween * 6].join(' ')}
           onPress={() => this.onPressHitBox(0, i)}
-          fill="blue"
           strokeWidth="0"
-          fillOpacity=".1"
+          fillOpacity="0"
         />
       )
     } else {
@@ -402,9 +409,8 @@ class EditMusicScreen extends React.Component {
           width={[mesureLength * 4].join(' ')}
           height={[spaceBetween * 6].join(' ')}
           onPress={() => this.onPressHitBox(1, i)}
-          fill="red"
           strokeWidth="0"
-          fillOpacity=".1"
+          fillOpacity="0"
         />
       )
     }
@@ -621,6 +627,22 @@ class EditMusicScreen extends React.Component {
               icon={
                 <Icon
                   name="left"
+                  size={15}
+                  color="white"
+                />
+              }
+              type="clear"
+            />
+          }
+          rightComponent={
+            <Button
+              onPress={() => this.props.navigation.navigate('ViewExportScreen', {
+                 sheet_ids: this.state.sheet_ids,
+                 email: this.state.email,
+              })}
+              icon={
+                <Icon
+                  name="right"
                   size={15}
                   color="white"
                 />

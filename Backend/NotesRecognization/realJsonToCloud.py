@@ -58,4 +58,6 @@ sql = "UPDATE sheet_music SET fileJSON = JSON_INSERT(fileJSON, '$.filey', {}) WH
 print("\n\n\n\nMYSQL COMMAND: {}".format(sql));
 cursor.execute(sql)
 db.commit()
+cursor.close()
+db.close()
 # return;

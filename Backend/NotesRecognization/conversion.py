@@ -10,13 +10,15 @@ import sendToCloud
 # from .. import MySQL
 
 if __name__ == "__main__":
-	file_path = "ExamplePredictions/DATA/file21.jpg"
+	file_path = "ExamplePredictions/DATA/s5.jpg"
 
 	mask, SOL, staff_lines = partition.full_partition(file_path)
 
 	ob_counter = 0
 
 	partition.print_objects(mask, SOL, staff_lines, "ExamplePredictions/predictions/")
+
+	exit(1)
 
 	dicty = {"clef":1, "notes":[]}
 

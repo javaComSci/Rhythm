@@ -54,7 +54,7 @@ var SheetScreenTemplate = function () {
                                 <TouchableOpacity
                                     style={styles.compositionItem}
                                     onPress={(e) => {
-                                        this.props.navigation.navigate('EditMusicScreen', {title: item.getTitle(), file: item.getFile()})
+                                        this.props.navigation.navigate('EditMusicScreen', {title: item.getTitle(), file: item.getFile(), sheet_id: item.getID(), email: this.props.isRegistered})
                                     }}
                                     onLongPress={(e) => {
                                         console.log("pepper")
@@ -65,6 +65,14 @@ var SheetScreenTemplate = function () {
                                     }}
                                 >
                                     <Text style={{ color: 'white', fontSize: 40 }}>{item.getTitle()}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity 
+                                    style={styles.openButton} 
+                                    onPress={(e) => {
+                                        this.props.navigation.navigate('SelectMusicScreen', {sheet_id: item.getID()})
+                                    }}
+                                >
+                                    <Text style={{ color: 'white', fontSize: 30 }}>Email PDF</Text>
                                 </TouchableOpacity>
                                 <View style={styles.lineBreak} />
                             </View>}

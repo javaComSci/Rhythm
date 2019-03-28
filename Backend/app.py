@@ -26,6 +26,8 @@ import user.routes.newComposition as newCompositions
 import user.routes.newMusicSheet as newMusicSheets
 import user.routes.AccountRecovery as AccountRecoverys
 import user.routes.getInfo as getInfos
+import user.routes.createPDF as createPDFs
+import user.routes.selectInstrument as selectInstruments
 from flask_mail import Mail, Message
 ##
 # Creates an instance of the exisiting class/module
@@ -234,12 +236,30 @@ def recoverEmail():
 # }
 
 
+# will send the pdf to the user
+@app.route('/createPDF', methods=['POST'])
+def createPDF():
+    print "CALLING TO PDF"
+    return createPDFs.exportPDF(mail, app)
+
+
+
+
+# will select instrument for sheet music
+@app.route('/selectInstrument', methods=['POST'])
+def selectInstrument():
+    print "Selected Instrument!"
+    return selectInstruments.selectMusic()
+
+
+
 @app.route('/checkKey', methods=['POST'])
 def checkKey():
     if request.method == 'POST':
         return AccountRecoverys.checkKey()
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
+
 
 
 ##

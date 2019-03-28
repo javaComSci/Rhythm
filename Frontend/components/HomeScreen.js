@@ -30,8 +30,9 @@ class HomeScreen extends React.Component {
 
         // AsyncStorage.clear().then(() => {
         this.props.navigation.navigate("EditMusicScreen"); //Change this
-        return;
+        // return;
         // });
+        /*
         var formData = new FormData();
         formData.append('sheet_id', 147);
         formData.append('file', JSON.stringify(sampleJson));
@@ -47,7 +48,7 @@ class HomeScreen extends React.Component {
             }).catch(err => {
                 console.log("camera err", err)
             })
-        });
+        });*/
         console.log("cleared");
     }
 
