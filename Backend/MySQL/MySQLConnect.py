@@ -13,44 +13,51 @@ with open("config/mysql.json") as json_file:
  # Connecting to mySQL with username/password (in .config file)
  # Connect using mysql -u root -p (Must have mysql downloaded)
  ##
-db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
 
 # takes string and a tuple
 def runQuery(query, args):
+    db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
     cursor = db.cursor()
     cursor.execute(query, args)
     db.commit()
     lastrowid = cursor.lastrowid
     cursor.close()
+    db.close()
     return lastrowid
 
 def update(table, update, where):
+    db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
     cursor = db.cursor()
     sql = "UPDATE {} SET {}='{}' WHERE {}='{}';".format(table, update[0], update[1], where[0], where[1])
     cursor.execute(sql)
     db.commit()
     cursor.close()
     print("MYSQL COMMAND: {}".format(sql))
-    return;
+    db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
+    db.close()
+    return
 
 
 def updateMulti(table, update, where):
+    db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
     cursor = db.cursor()
-    sql = "UPDATE {} SET {}='{}' WHERE {}='{}';".format(table, update[0], update[1], where[0], where[1]);
+    sql = "UPDATE {} SET {}='{}' WHERE {}='{}';".format(table, update[0], update[1], where[0], where[1])
     cursor.execute(sql)
     db.commit()
-    sqll = "UPDATE {} SET {}='{}' WHERE {}='{}';".format(table, update[2], update[3], where[0], where[1]);
+    sqll = "UPDATE {} SET {}='{}' WHERE {}='{}';".format(table, update[2], update[3], where[0], where[1])
     cursor.execute(sqll)
     db.commit()
     cursor.close()
-    print("MYSQL COMMAND: {}".format(sqll));
-    return;
+    print("MYSQL COMMAND: {}".format(sqll))
+    db.close()
+    return
 
 ##
  # This will find everything in a specific table and matching the id with the user_id
  #
  ##
 def find(table, id):
+    db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
     cursor = db.cursor()
     sql = "SELECT * FROM {} WHERE user_id = '{}';".format(table, id)
     print("MYSQL COMMAND: {}".format(sql))
@@ -58,10 +65,12 @@ def find(table, id):
     db.commit()
     result = cursor.fetchall()
     cursor.close()
+    db.close()
     return result
 
 
 def findByEmail(table, email):
+    db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
     cursor = db.cursor()
     sql = "SELECT * FROM {} WHERE email = '{}';".format(table, email)
     print("MYSQL COMMAND: {}".format(sql))
@@ -69,10 +78,12 @@ def findByEmail(table, email):
     db.commit()
     result = cursor.fetchall()
     cursor.close()
+    db.close()
     return result
 
 
 def findVerf(table, code):
+    db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
     cursor = db.cursor()
     sql = "SELECT * FROM {} WHERE verf_code = {};".format(table, code)
     print("MYSQL COMMAND: {}".format(sql))
@@ -81,9 +92,11 @@ def findVerf(table, code):
     result = cursor.fetchall()
     print(result)
     cursor.close()
+    db.close()
     return result
 
 def findSheet(table, email):
+    db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
     cursor = db.cursor()
     sql = "SELECT * FROM {} WHERE composition_id = '{}';".format(table, email)
     print("MYSQL COMMAND: {}".format(sql))
@@ -91,10 +104,12 @@ def findSheet(table, email):
     db.commit()
     result = cursor.fetchall()
     cursor.close()
+    db.close()
     return result
 
 
 def findSheetBySheetID(table, sheet_id):
+    db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
     cursor = db.cursor()
     sql = "SELECT * FROM {} WHERE sheet_id = '{}';".format(table, sheet_id)
     print("MYSQL COMMAND: {}".format(sql))
@@ -102,11 +117,13 @@ def findSheetBySheetID(table, sheet_id):
     db.commit()
     result = cursor.fetchall()
     cursor.close()
+    db.close()
     return result
 
 
 # when given the sheet id, the instrument is updated for the selection
 def updateInstrumentById(table, sheet_id, instrument):
+    db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
     cursor = db.cursor()
 
     # NEED TO FILL THIS THING!!!!!!
@@ -117,6 +134,7 @@ def updateInstrumentById(table, sheet_id, instrument):
     db.commit()
     result = cursor.fetchall()
     cursor.close()
+    db.close()
     return result
 
 ##
@@ -124,6 +142,7 @@ def updateInstrumentById(table, sheet_id, instrument):
  #
  ##
 def findUser(table, value):
+    db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
     cursor = db.cursor()
     sql = "SELECT * FROM {} WHERE email = '{}';".format(table, value)
     print("MYSQL COMMAND: {}".format(sql))
@@ -132,6 +151,7 @@ def findUser(table, value):
     result = cursor.fetchall()
     print(result)
     cursor.close()
+    db.close()
     return result
 
 ##
@@ -144,12 +164,14 @@ def findUser(table, value):
  # @return void
  ##
 def delete(table, delete):
+    db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
     cursor = db.cursor()
     sql = "DELETE FROM {} WHERE {} = '{}';".format(table, delete[0], delete[1])
     print("MYSQL COMMAND: {}".format(sql))
     cursor.execute(sql)
     db.commit()
     cursor.close()
+    db.close()
     return
 
 ##
@@ -161,12 +183,14 @@ def delete(table, delete):
  # @return void
  ##
 def insert(table, query, value):
+    db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
     cursor = db.cursor()
     sql = "INSERT INTO {}({}) VALUES ({});".format(table,query,value)
     print("MYSQL COMMAND: {}".format(sql))
     cursor.execute(sql)
     db.commit()
     cursor.close()
+    db.close()
     return
 
 def jsonToCloud(data):
