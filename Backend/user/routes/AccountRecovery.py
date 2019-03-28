@@ -21,7 +21,8 @@ def checkKey():
     content = request.json
     try:
         check = MySQLConnect.findVerf("user", content['code'])
-    except MySQLConnect.cursor.InternalError:
+    #except MySQLConnect.cursor.InternalError:
+    except:
         check = '' # length 0
     if len(check) == 0:
         result = {

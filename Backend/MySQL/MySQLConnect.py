@@ -14,23 +14,35 @@ with open("config/mysql.json") as json_file:
  # Connect using mysql -u root -p (Must have mysql downloaded)
  ##
 db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
-cursor = db.cursor()
+
+# takes string and a tuple
+def runQuery(query, args):
+    cursor = db.cursor()
+    cursor.execute(query, args)
+    db.commit()
+    lastrowid = cursor.lastrowid
+    cursor.close()
+    return lastrowid
 
 def update(table, update, where):
-    sql = "UPDATE {} SET {}='{}' WHERE {}='{}';".format(table, update[0], update[1], where[0], where[1]);
+    cursor = db.cursor()
+    sql = "UPDATE {} SET {}='{}' WHERE {}='{}';".format(table, update[0], update[1], where[0], where[1])
     cursor.execute(sql)
     db.commit()
-    print("MYSQL COMMAND: {}".format(sql));
+    cursor.close()
+    print("MYSQL COMMAND: {}".format(sql))
     return;
 
 
 def updateMulti(table, update, where):
+    cursor = db.cursor()
     sql = "UPDATE {} SET {}='{}' WHERE {}='{}';".format(table, update[0], update[1], where[0], where[1]);
     cursor.execute(sql)
     db.commit()
     sqll = "UPDATE {} SET {}='{}' WHERE {}='{}';".format(table, update[2], update[3], where[0], where[1]);
     cursor.execute(sqll)
     db.commit()
+    cursor.close()
     print("MYSQL COMMAND: {}".format(sqll));
     return;
 
@@ -39,61 +51,73 @@ def updateMulti(table, update, where):
  #
  ##
 def find(table, id):
-    sql = "SELECT * FROM {} WHERE user_id = '{}';".format(table, id);
-    print("MYSQL COMMAND: {}".format(sql));
+    cursor = db.cursor()
+    sql = "SELECT * FROM {} WHERE user_id = '{}';".format(table, id)
+    print("MYSQL COMMAND: {}".format(sql))
     cursor.execute(sql)
     db.commit()
     result = cursor.fetchall()
-    return result;
+    cursor.close()
+    return result
 
 
 def findByEmail(table, email):
-    sql = "SELECT * FROM {} WHERE email = '{}';".format(table, email);
-    print("MYSQL COMMAND: {}".format(sql));
+    cursor = db.cursor()
+    sql = "SELECT * FROM {} WHERE email = '{}';".format(table, email)
+    print("MYSQL COMMAND: {}".format(sql))
     cursor.execute(sql)
     db.commit()
     result = cursor.fetchall()
-    return result;
+    cursor.close()
+    return result
 
 
 def findVerf(table, code):
-    sql = "SELECT * FROM {} WHERE verf_code = {};".format(table, code);
-    print("MYSQL COMMAND: {}".format(sql));
+    cursor = db.cursor()
+    sql = "SELECT * FROM {} WHERE verf_code = {};".format(table, code)
+    print("MYSQL COMMAND: {}".format(sql))
     cursor.execute(sql)
     db.commit()
     result = cursor.fetchall()
     print(result)
-    return result;
+    cursor.close()
+    return result
 
 def findSheet(table, email):
-    sql = "SELECT * FROM {} WHERE composition_id = '{}';".format(table, email);
-    print("MYSQL COMMAND: {}".format(sql));
+    cursor = db.cursor()
+    sql = "SELECT * FROM {} WHERE composition_id = '{}';".format(table, email)
+    print("MYSQL COMMAND: {}".format(sql))
     cursor.execute(sql)
     db.commit()
     result = cursor.fetchall()
-    return result;
+    cursor.close()
+    return result
 
 
 def findSheetBySheetID(table, email):
-    sql = "SELECT * FROM {} WHERE sheet_id = '{}';".format(table, email);
-    print("MYSQL COMMAND: {}".format(sql));
+    cursor = db.cursor()
+    sql = "SELECT * FROM {} WHERE sheet_id = '{}';".format(table, email)
+    print("MYSQL COMMAND: {}".format(sql))
     cursor.execute(sql)
     db.commit()
     result = cursor.fetchall()
-    return result;
+    cursor.close()
+    return result
 
 ##
  # This will find everything in a specific table and matching the id with the user_id
  #
  ##
 def findUser(table, value):
-    sql = "SELECT * FROM {} WHERE email = '{}';".format(table, value);
-    print("MYSQL COMMAND: {}".format(sql));
+    cursor = db.cursor()
+    sql = "SELECT * FROM {} WHERE email = '{}';".format(table, value)
+    print("MYSQL COMMAND: {}".format(sql))
     cursor.execute(sql)
     db.commit()
     result = cursor.fetchall()
     print(result)
-    return result;
+    cursor.close()
+    return result
 
 ##
  # This will delete everything in the specific table matching the id to user_id AND
@@ -105,11 +129,13 @@ def findUser(table, value):
  # @return void
  ##
 def delete(table, delete):
-    sql = "DELETE FROM {} WHERE {} = '{}';".format(table, delete[0], delete[1]);
-    print("MYSQL COMMAND: {}".format(sql));
+    cursor = db.cursor()
+    sql = "DELETE FROM {} WHERE {} = '{}';".format(table, delete[0], delete[1])
+    print("MYSQL COMMAND: {}".format(sql))
     cursor.execute(sql)
     db.commit()
-    return;
+    cursor.close()
+    return
 
 ##
  # This will insert new information into the specific table
@@ -120,11 +146,13 @@ def delete(table, delete):
  # @return void
  ##
 def insert(table, query, value):
-    sql = "INSERT INTO {}({}) VALUES ({});".format(table,query,value);
-    print("MYSQL COMMAND: {}".format(sql));
+    cursor = db.cursor()
+    sql = "INSERT INTO {}({}) VALUES ({});".format(table,query,value)
+    print("MYSQL COMMAND: {}".format(sql))
     cursor.execute(sql)
     db.commit()
-    return;
+    cursor.close()
+    return
 
 def jsonToCloud(data):
 	print("DATA", data)
