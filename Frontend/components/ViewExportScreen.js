@@ -11,9 +11,10 @@ class ViewExportScreen extends React.Component{
 
 	constructor(props) {
 		super(props);
+
 		this.state = {
-			sheet_ids: this.props.sheet_ids,
-			email: this.props.email,
+			sheet_ids: this.props.navigation.getParam('sheet_ids'),
+			email: this.props.navigation.getParam('email'),
 		}
 	}
 
