@@ -5,6 +5,15 @@
  * react-native-pinch-zoom-view, expo, and most importantly SVG.
  */
 
+
+// list of instruments and clefs
+// Both: piano and harp
+// Treble: violin, flute, guitar
+// Bass: tuba, cello, Bass
+// Alto: trombone, viola
+
+
+
 import React from 'react';
 import { ListItem, Dimensions, TextInput, Alert, FlatList, TouchableOpacity, ScrollView, StyleSheet, View, KeyboardAvoidingView, Image, ImageBackground } from 'react-native';
 // import { Header } from 'react-navigation';
@@ -182,11 +191,10 @@ class EditMusicScreen extends React.Component {
     // }
     sampleJson = sampleJson3;
 
-
-    console.log("ALL IDS IN EDIT SCREEN", this.props.sheet_id, this.props.email, this.props.title);
-
     ids = [];
-    ids.push(this.props.sheet_id);
+    ids.push(this.props.navigation.getParam('sheet_id'));
+
+    console.log("IN THE EDIT SHEET SCREEN" + this.props.navigation.getParam('sheet_id'));
 
     this.state = {
       colorProp: 'black',
@@ -195,7 +203,7 @@ class EditMusicScreen extends React.Component {
       troubleCleff: troubleCleffSplit,
       baseCleff: baseCleffSplit,
       sheet_ids: ids,
-      email: this.props.email,
+      email: this.props.navigation.getParam('email'),
     };
   }
 

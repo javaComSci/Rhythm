@@ -18,21 +18,26 @@ def getNotes(fileName):
 
 def getNoteType(note, pitch, length):
 
+	print note
+	print pitch
+	print length
 	noteType = False
 
 	if note == 0 and pitch == 1 and length == 0:
-		noteType = 'treble'
+		noteType = 'gclef'
 	elif note == 6 and pitch == 1 and length == 0:
-		noteType = 'alto'
+		noteType = 'fclef'
 	elif note == 7 and pitch == 1 and length == 0:
-		noteType = 'bass'
-	elif note == 5 and length == .125:
+		noteType = 'cclef'
+	elif note == 5:
 		noteType = 'sixteenth'
-	elif note == 1 and length == .5:
+	elif note == 1:
 		noteType = 'eighth'
-	elif note == 3 and length == 2:
+	elif note == 2:
+		noteType = 'quarter'
+	elif note == 3:
 		noteType = 'half'
-	elif note == 4 and length == 4:
+	elif note == 4:
 		noteType = 'whole'
 	elif note == 9 and length == .5:
 		noteType = 'eighthrest'
@@ -238,19 +243,162 @@ def placeClefs(notesData, notesArr, staffLinesStartingPos):
 def placeNotes(notesData, notesArr, staffLinesStartingPos):
 
 	# must start at position 350 now in terms of the columns
+	currColumn = 350
 
 	durationCount = 0
 
-	for note in notes:
+	# indicate which row to look at 
+	k = 0
 
-		# need to move to next staff line
-		if durationCount % 4 == 0:
-			continue
+	print notesData
 
-		# can stay on same staff line but shift the notes over a bit
-		else:
-			noteType = getNoteType(note['note'], note['pitch'], note['length'])
+	# for each of the notes in the notesData
+	for note in notesData['notes']:
 
+		# get the note nype and get the corresponding file
+		noteType = getNoteType(note['note'], note['pitch'], note['length'])
+		noteFile = './assets/' + noteType + '.png'
+		imgNote = cv2.imread(noteFile, cv2.IMREAD_GRAYSCALE)
+		(thresh, imgNoteBW) = cv2.threshold(imgNote, 128, 255, cv2.THRESH_BINARY)
+		imgNoteResized = cv2.resize(imgNoteBW, (150, 250))
+
+		name = noteType + '.png'
+
+		imgNoteResized = imgNoteResized * 255
+		cv2.imwrite(name, imgNoteResized)
+
+		# check the note type and do spacing and fill in note
+		if noteType == 'sixteenth':
+			# through the row
+			for i in range(250):
+
+				# through the column
+				for j in range(150):
+
+					if imgNoteResized[i][j] == 0:
+						# check if there is note there
+						print staffLinesStartingPos[k] + (note['pitch'] * 10)
+						print currColumn + j
+						notesArr[staffLinesStartingPos[k] + (note['pitch'] * 10)][currColumn + j] = 0
+
+			# move the column position for spacing after the note
+			currColumn = currColumn + imgNoteResized.shape[1] + 10
+
+		elif noteType == 'eighth':
+			# through the row
+			for i in range(250):
+
+				# through the column
+				for j in range(150):
+
+					if imgNoteResized[i][j] == 0:
+					# check if there is note there
+						notesArr[staffLinesStartingPos[k] + (note['pitch'] * 10)][currColumn + j] = 0
+
+			# move the column position for spacing after the note
+			currColumn = currColumn + imgNoteResized.shape[1] + 20
+
+		elif noteType == 'quarter':
+			# through the row
+			for i in range(250):
+
+				# through the column
+				for j in range(150):
+
+					if imgNoteResized[i][j] == 0:
+					# check if there is note there
+						notesArr[staffLinesStartingPos[k] + (note['pitch'] * 10)][currColumn + j] = 0
+
+			# move the column position for spacing after the note
+			currColumn = currColumn + imgNoteResized.shape[1] + 40
+
+		elif noteType == 'half':
+			print 'HERE!!!!\n\n'
+			# through the row
+			for i in range(imgNoteResized.shape[0]):
+
+				# through the column
+				for j in range(imgNoteResized.shape[1]):
+
+					if imgNoteResized[i][j] == 0:
+					# check if there is note there
+						print staffLinesStartingPos[k]
+						print staffLinesStartingPos[k] + (note['pitch'] * 10)
+						print currColumn + j
+						notesArr[staffLinesStartingPos[k] + (note['pitch'] * 20)][currColumn + j] = 0
+
+			# move the column position for spacing after the note
+			currColumn = currColumn + imgNoteResized.shape[1] + 80
+
+		elif noteType == 'whole':
+			# through the row
+			for i in range(imgNoteResized.shape[0]):
+
+				# through the column
+				for j in range(imgNoteResized.shape[1]):
+
+					if imgNoteResized[i][j] == 0:
+					# check if there is note there
+						notesArr[staffLinesStartingPos[k] + (note['pitch'] * 10)][currColumn + j] = 0
+
+			# move the column position for spacing after the note
+			currColumn = currColumn + imgNoteResized.shape[1] + 160
+
+		elif noteType == 'sharp':
+			# through the row
+			for i in range(imgNoteResized.shape[0]):
+
+				# through the column
+				for j in range(imgNoteResized.shape[1]):
+
+					if imgNoteResized[i][j] == 0:
+					# check if there is note there
+						notesArr[staffLinesStartingPos[k] + (note['pitch'] * 10)][currColumn + j] = 0
+
+			# move the column position for spacing after the note
+			currColumn = currColumn + imgNoteResized.shape[1] + 5
+		
+		elif noteType == 'flat':
+			# through the row
+			for i in range(imgNoteResized.shape[0]):
+
+				# through the column
+				for j in range(imgNoteResized.shape[1]):
+
+					if imgNoteResized[i][j] == 0:
+					# check if there is note there
+						notesArr[staffLinesStartingPos[k] + (note['pitch'] * 10)][currColumn + j] = 0
+
+			# move the column position for spacing after the note
+			currColumn = currColumn + imgNoteResized.shape[1] + 5
+
+		elif noteType == 'eighthrest' or noteType == 'quarterrest' or noteType == 'wholerest':
+			# through the row
+			for i in range(imgNoteResized.shape[0]):
+
+				# through the column
+				for j in range(imgNoteResized.shape[1]):
+
+					if imgNoteResized[i][j] == 0:
+					# check if there is note there
+						notesArr[staffLinesStartingPos[k] + (note['pitch'] * 10)][currColumn + j] = 0
+
+			# move the column position for spacing after the note
+			currColumn = currColumn + imgNoteResized.shape[1] + 5
+
+		# add to the duration of the notes
+		durationCount += note['length']
+
+		# need to move to next staff line if the current staff line is full
+		# rest the current column position to be beginning of the line
+		if durationCount == int(durationCount) and durationCount % 16 == 0:
+			print "MOVIGN TO NEXT LINE"
+			k += 1
+			currColumn = 350
+
+
+	notesArr = notesArr * 255
+	cv2.imwrite("notes.png", notesArr)
 
 
 
@@ -275,5 +423,5 @@ def conversion(file, fileName):
 notes = getNotes('./MusicSheet1.json')
 notesArrWithLines, staffLinesStartingPos = createLines(notes)
 notesArrWithClefs = placeClefs(notes, notesArrWithLines, staffLinesStartingPos)
-notesArrWithNotes = placeNotes(notes, notesArrWithLines, staffLinesStartingPos)
+notesArrWithNotes = placeNotes(notes, notesArrWithClefs, staffLinesStartingPos)
 

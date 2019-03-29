@@ -12,11 +12,11 @@ class SelectMusicScreen extends React.Component {
 			tableData: [
 				['Piano', 'Harp'],
 				['Violin', 'Flute'],
-				['Drums', 'Guitar'],
+				['Tuba', 'Guitar'],
 				['Cello', 'Bass'],
-				['Tuba', 'Viola']
+				['Trombone', 'Viola']
 			],
-			sheet_id: this.props.sheet_id,
+			sheet_id: this.props.navigation.getParam('sheet_id'),
 		};
 
 	}
