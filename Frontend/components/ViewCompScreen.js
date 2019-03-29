@@ -18,12 +18,13 @@ var background = require('../assets/backgroundImage.png')
 Composition class
 */
 class Composition {
-    constructor(title, id, description, file) {
+    constructor(title, id, description, file, instrument) {
         this.title = title;
         this.description = description;
         this.file = file
         this.key = id.toString(); // must be stored as string for FlatList
         this.sheetMusic = [];
+        this.instrument = instrument;
     }
 
     getFile = function () {
@@ -40,6 +41,10 @@ class Composition {
 
     getDescription = function () {
         return this.description;
+    }
+
+    getInstrument = function () {
+        return this.instrument;
     }
 }
 /* Profile Screen */
@@ -88,7 +93,8 @@ class ViewCompScreen extends React.Component {
                 JSON.parse(res).forEach(element => {
                     // title, id, compid
                     // console.log(JSON.parse(element[4]))
-                    dummyList.push(new Composition(element[3], element[0], element[2], JSON.parse(element[4])));
+                    console.log(element[5])
+                    dummyList.push(new Composition(element[3], element[0], element[2], JSON.parse(element[4]), element[5]));
                 });
                 that.setState({ "sheet_music": dummyList })
                 that.sheetList = dummyList.map(sheet => ({ value: sheet.getID(), label: sheet.getTitle(), color: "red" }))
