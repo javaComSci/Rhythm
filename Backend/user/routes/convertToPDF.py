@@ -420,7 +420,7 @@ def conversion(file, fileName):
 
 
 
-notes = getNotes('./MusicSheet1.json')
+# notes = getNotes('./MusicSheet1.json')
 notesArrWithLines, staffLinesStartingPos = createLines(notes)
 notesArrWithClefs = placeClefs(notes, notesArrWithLines, staffLinesStartingPos)
 notesArrWithNotes = placeNotes(notes, notesArrWithClefs, staffLinesStartingPos)
