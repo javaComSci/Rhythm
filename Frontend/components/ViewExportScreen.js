@@ -6,7 +6,6 @@ import { Button, Header } from 'react-native-elements';
 import PinchZoomView from 'react-native-pinch-zoom-view';
 
 var styles = require('../style')
-var background = require('../assets/backgroundImage.png')
 
 class ViewExportScreen extends React.Component{
 
@@ -51,19 +50,30 @@ class ViewExportScreen extends React.Component{
 
 		return (
 			  <ImageBackground style={{ width: '100%', height: '100%' }}>
-	            <View style={styles.container}>
+	            <View>
 	                <View></View>
 	                <View>
-	                    <View style={styles.operatorContainer}>
-	                        <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1}}
-	                        	onChangeText={(email) => this.setState({email})}
-	 							value={this.state.email}/>
-	                        <TouchableOpacity style={styles.openButton} onPress={() => this.exportSheets()}>
-	                            <Text style={{ color: 'white', fontSize: 30 }}>Email PDF</Text>
+	                    <View>
+	                    	<Text style = {{fontSize: 45, marginTop: '50%', fontWeight: 'bold', color: 'black', textAlign: 'center'}}> Export to Email</Text>
+	                    	<View style={{margin: '10%'}}>
+		                        <TextInput style={{ height: 50, width: '100%', borderColor: 'gray', borderWidth: 2, borderRadius: 2}}
+		                        	onChangeText={(email) => this.setState({email})}
+		 							value={this.state.email}/>
+		 					</View>
+	                        <TouchableOpacity style={{backgroundColor: 'black', marginTop: '5%'}} onPress={() => this.exportSheets()}>
+	                            <Text style={{ color: 'white', fontSize: 30, textAlign: 'center' }}>Send Email</Text>
 	                        </TouchableOpacity>
 	                    </View>
 	                </View>
 	            </View>
+	            <View style={{marginTop: '80%'}}>
+                    <TouchableOpacity
+                        onPress={() => this.props.navigation.navigate('ViewCompScreen')}
+                        style={styles.navButton}
+                    >
+                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 40 }}> Back </Text>
+                    </TouchableOpacity>
+                </View>
 	        </ImageBackground>
 		);
 	}
