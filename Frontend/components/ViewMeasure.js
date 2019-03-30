@@ -133,6 +133,7 @@ class ViewMeasure extends React.Component {
       super(props);
       draggables = [];
       keyvalue = 0;
+
       draggables.push(
         [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/7, 5, keyvalue++]
       );
@@ -157,13 +158,17 @@ class ViewMeasure extends React.Component {
       fullList = this.props.navigation.getParam('full');
       MeasureNoteList = this.props.navigation.getParam('arr');
       measureNum = this.props.navigation.getParam('num');
-
-      if((MeasureNoteList[0].props.note == 0 || MeasureNoteList[0].props.note == 6 || MeasureNoteList[0].props.note == 7)){
-        hasClef = MeasureNoteList[0].props.note;
-        MeasureNoteList.splice(0,1);
+      if(MeasureNoteList.length != 0){
+        if((MeasureNoteList[0].props.note == 0 || MeasureNoteList[0].props.note == 6 || MeasureNoteList[0].props.note == 7)){
+          hasClef = MeasureNoteList[0].props.note;
+          MeasureNoteList.splice(0,1);
+        }else{
+          hasClef = -1;
+        }
       }else{
         hasClef = -1;
       }
+
       this.state = {
         verfColor: "green",
         showDraggable   : true,
@@ -172,6 +177,9 @@ class ViewMeasure extends React.Component {
       };
       this.state.panLayouts = [];
       panHandlers = [];
+      MeasureNoteList = [];
+      fullList = [];
+      NewMeasureNoteList = [];
 
       /* This for loop sents up all the drag and drops.. This code is jank AF */
       for (let i = 0; i < 30; i++) {
@@ -179,49 +187,79 @@ class ViewMeasure extends React.Component {
         panHandlers.push(
           this.panResponder2 = PanResponder.create({
               onStartShouldSetPanResponder: (e, gesture) => {
+                // console.log("clicked");
                 clickedY = e.nativeEvent.locationY;
                 clickedX = e.nativeEvent.locationX;
+                // console.log(e.nativeEvent.pageX + " : " + e.nativeEvent.pageY);
+                console.log(this.state.panLayouts[i]);
+                // this.state.panLayouts[i].setValue({
+                //   x: e.nativeEvent.pageX, y: e.nativeEvent.pageY
+                // })
                 return true;
+
               },
               onPanResponderMove: (e, gesture) => {
+                // console.log("before");
+                // console.log(this.state.panLayouts[i]);
+                // console.log("moved");
                 if(this.checkDropBoxes(e.nativeEvent.pageX, e.nativeEvent.pageY, i, (e.nativeEvent.pageX - gesture.dx), (e.nativeEvent.pageY - gesture.dy), gesture, e) == -1){
+
                   this.state.panLayouts[i].setValue({
                     x: gesture.dx, y: gesture.dy
                   })
+
                 }
+                // console.log("after");
+                // console.log(this.state.panLayouts[i]);
               },
               onPanResponderRelease: (e, gesture) => {
-                // console.log(gesture);
+                // console.log("realsed");
+                // console.log(draggables);
+                // draggables[i][0] += (gesture.y0);
                 let check = this.checkDropBoxes(e.nativeEvent.pageX, e.nativeEvent.pageY, i, (e.nativeEvent.pageX - gesture.dx), (e.nativeEvent.pageY - gesture.dy), gesture, e)
                   if(check != -1){
-                    console.log(check);
-                    console.log("Row " + Math.floor(check / 11));
-                    console.log("Pitch " + (check % 11));
-                    // console.log("Note " + draggables[0][3]);
-                    console.log("target " + e.target);
-                    console.log("i " + i);
-                    console.log("note " + draggables[i][2]);
-                    switch (i) {
-                      case 0:
-                        NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={Math.floor(check / 11)} y={(check % 11)} length={.25} note={5} color="black" pitch={1} />);
+                    // console.log(check);
+                    // console.log("Row " + Math.floor(check / 11));
+                    // console.log("Pitch " + (check % 11));
+                    // // console.log("Note " + draggables[0][3]);
+                    // console.log("target " + e.target);
+                    // console.log("i " + i);
+                    // console.log("note " + draggables[i][2]);
+                    // console.log(gesture.dy);
+                    // draggables[i][0] += (gesture.y0);
+                    // draggables[i][0] = (e.nativeEvent.pageY);
+                    // draggables[0][0] += (gesture.x0 - clickedX);
+                    // draggables[i][1] = SCREEN_WIDTH/7 + gesture.dx;
+                    // console.log(gesture.y0);
+                    // draggables[i][1] += gesture.dx;
+
+                    switch (draggables[i][2]) {
+                      case 5:
+                        NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={Math.floor(check / 11)} y={(check % 11)} length={.25} note={5} color="black" pitch={(check % 11)} />);
                         draggables.push(
                           [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/7, 5]
                         );
+                        draggables.push(
+                          [SCREEN_HEIGHT/1.6 + gesture.y0, SCREEN_WIDTH/7 + gesture.x0, 5]
+                        );
                         break;
                       case 1:
-                      draggables.push(
-                        [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/3, 1, keyvalue++]
-                      );
+                        draggables.push(
+                          [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/3, 1, keyvalue++]
+                        );
+                        NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={Math.floor(check / 11)} y={(check % 11)} length={.5} note={1} color="black" pitch={(check % 11)} />);
                         break;
                       case 2:
                         draggables.push(
                           [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/2, 2, keyvalue++]
                         );
+                        NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={Math.floor(check / 11)} y={(check % 11)} length={1} note={2} color="black" pitch={(check % 11)} />);
                         break;
                       case 3:
                         draggables.push(
                           [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/1.5, 3, keyvalue++]
                         );
+                        NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={Math.floor(check / 11)} y={(check % 11)} length={2} note={3} color="black" pitch={(check % 11)} />);
                         break;
                       case 4:
                         // draggables.push(
@@ -247,6 +285,7 @@ class ViewMeasure extends React.Component {
                       ).start();
                   }
                   // console.log(NewMeasureNoteList);
+                  // console.log(draggables);
                   this.setState({ });
 
 
@@ -261,14 +300,15 @@ class ViewMeasure extends React.Component {
 
   componentDidMount() {
     /* resetting all global values */
-    MeasureNoteList = [];
-    // panHandlers = [];
-    fullList = [];
+    // MeasureNoteList = [];
+    // // panHandlers = [];
+    // fullList = [];
+    // NewMeasureNoteList = [];
   }
 
   componentWillMount() {
     /* Not sure what this does but its needed */
-    NewMeasureNoteList = [];
+    // NewMeasureNoteList = [];
   }
 
   newLineSection(){
@@ -330,7 +370,7 @@ class ViewMeasure extends React.Component {
   checkIntegraty(){
     let check = [];
     fullList[measureNum] = NewMeasureNoteList;
-    console.log(NewMeasureNoteList);
+    // console.log(NewMeasureNoteList);
     for (let i = measureNum; i < fullList.length; i++) {
       for (let j = measureNum; j < fullList[i].length; j++) {
         check.push(fullList[i][j]);
@@ -379,7 +419,12 @@ class ViewMeasure extends React.Component {
     }else{
       //dont send it
     }
-    NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={2} y={1} length={1} note={2} color="black" pitch={1} />);
+    if(hasClef != -1){
+      NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={1} y={1} length={1} note={hasClef} color="black" pitch={1} />);
+    }
+    console.log(fullList);
+    this.props.navigation.navigate('EditMusicScreen', { arr: fullList })
+    // NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={2} y={1} length={1} note={2} color="black" pitch={1} />);
   }
 
   onPressEditNote(note){
@@ -437,10 +482,14 @@ class ViewMeasure extends React.Component {
         let dist = Math.sqrt(a*a + b*b);
 
         if(dist < 10) {
+          // console.log("g.x0 - clickedX = " + (g.x0 - clickedX));
+          // console.log("g.y0 - clickedY = " + (g.y0 - clickedY));
           this.state.panLayouts[i].setValue({
             x: (SCREEN_WIDTH/8 - (g.x0 - clickedX) - CIRCLE_RADIUS/2 + (j * SCREEN_WIDTH/20)),
             y: (((SCREEN_HEIGHT/3.5) + (SCREEN_HEIGHT/25)) - (g.y0 - clickedY) + (((k+1) * SCREEN_HEIGHT / 25))/2 - SCREEN_HEIGHT/50)
           })
+          // console.log("inside");
+          // console.log(this.state.panLayouts[i]);
           return ((11*j) + k);
         }
       }
@@ -511,7 +560,7 @@ class ViewMeasure extends React.Component {
           barStyle="light-content" // or directly
           leftComponent={
             <Button
-              onPress={() => this.props.navigation.navigate('EditMusicScreen', { arr: fullList })}
+              onPress={() => this.props.navigation.navigate('EditMusicScreen', { arr: [] })}
               icon={
                 <Icon
                   name="left"
