@@ -197,6 +197,13 @@ def getInfoBySheet():
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
+@app.route("/getSong", methods=["GET"])
+def getSong():
+    if request.method == 'GET':
+        return getInfos.getSong(request.args.get('sheetid'))
+    else:
+        return 'no'
+
 
 ##
  # Will update a specfic value in a table for a specific user

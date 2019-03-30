@@ -22,3 +22,7 @@ def getInfoSheet():
     print("getInfoByEamil Route Call")
     results = MySQLConnect.findSheet(content['table'], content['id']);
     return jsonify(results)
+
+def getSong(sheet_id):
+    songFile = MySQLConnect.getSong(sheet_id)
+    return songFile
