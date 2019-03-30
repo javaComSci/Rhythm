@@ -612,7 +612,7 @@ class EditMusicScreen extends React.Component {
     }else{
       console.log("ReRendering main\n");
       // console.log(this.props.navigation.getParam('arr'));
-      troubleCleffSplit = this.props.navigation.getParam('arr');
+      // troubleCleffSplit = this.props.navigation.getParam('arr');
       console.log(troubleCleffSplit);
       console.log("ReRendering main\n");
     }
