@@ -70,12 +70,11 @@ var SheetScreenTemplate = function () {
 
                                 <TouchableOpacity
                                     onPress={(e) => {
-                                        this.props.navigation.navigate('SelectMusicScreen', {title: item.getTitle(), sheet_id: item.getID()})
+                                        this.props.navigation.navigate('SelectMusicScreen', {title: item.getTitle(), sheet_id: item.getID(), file: item.getFile()})
                                     }}
-                    
                                 >
-                                <Text> {item.getID()} </Text>
-                                    <Text style={{ color: 'black', fontSize: 10 }}>Selected Instrument: PIANO</Text>
+                                    <Text style={{color: 'white', backgroundColor: 'black', borderRadius: 2, borderWidth: 3, borderColor: 'white', fontSize: 20}}> {item.getInstrument() ? item.getInstrument() : "Piano"} </Text>
+                                
                                 </TouchableOpacity>
 
 
