@@ -21,6 +21,7 @@ import { connect } from 'react-redux';
 import { Button, Header } from 'react-native-elements';
 import { Col, Row, Grid } from "react-native-easy-grid";
 import Icon from 'react-native-vector-icons/AntDesign'
+import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import PinchZoomView from 'react-native-pinch-zoom-view';
 
 
@@ -610,7 +611,8 @@ class EditMusicScreen extends React.Component {
       firstRender = 0;
     }else{
       console.log("ReRendering main\n");
-      console.log(this.props.navigation.getParam('arr'));
+      // console.log(this.props.navigation.getParam('arr'));
+      troubleCleffSplit = this.props.navigation.getParam('arr');
       console.log(troubleCleffSplit);
       console.log("ReRendering main\n");
     }

@@ -127,8 +127,7 @@ def updateInstrumentById(table, sheet_id, instrument):
     cursor = db.cursor()
 
     # NEED TO FILL THIS THING!!!!!!
-    sql = "SELECT * FROM {} WHERE sheet_id = '{}';".format(table, sheet_id)
-
+    sql = "update sheet_music set instrument = {} where sheet_id={}".format(instrument, sheet_id)
     print("MYSQL COMMAND: {}".format(sql))
     cursor.execute(sql)
     db.commit()

@@ -304,10 +304,13 @@ class ViewMeasure extends React.Component {
   }
 
   verfyButtonPress(){
-    NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={1} y={1} length={1} note={2} color="black" pitch={1} />);
+    if(notes[0].props.note == 0 || notes[0].props.note == 6){
+      s++;
+      betweenNotes = (SCREEN_WIDTH/(notes.length+1));
+      NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={1} y={1} length={0} note={0} color="black" pitch={1} />);
+    }
+    NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={2} y={1} length={1} note={2} color="black" pitch={1} />);
     this.checkIntegraty();
-    console.log("PRINTING FULL LIST");
-    console.log(fullList);
   }
 
   onPressEditNote(note){
