@@ -24,7 +24,7 @@ var SheetScreenTemplate = function () {
                     closeDialog={() => { this.setState({ isDialogVisible: false, toEdit: '' }) }}>
                 </DialogInput>
                 <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 40, width: "80%" }}> {compositionTitle} </Text>
-                <View style={{height: 100}}>
+                <View style={{ height: 100 }}>
                     <View style={styles.operatorContainer}>
                         <TouchableOpacity
                             onPress={() => this.createComposition()}
@@ -51,30 +51,38 @@ var SheetScreenTemplate = function () {
                         extraData={this.state}
                         renderItem={({ item }) =>
                             <View style={styles.compositionContainer}>
-                                <TouchableOpacity
-                                    style={styles.compositionItem}
-                                    onPress={(e) => {
-                                        this.props.navigation.navigate('EditMusicScreen', {title: item.getTitle(), file: item.getFile(), sheet_id: item.getID(), email: this.props.isRegistered})
-                                    }}
-                                    onLongPress={(e) => {
-                                        console.log("pepper")
-                                        this.setState({
-                                            isDialogVisible: true,
-                                            toEdit: [item.getTitle(), item.getID()], // getdescription actually gets the composition id
-                                        })
-                                    }}
-                                >
-                                    <Text style={{ color: 'white', fontSize: 40 }}>{item.getTitle()}</Text>
-                                </TouchableOpacity>
+                                <View style={styles.sheetItemContainer}>
+                                    <TouchableOpacity
+                                        style={styles.sheetItem}
+                                        onPress={(e) => {
+                                            this.props.navigation.navigate('EditMusicScreen', { title: item.getTitle(), file: item.getFile(), sheet_id: item.getID(), email: this.props.isRegistered })
+                                        }}
+                                        onLongPress={(e) => {
+                                            console.log("pepper")
+                                            this.setState({
+                                                isDialogVisible: true,
+                                                toEdit: [item.getTitle(), item.getID()], // getdescription actually gets the composition id
+                                            })
+                                        }}
+                                    >
+                                        <Text style={{ color: 'white', fontSize: 40 }}>{item.getTitle()}</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.sheetItem}
+                                        onPress={(e) => {
+                                            this.playSong(item.getID())
+                                        }}>
+                                        <Text style={{ color: 'white', fontSize: 40 }}> > </Text>
+                                    </TouchableOpacity>
+                                </View>
 
-
                                 <TouchableOpacity
                                     onPress={(e) => {
-                                        this.props.navigation.navigate('SelectMusicScreen', {title: item.getTitle(), sheet_id: item.getID()})
+                                        this.props.navigation.navigate('SelectMusicScreen', { title: item.getTitle(), sheet_id: item.getID() })
                                     }}
-                    
+
                                 >
-                                <Text> {item.getID()} </Text>
+                                    <Text> {item.getID()} </Text>
                                     <Text style={{ color: 'black', fontSize: 10 }}>Selected Instrument: PIANO</Text>
                                 </TouchableOpacity>
 
