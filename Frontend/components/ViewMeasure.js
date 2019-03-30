@@ -132,17 +132,18 @@ class ViewMeasure extends React.Component {
   constructor(props) {
       super(props);
       draggables = [];
+      keyvalue = 0;
       draggables.push(
-        [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/7, 5]
+        [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/7, 5, keyvalue++]
       );
       draggables.push(
-        [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/3, 1]
+        [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/3, 1, keyvalue++]
       );
       draggables.push(
-        [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/2, 2]
+        [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/2, 2, keyvalue++]
       );
       draggables.push(
-        [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/1.5, 3]
+        [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/1.5, 3, keyvalue++]
       );
       // draggables.push({SCREEN_HEIGHT/1.6, SCREEN_WIDTH/3, 1});
       // draggables.push({SCREEN_HEIGHT/1.6, SCREEN_WIDTH/2, 2});
@@ -178,7 +179,6 @@ class ViewMeasure extends React.Component {
         panHandlers.push(
           this.panResponder2 = PanResponder.create({
               onStartShouldSetPanResponder: (e, gesture) => {
-
                 clickedY = e.nativeEvent.locationY;
                 clickedX = e.nativeEvent.locationX;
                 return true;
@@ -194,23 +194,50 @@ class ViewMeasure extends React.Component {
                 // console.log(gesture);
                 let check = this.checkDropBoxes(e.nativeEvent.pageX, e.nativeEvent.pageY, i, (e.nativeEvent.pageX - gesture.dx), (e.nativeEvent.pageY - gesture.dy), gesture, e)
                   if(check != -1){
-
                     console.log(check);
                     console.log("Row " + Math.floor(check / 11));
                     console.log("Pitch " + (check % 11));
-                    console.log("Note " + draggables[0][3]);
+                    // console.log("Note " + draggables[0][3]);
+                    console.log("target " + e.target);
+                    console.log("i " + i);
+                    console.log("note " + draggables[i][2]);
                     switch (i) {
                       case 0:
                         NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={Math.floor(check / 11)} y={(check % 11)} length={.25} note={5} color="black" pitch={1} />);
-                        // draggables.push(
-                        //   [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/7, 5]
-                        // );
+                        draggables.push(
+                          [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/7, 5]
+                        );
                         break;
                       case 1:
-
+                      draggables.push(
+                        [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/3, 1, keyvalue++]
+                      );
                         break;
-                      default:
-
+                      case 2:
+                        draggables.push(
+                          [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/2, 2, keyvalue++]
+                        );
+                        break;
+                      case 3:
+                        draggables.push(
+                          [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/1.5, 3, keyvalue++]
+                        );
+                        break;
+                      case 4:
+                        // draggables.push(
+                        //   [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/1.5, 3, keyvalue++]
+                        // );
+                        break;
+                      case 5:
+                        // draggables.push(
+                        //   [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/1.5, 3, keyvalue++]
+                        // );
+                        break;
+                    case 6:
+                      // draggables.push(
+                      //   [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/1.5, 3, keyvalue++]
+                      // );
+                      break;
                     }
 
                   }else{
@@ -241,7 +268,6 @@ class ViewMeasure extends React.Component {
 
   componentWillMount() {
     /* Not sure what this does but its needed */
-    keyvalue = 0;
     NewMeasureNoteList = [];
   }
 
@@ -450,8 +476,8 @@ class ViewMeasure extends React.Component {
   }
 
   renderDraggableNotes(drags){
-    console.log("i: "+ i);
-    console.log(drags);
+    // console.log("i: "+ i);
+    // console.log(drags);
       if(this.state.showDraggable){
         let ret = [];
         for (let i = 0; i < drags.length; i++) {
