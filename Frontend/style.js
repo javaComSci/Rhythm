@@ -26,6 +26,14 @@ module.exports = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
     },
+    sheetItemContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    sheetItem: {
+        height: 50
+    },
     headerText: {
         fontSize: 20,
         margin: 10,
