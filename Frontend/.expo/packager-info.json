@@ -1,7 +1,7 @@
 {
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null,
+  "expoServerNgrokUrl": "https://si-a9s.anonymous.frontend.exp.direct",
+  "packagerNgrokUrl": "https://packager.si-a9s.anonymous.frontend.exp.direct",
+  "ngrokPid": 8363,
   "packagerPort": null,
   "packagerPid": null,
   "devToolsPort": 19002,

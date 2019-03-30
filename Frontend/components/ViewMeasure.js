@@ -21,6 +21,7 @@ import React from 'react';
 const SCREEN_WIDTH = Dimensions.get('window').width
 const SCREEN_HEIGHT = Dimensions.get('window').height
 
+var EditScreen = require('./EditMusicScreen');
 var NoteSVG = require('./jsons/NotesData.json');
 var MiscJson = require('./jsons/EditMisc.json');
 
@@ -126,6 +127,8 @@ class ViewMeasure extends React.Component {
 
   constructor(props) {
       super(props);
+      console.log("CONSTRUCTERFF \n");
+      console.log(EditScreen.FullListOfNotesArrTrouble);
       fullList = this.props.navigation.getParam('full');
       MeasureNoteList = this.props.navigation.getParam('arr');
       measureNum = this.props.navigation.getParam('num');
@@ -133,13 +136,35 @@ class ViewMeasure extends React.Component {
         verfColor: "green",
         showDraggable   : true,
         dropZoneValues  : null,
-        pan             : new Animated.ValueXY()
+        pan1             : new Animated.ValueXY(),
+        pan2             : new Animated.ValueXY()
       };
-      this.panResponder = PanResponder.create({
-          onStartShouldSetPanResponder    : () => true,
-          onPanResponderMove              : Animated.event([null,{
-              dx  : this.state.pan.x,
-              dy  : this.state.pan.y
+      this.panResponder1 = PanResponder.create({
+          onStartShouldSetPanResponder: () => true,
+          onPanResponderMove: Animated.event([null,{
+              dx  : this.state.pan1.x,
+              dy  : this.state.pan1.y
+          }]),
+          onPanResponderRelease: (e, gesture) => {
+            console.log("Dropped1");
+              if(this.isDropZone(gesture)){
+                  this.setState({
+                      showDraggable : false
+                  });
+              }else{
+                  Animated.spring(
+                      this.state.pan1,
+                      {toValue:{x:0,y:0}}
+                  ).start();
+              }
+          }
+      });
+
+      this.panResponder2 = PanResponder.create({
+          onStartShouldSetPanResponder: () => true,
+          onPanResponderMove: Animated.event([null,{
+              dx  : this.state.pan2.x,
+              dy  : this.state.pan2.y
           }]),
           onPanResponderRelease           : (e, gesture) => {
               if(this.isDropZone(gesture)){
@@ -148,10 +173,11 @@ class ViewMeasure extends React.Component {
                   });
               }else{
                   Animated.spring(
-                      this.state.pan,
+                      this.state.pan2,
                       {toValue:{x:0,y:0}}
                   ).start();
               }
+              console.log("Dropped2");
           }
       });
   }
@@ -162,6 +188,7 @@ class ViewMeasure extends React.Component {
 
   componentDidMount() {
     MeasureNoteList = [];
+    fullList = [];
   }
 
   componentWillMount() {
@@ -277,7 +304,12 @@ class ViewMeasure extends React.Component {
   }
 
   verfyButtonPress(){
-    NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={1} y={1} length={1} note={2} color="black" pitch={1} />);
+    if(notes[0].props.note == 0 || notes[0].props.note == 6){
+      s++;
+      betweenNotes = (SCREEN_WIDTH/(notes.length+1));
+      NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={1} y={1} length={0} note={0} color="black" pitch={1} />);
+    }
+    NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={2} y={1} length={1} note={2} color="black" pitch={1} />);
     this.checkIntegraty();
   }
 
@@ -333,17 +365,35 @@ class ViewMeasure extends React.Component {
       });
   }
 
-  renderDraggable2(){
+  // renderDraggable2(){
+  //     if(this.state.showDraggable){
+  //         return (
+  //             <View style={{position: 'absolute', top: SCREEN_HEIGHT/2, left: SCREEN_WIDTH/2}}>
+  //               <Animated.View
+  //                   {...this.panResponder2.panHandlers}
+  //                   style={[this.state.pan2.getLayout(),
+  //                   {backgroundColor: 'transparent', width: CIRCLE_RADIUS, height: CIRCLE_RADIUS, borderRadius: CIRCLE_RADIUS}]}
+  //                   >
+  //                   <Svg height="100%"  width="100%">
+  //                     <Path x={[CIRCLE_RADIUS/2.8].join(' ')} y={([CIRCLE_RADIUS/1.3].join(' '))} transform={['scale(', NoteSVG[1].scale1 * 1.2, NoteSVG[1].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[1].data].join(' ')}/>
+  //                   </Svg>
+  //               </Animated.View>
+  //             </View>
+  //         );
+  //     }
+  // }
+
+  renderDraggableNotes(locY, locX, note){
       if(this.state.showDraggable){
           return (
-              <View style={{position: 'absolute', top: SCREEN_HEIGHT/2, left: SCREEN_WIDTH/2}}>
+              <View style={{position: 'absolute', top: locY, left: locX}}>
                 <Animated.View
-                    {...this.panResponder.panHandlers}
-                    style={[this.state.pan.getLayout(),
-                    {backgroundColor: 'yellow', width: CIRCLE_RADIUS, height: CIRCLE_RADIUS, borderRadius: CIRCLE_RADIUS}]}
+                    {...this.panResponder1.panHandlers}
+                    style={[this.state.pan1.getLayout(),
+                    {backgroundColor: 'transparent', width: CIRCLE_RADIUS, height: CIRCLE_RADIUS, borderRadius: CIRCLE_RADIUS}]}
                     >
                     <Svg height="100%"  width="100%">
-                      <Path x={[CIRCLE_RADIUS/2.8].join(' ')} y={([CIRCLE_RADIUS/1.3].join(' '))} transform={['scale(', NoteSVG[1].scale1 * 1.2, NoteSVG[1].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[1].data].join(' ')}/>
+                      <Path x={[CIRCLE_RADIUS/2.8].join(' ')} y={([CIRCLE_RADIUS/1.3].join(' '))} transform={['scale(', NoteSVG[note].scale1 * 1.2, NoteSVG[note].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[note].data].join(' ')}/>
                     </Svg>
                 </Animated.View>
               </View>
@@ -363,7 +413,7 @@ class ViewMeasure extends React.Component {
           barStyle="light-content" // or directly
           leftComponent={
             <Button
-              onPress={() => this.props.navigation.navigate('EditMusicScreen')}
+              onPress={() => this.props.navigation.navigate('EditMusicScreen', { arr: fullList })}
               icon={
                 <Icon
                   name="left"
@@ -386,10 +436,13 @@ class ViewMeasure extends React.Component {
           {this.lineSection()}
           {this.NotesEditRender(MeasureNoteList, "gray", .7)}
           {this.NotesEditRender(NewMeasureNoteList, "black", 1)}
-          {this.editNewMeasure()}
-
         </Svg>
-        {this.renderDraggable2()}
+
+        {this.renderDraggableNotes(SCREEN_HEIGHT/1.7, SCREEN_WIDTH/7, 2)}
+        {this.renderDraggableNotes(SCREEN_HEIGHT/1.722, SCREEN_WIDTH/3, 1)}
+        {/*this.renderDraggableNotes(SCREEN_HEIGHT/1.7, SCREEN_WIDTH/3, 2)*/}
+        {/*this.renderDraggableNotes(SCREEN_HEIGHT/1.7, SCREEN_WIDTH/1, 5)*/}
+        {/*this.renderDraggable()*/}
 
       </View>
     )

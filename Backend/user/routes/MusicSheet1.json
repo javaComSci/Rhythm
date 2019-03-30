@@ -1,0 +1,36 @@
+{
+	"clef": 1,
+	"notes":
+	[
+		{
+			"note": 0,
+			"length": 0,
+			"pitch": 1
+		},
+		{
+			"note": 3,
+			"length": 2,
+			"pitch": 5
+		},
+		{
+			"note": 3,
+			"length": 2,
+			"pitch": 3
+		},
+    {
+      "note": 3,
+      "length": 2,
+      "pitch": 2
+    },
+    {
+      "note": 3,
+      "length": 2,
+      "pitch": 1
+    },
+    {
+      "note": 0,
+      "length": 0,
+      "pitch": 1
+    }
+	]
+}
