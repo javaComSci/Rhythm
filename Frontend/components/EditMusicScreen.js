@@ -21,6 +21,7 @@ import { connect } from 'react-redux';
 import { Button, Header } from 'react-native-elements';
 import { Col, Row, Grid } from "react-native-easy-grid";
 import Icon from 'react-native-vector-icons/AntDesign'
+import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import PinchZoomView from 'react-native-pinch-zoom-view';
 
 
@@ -74,6 +75,9 @@ var altoCleffSplit = [];
 var keyvalue;
 
 var firstRender = 1;
+
+/* This is the sheet id to update */
+var sheet_id;
 
 /*
  * This is the Component that holds all the notes and
@@ -172,24 +176,32 @@ class EditMusicScreen extends React.Component {
 
   constructor(props) {
     super(props);
-
-    // sampleJson = props.navigation.getParam('file')
-    // empty json file if file is null
-    // if (sampleJson == null) {
-    //   // sampleJson = {
-    //   //   "clef": 1,
-    //   //   "notes":
-    //   //     [
-    //   //       {
-    //   //         "note": 0,
-    //   //         "length": 0,
-    //   //         "pitch": 1
-    //   //       }
-    //   //     ]
-    //   // }
-    //
-    // }
-    sampleJson = sampleJson3;
+    console.log("Constructor");
+    /* grabbing the file from the backend */
+    sampleJson = props.navigation.getParam('file')
+    sheet_id = props.navigation.getParam('sheet_id')
+    console.log("This is the file being passed ");
+    console.log(sampleJson);
+    // Set it as an empty json is null;
+    if (sampleJson == null) {
+      sampleJson = {
+        "clef": 1,
+        "notes":
+          [
+            {
+              "note": 0,
+              "length": 0,
+              "pitch": 1
+            },
+            {
+              "note": 6,
+              "length": 0,
+              "pitch": 1
+            }
+          ]
+      }
+    }
+    // sampleJson = sampleJson3;
 
     ids = [];
     ids.push(this.props.navigation.getParam('sheet_id'));
@@ -211,7 +223,9 @@ class EditMusicScreen extends React.Component {
     title: 'Welcome', header: null
   };
 
-  componentDidMount() { }
+  componentDidMount() {
+    console.log("componentDidMount");
+  }
 
   componentWillMount() {
     console.log("Component will mount!")
@@ -258,16 +272,6 @@ class EditMusicScreen extends React.Component {
         {this.VerticalSection(mesureLength * 9.05, start)}
       </Svg>
     )
-  }
-
-  pressHandler(Note) {
-
-    if (Note.color == "red" && Note.note != 0) {
-      Note.color = "black"
-    } else if (Note.color == "black" && Note.note != 0) {
-      Note.color = "red"
-    }
-    this.setState({ state: this.state });
   }
 
   lineSection() {
@@ -335,13 +339,6 @@ class EditMusicScreen extends React.Component {
         />
       </G>
     )
-  }
-
-  updateFunc(alert) {
-    // console.log("GWFDigrjejgioperjgreaoyigjaw4og\n")
-    // this.setState({
-    //   alert: alert
-    // })
   }
 
   /**
@@ -468,7 +465,8 @@ class EditMusicScreen extends React.Component {
         }
       }
     }
-
+    console.log("PENIS MAN 3000\n");
+    this.setState({ });
   }
 
   splitUp(troubleCleff, baseCleff, altoCleff){
@@ -612,6 +610,9 @@ class EditMusicScreen extends React.Component {
       this.initNotesListByMeasure();
       firstRender = 0;
     }else{
+      console.log("ReRendering main\n");
+      // console.log(this.props.navigation.getParam('arr'));
+      troubleCleffSplit = this.props.navigation.getParam('arr');
       console.log(troubleCleffSplit);
       console.log("ReRendering main\n");
     }
