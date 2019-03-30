@@ -200,7 +200,7 @@ def getInfoBySheet():
 @app.route("/getSong", methods=["GET"])
 def getSong():
     if request.method == 'GET':
-        return getInfos.getSong(request.args.get('sheet_id'))
+        return getInfos.getSong(request.args.get('sheetid'))
     else:
         return 'no'
 
