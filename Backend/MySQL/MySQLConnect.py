@@ -4,6 +4,9 @@
 from flask import Flask, render_template, json, url_for, send_file
 # Importing a MySQL helper
 import pymysql
+import subprocess
+import os
+import shlex
 import io
 
 # Opens mysql.json file to grab mySQL super secret data
@@ -194,7 +197,11 @@ def insert(table, query, value):
     return
 
 def getSong(sheet_id):
-    db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
+    print os.path.abspath(os.curdir)
+    subprocess.call(shlex.split('/home/ubuntu/Rhythm/Backend/MidiConversion/ConvertToMP3.sh '+sheet_id+'.mid'))
+    flPath = '/home/ubuntu/Rhythm/Backend/MidiConversion/'+sheet_id+'.mp3'
+    return send_file(flPath, as_attachment=True,attachment_filename=sheet_id+".mp3",mimetype="audio/mpeg")
+    '''db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
     cursor = db.cursor()
     cursor.execute("SELECT file FROM sheet_music WHERE sheet_id=%s", (sheet_id))
     data = cursor.fetchone()
@@ -203,6 +210,7 @@ def getSong(sheet_id):
     buffer.write(blob)
     buffer.seek(0)
     return send_file(buffer, as_attachment=True,attachment_filename=sheet_id+".mp3",mimetype="audio/mpeg")
+    '''
 
 def jsonToCloud(data):
 	print("DATA", data)
