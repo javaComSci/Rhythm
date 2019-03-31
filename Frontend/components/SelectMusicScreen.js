@@ -8,15 +8,27 @@ class SelectMusicScreen extends React.Component {
 	constructor(props){
 		super(props);
 
+		let clefData = this.props.navigation.getParam('file');
+		console.log("CLEF INTO");
+		console.log(clefData)
+
+
 		this.state = {
-			tableData: [
+			tableDataBoth: [
 				['Piano', 'Harp'],
+			],
+			tableDataTreble: [
 				['Violin', 'Flute'],
 				['Tuba', 'Guitar'],
+			],
+			tableDataBass: [
 				['Cello', 'Bass'],
-				['Trombone', 'Viola']
+			],
+			tableDataAlto: [
+				['Trombone', 'Viola'],
 			],
 			sheet_id: this.props.navigation.getParam('sheet_id'),
+			clefInfo: clefData ? Integer.parseInt(clefData) : 0
 		};
 
 	}
@@ -57,6 +69,7 @@ class SelectMusicScreen extends React.Component {
 			case 'Bass': return (<Image style={styles.img} source={require('../assets/bass.png')} />);
 			case 'Tuba': return (<Image style={styles.img} source={require('../assets/tuba.png')} />);
 			case 'Viola': return (<Image style={styles.img} source={require('../assets/viola.png')} />);
+			case 'Trombone': return (<Image style={styles.img} source={require('../assets/trombone.png')} />);
 		}
 	}
 
@@ -73,10 +86,21 @@ class SelectMusicScreen extends React.Component {
 	}
 
 	createButtonElements() {
-		console.log('props',this.state.tableData);
+
+		let tableData;
+		if (this.state.clefInfo == 0) {
+			tableData = this.state.tableDataTreble.slice();
+		} else if (this.state.clefInfo == 1){
+			tableData = this.state.tableDataBoth.slice();
+		} else if(this.state.clefInfo == 2) {
+			tableData = this.state.tableDataBass.slice();
+		} else if(this.state.clefInfo == 3) {
+			tableData = this.state.tableDataAlto.slice();
+		}
+
 		return (
           
-            this.state.tableData.map((rowData, index) => (
+            tableData.map((rowData, index) => (
               <TableWrapper key={index} style={styles.row}>
                 {
                   rowData.map((cellData, cellIndex) => {
@@ -92,8 +116,8 @@ class SelectMusicScreen extends React.Component {
     render() {
         return (
 	        <View styles={styles.container}>
-	        	<Text style={{fontSize: 30, marginTop: '5%', fontWeight: 'bold'}}> Choose Instrument </Text>
-	        	<Table style={{height:'100%', marginTop: '5%'}} borderStyle={{borderWidth: 3, borderRadius: 5, borderColor: '#9fa1a5'}}>
+	        	<Text style={{fontSize: 45, marginTop: '30%', fontWeight: 'bold'}}> Choose Instrument </Text>
+	        	<Table style={{height:'100%', marginTop: '10%'}} borderStyle={{borderWidth: 3, borderRadius: 5, borderColor: '#9fa1a5'}}>
 	        		{this.createButtonElements()}
 	        	</Table>
 	        </View>
