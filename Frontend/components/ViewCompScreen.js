@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, TextInput, TouchableHighlight, FlatList, TouchableOpacity, ScrollView, Text, View, ImageBackground } from 'react-native';
+import { Button, TextInput, TouchableHighlight, FlatList, TouchableOpacity, ScrollView, Text, View, ImageBackground, Alert } from 'react-native';
+import { Audio, FileSystem } from 'expo';
 import { Icon } from 'react-native-elements'
 import { connect } from 'react-redux';
 import DialogInput from 'react-native-dialog-input';
@@ -74,6 +75,19 @@ class ViewCompScreen extends React.Component {
         }
     }
 
+    async playSong (sheet_id) {
+        await Audio.setIsEnabledAsync(true);
+        const soundObject = new Audio.Sound();
+        try {
+          await soundObject.loadAsync({uri: 'http://18.237.79.152:5000/getSong?sheetid='+sheet_id});
+          await soundObject.playAsync();
+          // Your sound is playing!
+        } catch (error) {
+          // An error occurred!
+          Alert.alert("No song")
+        }
+    }
+
     getInfo = function () {
         const that = this; // a reference to the previous value of "this" is required as there is a context change going into the promise of the fetch
         fetch('http://18.237.79.152:5000/getInfoBySheet', {
@@ -83,7 +97,7 @@ class ViewCompScreen extends React.Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                'table': 'sheet_music',
+                'table': "(SELECT sheet_id,composition_id,name,song_json,instrument FROM sheet_music where composition_id=" + this.props.navigation.getParam('compositionID') + ") as S;--",
                 'id': this.props.navigation.getParam('compositionID'),
             }),
         }).then((res) => {
@@ -93,8 +107,7 @@ class ViewCompScreen extends React.Component {
                 JSON.parse(res).forEach(element => {
                     // title, id, compid
                     // console.log(JSON.parse(element[4]))
-                    console.log(element[5])
-                    dummyList.push(new Composition(element[3], element[0], element[2], JSON.parse(element[4]), element[5]));
+                    dummyList.push(new Composition(element[2], element[0], element[1], JSON.parse(element[3]), element[4]));
                 });
                 that.setState({ "sheet_music": dummyList })
                 that.sheetList = dummyList.map(sheet => ({ value: sheet.getID(), label: sheet.getTitle(), color: "red" }))
