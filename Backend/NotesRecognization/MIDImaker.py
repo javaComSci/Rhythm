@@ -301,7 +301,7 @@ class MIDImaker:
 				elif ob['note'] == 5 or ob['note'] == 1 or ob['note'] == 2 or ob['note'] == 3 or ob['note'] == 8: #Note
 					new_ob.run = ob['pitch']
 					new_ob.duration = ob['length']
-				elif ob['note'] == 9 or ob['note'] == 10 or ob['note'] == 11: #rest
+				elif ob['note'] == 9 or ob['note'] == 10 or ob['note'] == 11 or ob['note'] == 12: #rest
 					new_ob.rest = 1
 					new_ob.run = ob['pitch']
 					new_ob.duration = ob['length']

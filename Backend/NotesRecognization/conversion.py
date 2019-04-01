@@ -157,8 +157,11 @@ if __name__ == "__main__":
 
 		sendToCloud.cloud(jsonData)
 
-	MF = MIDImaker.MIDIob(SOL)
-	filey = MF.convert_to_MIDI()
+	MF = MIDImaker.MIDImaker()
+	MF.add_track(SOL)
+	MF.convert_to_MIDI(instruments = ["Piano"], start_times = [2], tempos=[80],
+	 tracks=1, channel=0, volume=100)
+	MF.MIDI_to_file(filepath="twinkle.mid")
 
 
 
