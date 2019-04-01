@@ -10,15 +10,13 @@ import sendToCloud
 # from .. import MySQL
 
 if __name__ == "__main__":
-	file_path = "ExamplePredictions/DATA/s5.jpg"
+	file_path = "ExamplePredictions/DATA/myfile.jpg"
 
 	mask, SOL, staff_lines = partition.full_partition(file_path)
 
 	ob_counter = 0
 
 	partition.print_objects(mask, SOL, staff_lines, "ExamplePredictions/predictions/")
-
-	exit(1)
 
 	dicty = {"clef":1, "notes":[]}
 
@@ -37,6 +35,7 @@ if __name__ == "__main__":
 		fclef = False
 
 		for i in range(len(SOL)):
+			print("I", i)
 			n_arr = partition.SO_to_array(SOL[i])
 
 			print(n_arr.shape)
