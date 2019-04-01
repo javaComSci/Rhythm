@@ -434,9 +434,9 @@ def check_object_area(ob):
 	if ar >= 0.8:
 		return True
 
-	ar1 = len(ob.pixel_list) / ((1.00 * 3500))
-	if ar1 <= 0.1:
-		return True
+	# ar1 = len(ob.pixel_list) / ((1.00 * 3500))
+	# if ar1 <= 0.1:
+	# 	return True
 	return False
 
 # @mask - Contains labels for identifying which pixels belong to which objects
@@ -448,9 +448,14 @@ def prune_objects(mask, SOL):
 	while ob < len(SOL):
 
 		#if the object isn't wide, tall, or sized large enough
-		prune = check_width(SOL[ob]) or check_height(SOL[ob]) or check_area(SOL[ob]) or check_object_area(SOL[ob])
+		cw = check_width(SOL[ob])
+		ch = check_height(SOL[ob])
+		ca = check_area(SOL[ob])
+		coa = check_object_area(SOL[ob])
+		prune =  cw or ch or ca or coa
 
 		if prune:
+			cv2.imwrite("{}{}ob_{}{}{}{}.jpg".format("ExamplePredictions/predictions/",SOL[ob].R1,cw,ch,ca,coa), SO_to_array(SOL[ob]))
 
 			#update mask with removed object
 			update_mask(mask,SOL[ob],0)
@@ -556,11 +561,18 @@ def full_partition(path):
 	#load image as grayscale
 	im_gray =  cv2.imread(path, cv2.IMREAD_GRAYSCALE)
 
+	#cv2.imwrite("{}starter.jpg".format(path), im_gray)
+
+	if (type(im_gray) == None):
+		raise Exception("IMAGE LOAD FAIL")
+		return
+
+
 	#convert image to binary
 	(thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 	#print "Completed 'image load'"
 
-	cv2.imwrite("{}FullImage_binary.jpg".format(path), im_bw)
+	#cv2.imwrite("{}FullImage_binary.jpg".format(path), im_bw)
 
 	#resize image if it is too large
 	# if (im_bw.shape[0] > 2000 and im_bw.shape[1] > 2000):
@@ -789,7 +801,7 @@ def sort_SOL(SOL):
 
 
 if __name__ == "__main__":
-	mask, SOL, sl = full_partition("ExamplePredictions/DATA/test2.jpg")
+	mask, SOL, sl = full_partition("ExamplePredictions/DATA/t.jpg")
 	print_objects(mask,SOL,sl,path="ExamplePredictions/predictions",staff_lines=True)
 
 
