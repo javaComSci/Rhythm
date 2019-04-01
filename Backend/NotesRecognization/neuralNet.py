@@ -1137,13 +1137,15 @@ def predict(testingIn):
 			for i in range(generalPredictions.shape[0]):
 
 				# find the value that was predicted
-				# overallPredictions[i] = np.argmax(generalPredictions[i])
+
+				overallPredictions[i] = np.argmax(generalPredictions[i])
+				print("PREDICTION WAS", generalPredictions[i], generalPredictions[i][0])
 
 				# find the value that was predicted
-				if generalPredictions[i] < 0.5:
-					overallPredictions[i] = 0
-				else:
-					overallPredictions[i] = 1
+				# if generalPredictions[i][0] < 0.5:
+					# overallPredictions[i] = 0
+				# else:
+					# overallPredictions[i] = 1
 
 				# if it was a clef
 				if overallPredictions[i] == 0:
@@ -1311,4 +1313,4 @@ if __name__ == '__main__':
 	# trainExtrasNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testExtrasNN(testingIn, testingOut)
 
-	checkPredictions(testingIn, testingOut)
+	# checkPredictions(testingIn, testingOut)
