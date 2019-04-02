@@ -23,7 +23,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import Icon from 'react-native-vector-icons/AntDesign'
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import PinchZoomView from 'react-native-pinch-zoom-view';
-
+import NoteObjects from './NotesObjects'
 
 import { Svg } from 'expo';
 const { Circle, Rect, Path, Line, Text, G, Defs, Use } = Svg;
@@ -42,6 +42,7 @@ var sampleJson0 = require('./jsons/MusicSheet0.json');
 var sampleJson1 = require('./jsons/MusicSheet1.json');
 var sampleJson2 = require('./jsons/MusicSheet2.json');
 var sampleJson3 = require('./jsons/MuiscSheet32Hands.json');
+var sampleJson4 = require('./jsons/MusicSheet3.json');
 // var sampleJson3 = require('./jsons/MuiscSheet32Hands.json');
 // var sampleJson3 = require('./MusicSheet3.json');
 // var sampleJson = require('./SampleMusicSheet.json');
@@ -79,97 +80,12 @@ var firstRender = 1;
 /* This is the sheet id to update */
 var sheet_id;
 
+var forceRender = true;
+
 /*
  * This is the Component that holds all the notes and
  * renders each note depending on the note num, pitch, and length
  */
-class NoteObjects extends React.Component {
-
-  /**
-   * This sets up the state and the functions to
-   * change the state
-   */
-  constructor(props) {
-    super(props);
-
-    // console.log("Props:");
-    // console.log(this.props);
-
-    /* Sets up the state with note num, pitch, Location, and color */
-    this.state = {
-      note: this.props.note,
-      color: this.props.color,
-      x: this.props.x,
-      y: this.props.y,
-      pitch: this.props.pitch,
-      editMode: 0,
-    }
-    // console.log(this.state);
-    // console.log("\n\n");
-    /* Binds this to pressed() so it can change state when called */
-    this.pressed = this.pressed.bind(this);
-    this.props.ChangeColor = this.pressed;
-    this.ChangeNotePressed = this.ChangeNotePressed.bind(this);
-    this.props.ChangeNote = this.ChangeNotePressed;
-    this.editModePress = this.editModePress.bind(this);
-    this.props.editMode = this.editModePress;
-  }
-
-  editModePress(mode) {
-    console.log("PIZZA IS THE BEST" + mode);
-  }
-  /**
-   * Changing the color of the note that was pressed
-   * red -> black OR black -> red
-   */
-  pressed() {
-    if (this.state.color == 'black') {
-      this.setState({ color: "red" });
-    } else if (this.state.color == 'red') {
-      this.setState({ color: "black" });
-    }
-  }
-  /**
-   * Changes the note when called. Simple stuff!
-   * @param n must be within the NotesData.json
-   * @param n == -1 then delete the note
-   */
-  ChangeNotePressed(n) {
-    console.log("ChangeNotePressed");
-  }
-  ChangeColor(n) {
-    this.setState({ color: "red" });
-  }
-  // shouldComponentUpdate(nextProps) {
-  //   console.log("WORKED\n");
-  //   // console.log(nextProps);
-  //   console.log(this.state);
-  //   this.setState({});
-  //   // console.log("ERGFAWFEAW\n");
-  //   // console.log(nextProps);
-  //     // if(JSON.stringify(this.props.user) !== JSON.stringify(nextProps.user)) // Check if it's a new user, you can also use some unique property, like the ID
-  //     // {
-  //     //        this.updateUser();
-  //     // }
-  // }
-  /**
-   * Renders the note with its path
-   */
-  render() {
-
-    // console.log("Rendering Notes\n");
-    // console.log(this.props);
-    let mesureLength = SCREEN_WIDTH / 10;
-    let start = SCREEN_HEIGHT / 8;
-    let betweenNotes = SCREEN_WIDTH / 11;
-    /* rendering the path of the note num */
-    return (
-      <G stroke="black" stroke-width="0" fill={this.state.color}>
-        <Path x={[((this.state.x) * (betweenNotes)) + NoteSVG[this.state.note].adjustX].join(' ')} y={([((this.state.y) * (start)) + (this.props.pitch * SCREEN_HEIGHT / 164) + NoteSVG[this.state.note].adjustY].join(' '))} transform={['scale(', NoteSVG[this.state.note].scale1, NoteSVG[this.state.note].scale2, ')'].join(' ')} d={[NoteSVG[this.state.note].data].join(' ')} />
-      </G>
-    )
-  }
-};
 
 
 class EditMusicScreen extends React.Component {
@@ -177,6 +93,10 @@ class EditMusicScreen extends React.Component {
   constructor(props) {
     super(props);
     console.log("Constructor");
+    console.log(props.navigation.getParam('arr'));
+    // if(this.props.navigation.getParam('arr') != undefined){
+    //   console.log("pma");
+    // }
     /* grabbing the file from the backend */
     sampleJson = props.navigation.getParam('file')
     sheet_id = props.navigation.getParam('sheet_id')
@@ -201,17 +121,17 @@ class EditMusicScreen extends React.Component {
           ]
       }
     }
-    // sampleJson = sampleJson3;
+    sampleJson = sampleJson4;
 
     ids = [];
     ids.push(this.props.navigation.getParam('sheet_id'));
 
-    console.log("IN THE EDIT SHEET SCREEN" + this.props.navigation.getParam('sheet_id'));
+    console.log("IN THE EDIT SHEET SCREEN " + this.props.navigation.getParam('sheet_id'));
 
     this.state = {
       colorProp: 'black',
       alert: false,
-      SheetType: 1,
+      SheetType: 0,
       troubleCleff: troubleCleffSplit,
       baseCleff: baseCleffSplit,
       sheet_ids: ids,
@@ -423,6 +343,8 @@ class EditMusicScreen extends React.Component {
 
   onPressHitBox(x, y) {
     console.log("x: " + x + " y: " + y);
+    // console.log("Before");
+    // console.log(troubleCleffSplit);
     // console.log(NotesListByMeasure[(y*2) + x])
     // troubleCleffSplit[x+y].splice(0,1);
     // console.log(troubleCleffSplit[x+y]);
@@ -435,9 +357,13 @@ class EditMusicScreen extends React.Component {
         this.props.navigation.navigate('ViewMeasure', { arr: [] });
       }else{
         this.props.navigation.navigate('ViewMeasure', {
-          arr: troubleCleffSplit[(y * 2) + x],
-          fullT: troubleCleffSplit,
-          num: ((y * 2) + x),
+          arr: troubleCleffSplit[y+x],
+          full: troubleCleffSplit,
+          num: ((y) + x),
+          yValue: y,
+          xValue: x,
+          cleff: 0,
+          sheetType: this.state.SheetType,
          });
       }
     } else if(this.state.SheetType == 1){
@@ -445,28 +371,51 @@ class EditMusicScreen extends React.Component {
         // console.log("x+y: " + (x+y));
         // console.log("length: " + troubleCleffSplit.length);
         if((y+x) >= troubleCleffSplit.length){
-          this.props.navigation.navigate('ViewMeasure', { arr: [] });
+          this.props.navigation.navigate('ViewMeasure',{
+             arr: [],
+             full: troubleCleffSplit,
+             num: ((y) + x),
+             yValue: y,
+             xValue: x,
+             cleff: 0,
+             sheetType: this.state.SheetType,
+           });
         } else {
           this.props.navigation.navigate('ViewMeasure', {
              arr: troubleCleffSplit[(y) + x],
              full: troubleCleffSplit,
              num: ((y) + x),
+             yValue: y,
+             xValue: x,
+             cleff: 0,
+             sheetType: this.state.SheetType,
            });
         }
       }else{
         if(((y-1)+x) >= troubleCleffSplit.length){
-          this.props.navigation.navigate('ViewMeasure', { arr: [] });
-        }else{
-          this.props.navigation.navigate('ViewMeasure', { arr:
-            baseCleffSplit[(y-1) + x],
+          this.props.navigation.navigate('ViewMeasure', {
+            arr: [],
             full: baseCleffSplit,
-            num: ((y-1) + x),
-           });
+            num: ((y-1)+x),
+            yValue: y,
+            xValue: x,
+            cleff: 1,
+            sheetType: this.state.SheetType,
+          });
+        }else{
+          this.props.navigation.navigate('ViewMeasure', {
+            arr: baseCleffSplit[((y-1)+x)],
+            full: baseCleffSplit,
+            num: ((y-1)+x),
+            yValue: y,
+            xValue: x,
+            cleff: 1,
+            sheetType: this.state.SheetType,
+          });
         }
       }
     }
-    console.log("PENIS MAN 3000\n");
-    this.setState({ });
+    // this.setState({ troubleCleff: troubleCleffSplit });
   }
 
   splitUp(troubleCleff, baseCleff, altoCleff){
@@ -601,6 +550,18 @@ class EditMusicScreen extends React.Component {
     return ret;
   }
 
+  renderArraysOfNotes(notes){
+    console.log("Rendering");
+    console.log(notes);
+    let x = [];
+    for (let i = 0; i < notes.length; i++) {
+      for (let j = 0; j < notes[i].length; j++) {
+        x.push(notes[i][j]);
+      }
+    }
+    return x;
+  }
+
   render() {
     // console.log("First Render in note\n");
     keyvalue = 0;
@@ -612,8 +573,26 @@ class EditMusicScreen extends React.Component {
     }else{
       console.log("ReRendering main\n");
       // console.log(this.props.navigation.getParam('arr'));
-      troubleCleffSplit = this.props.navigation.getParam('arr');
-      console.log(troubleCleffSplit);
+      newCleff = this.props.navigation.getParam('arr');
+      if(this.props.navigation.getParam('cleff') == 0){
+        troubleCleffSplit = newCleff;
+        // console.log("THSII S THE NEW ONE");
+        // console.log(troubleCleffSplit);
+      }else if(this.props.navigation.getParam('cleff') == 1){
+
+        baseCleffSplit = newCleff;
+        // console.log(baseCleffSplit);
+      }else if(this.props.navigation.getParam('cleff') == 2){
+        altoCleffSplit = newCleff;
+        // console.log(baseCleffSplit);
+      }
+        // array[i]
+      // if(forceRender){
+      //   this.setState({ });
+      //   forceRender = false;
+      // }
+      // forceRender = true;
+      // this.constructor();
       console.log("ReRendering main\n");
     }
 
@@ -669,8 +648,8 @@ class EditMusicScreen extends React.Component {
           <ScrollView>
             <Svg height={[screenSize + screenExtendSize].join(' ')} width="100%">
               {this.setTitle(this.props.navigation.getParam("title", "MusicSheet"))}
-              {troubleCleffSplit}
-              {baseCleffSplit}
+              {this.renderArraysOfNotes(troubleCleffSplit)}
+              {this.renderArraysOfNotes(baseCleffSplit)}
 
               {this.lineSection()}
               {this.displayHitBoxes()}

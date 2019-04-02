@@ -17,6 +17,7 @@ import React from 'react';
 
   import { Svg } from 'expo';
   const { Circle, Rect, Path, Line, Text, G, Defs, Use } = Svg;
+  import NoteObjects from './NotesObjects'
 
 const SCREEN_WIDTH = Dimensions.get('window').width
 const SCREEN_HEIGHT = Dimensions.get('window').height
@@ -38,101 +39,16 @@ var draggables = [];
 
 var keyvalue;
 
-class NoteObjects extends React.Component {
-
-  /**
-   * This sets up the state and the functions to
-   * change the state
-   */
-  constructor(props) {
-    super(props);
-
-    // console.log("Props:");
-    // console.log(this.props);
-
-    /* Sets up the state with note num, pitch, Location, and color */
-    this.state = {
-      note: this.props.note,
-      color: this.props.color,
-      x: this.props.x,
-      y: this.props.y,
-      pitch: this.props.pitch,
-      editMode: 0,
-    }
-    // console.log(this.state);
-    // console.log("\n\n");
-    /* Binds this to pressed() so it can change state when called */
-    this.pressed = this.pressed.bind(this);
-    this.props.ChangeColor = this.pressed;
-    this.ChangeNotePressed = this.ChangeNotePressed.bind(this);
-    this.props.ChangeNote = this.ChangeNotePressed;
-    this.editModePress = this.editModePress.bind(this);
-    this.props.editMode = this.editModePress;
-  }
-
-  editModePress(mode) {
-    console.log("PIZZA IS THE BEST" + mode);
-  }
-  /**
-   * Changing the color of the note that was pressed
-   * red -> black OR black -> red
-   */
-  pressed() {
-    if (this.state.color == 'black') {
-      this.setState({ color: "red" });
-    } else if (this.state.color == 'red') {
-      this.setState({ color: "black" });
-    }
-  }
-  /**
-   * Changes the note when called. Simple stuff!
-   * @param n must be within the NotesData.json
-   * @param n == -1 then delete the note
-   */
-  ChangeNotePressed(n) {
-    console.log("ChangeNotePressed");
-  }
-  ChangeColor(n) {
-    this.setState({ color: "red" });
-  }
-  // shouldComponentUpdate(nextProps) {
-  //   console.log("WORKED\n");
-  //   // console.log(nextProps);
-  //   console.log(this.state);
-  //   this.setState({});
-  //   // console.log("ERGFAWFEAW\n");
-  //   // console.log(nextProps);
-  //     // if(JSON.stringify(this.props.user) !== JSON.stringify(nextProps.user)) // Check if it's a new user, you can also use some unique property, like the ID
-  //     // {
-  //     //        this.updateUser();
-  //     // }
-  // }
-  /**
-   * Renders the note with its path
-   */
-  render() {
-    console.log("FEAWFAEWF");
-    // console.log("Rendering Notes\n");
-    // console.log(this.props);
-    let mesureLength = SCREEN_WIDTH / 10;
-    let start = SCREEN_HEIGHT / 8;
-    let betweenNotes = SCREEN_WIDTH / 11;
-    /* rendering the path of the note num */
-    return (
-      <G stroke="black" stroke-width="0" fill={this.state.color}>
-        <Path x={[((this.state.x) * (betweenNotes)) + NoteSVG[this.state.note].adjustX].join(' ')} y={([((this.state.y) * (start)) + (this.props.pitch * SCREEN_HEIGHT / 164) + NoteSVG[this.state.note].adjustY].join(' '))} transform={['scale(', NoteSVG[this.state.note].scale1, NoteSVG[this.state.note].scale2, ')'].join(' ')} d={[NoteSVG[this.state.note].data].join(' ')} />
-      </G>
-    )
-  }
-};
-
 
 class ViewMeasure extends React.Component {
 
   constructor(props) {
       super(props);
       draggables = [];
+      panHandlers = [];
+      NewMeasureNoteList = [];
       keyvalue = 0;
+      fullList = [];
 
       draggables.push(
         [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/7, 5, keyvalue++]
@@ -146,18 +62,20 @@ class ViewMeasure extends React.Component {
       draggables.push(
         [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/1.5, 3, keyvalue++]
       );
-      // draggables.push({SCREEN_HEIGHT/1.6, SCREEN_WIDTH/3, 1});
-      // draggables.push({SCREEN_HEIGHT/1.6, SCREEN_WIDTH/2, 2});
-      // draggables.push({SCREEN_HEIGHT/1.6, SCREEN_WIDTH/1.5, 3});
-      // {this.renderDraggableNotes(SCREEN_HEIGHT/1.6, SCREEN_WIDTH/7, 5, 0)}
-      // {this.renderDraggableNotes(SCREEN_HEIGHT/1.6, SCREEN_WIDTH/3, 1, 1)}
-      // {this.renderDraggableNotes(SCREEN_HEIGHT/1.6, SCREEN_WIDTH/2, 2, 2)}
-      // {this.renderDraggableNotes(SCREEN_HEIGHT/1.6, SCREEN_WIDTH/1.5, 3, 3)}
 
       /* Grabbing the params sent through React Navigation */
       fullList = this.props.navigation.getParam('full');
       MeasureNoteList = this.props.navigation.getParam('arr');
       measureNum = this.props.navigation.getParam('num');
+
+      console.log("fullList");
+      console.log(fullList);
+
+      console.log("\n\nMeasureNoteList");
+      console.log(MeasureNoteList);
+
+      console.log("\n\nmeasureNum " + measureNum);
+
       if(MeasureNoteList.length != 0){
         if((MeasureNoteList[0].props.note == 0 || MeasureNoteList[0].props.note == 6 || MeasureNoteList[0].props.note == 7)){
           hasClef = MeasureNoteList[0].props.note;
@@ -167,6 +85,7 @@ class ViewMeasure extends React.Component {
         }
       }else{
         hasClef = -1;
+        MeasureNoteList = [];
       }
 
       this.state = {
@@ -175,14 +94,12 @@ class ViewMeasure extends React.Component {
         dropZoneValues  : null,
         panLayouts: [],
       };
+
       this.state.panLayouts = [];
-      panHandlers = [];
-      MeasureNoteList = [];
-      fullList = [];
-      NewMeasureNoteList = [];
+
 
       /* This for loop sents up all the drag and drops.. This code is jank AF */
-      for (let i = 0; i < 30; i++) {
+      for (let i = 0; i < 50; i++) {
         this.state.panLayouts.push(new Animated.ValueXY());
         panHandlers.push(
           this.panResponder2 = PanResponder.create({
@@ -191,7 +108,7 @@ class ViewMeasure extends React.Component {
                 clickedY = e.nativeEvent.locationY;
                 clickedX = e.nativeEvent.locationX;
                 // console.log(e.nativeEvent.pageX + " : " + e.nativeEvent.pageY);
-                console.log(this.state.panLayouts[i]);
+                // console.log(this.state.panLayouts[i]);
                 // this.state.panLayouts[i].setValue({
                 //   x: e.nativeEvent.pageX, y: e.nativeEvent.pageY
                 // })
@@ -218,48 +135,66 @@ class ViewMeasure extends React.Component {
                 // draggables[i][0] += (gesture.y0);
                 let check = this.checkDropBoxes(e.nativeEvent.pageX, e.nativeEvent.pageY, i, (e.nativeEvent.pageX - gesture.dx), (e.nativeEvent.pageY - gesture.dy), gesture, e)
                   if(check != -1){
-                    // console.log(check);
-                    // console.log("Row " + Math.floor(check / 11));
-                    // console.log("Pitch " + (check % 11));
-                    // // console.log("Note " + draggables[0][3]);
-                    // console.log("target " + e.target);
-                    // console.log("i " + i);
-                    // console.log("note " + draggables[i][2]);
-                    // console.log(gesture.dy);
-                    // draggables[i][0] += (gesture.y0);
-                    // draggables[i][0] = (e.nativeEvent.pageY);
-                    // draggables[0][0] += (gesture.x0 - clickedX);
-                    // draggables[i][1] = SCREEN_WIDTH/7 + gesture.dx;
-                    // console.log(gesture.y0);
-                    // draggables[i][1] += gesture.dx;
 
                     switch (draggables[i][2]) {
                       case 5:
-                        NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={Math.floor(check / 11)} y={(check % 11)} length={.25} note={5} color="black" pitch={(check % 11)} />);
+                        NewMeasureNoteList.push({
+                          props: {
+                            note: 5,
+                            length: .25,
+                            pitch: (check % 11),
+                            x: Math.floor(check / 11),
+                          }
+                        });
+                        // NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={Math.floor(check / 11)} y={this.props.navigation.getParam('yValue')} length={.25} note={5} color="black" pitch={(check % 11)} />);
                         draggables.push(
                           [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/7, 5]
                         );
-                        draggables.push(
-                          [SCREEN_HEIGHT/1.6 + gesture.y0, SCREEN_WIDTH/7 + gesture.x0, 5]
-                        );
+                        // draggables.push(
+                        //   [SCREEN_HEIGHT/1.6 + gesture.y0, SCREEN_WIDTH/7 + gesture.x0, 5]
+                        // );
                         break;
                       case 1:
                         draggables.push(
                           [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/3, 1, keyvalue++]
                         );
-                        NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={Math.floor(check / 11)} y={(check % 11)} length={.5} note={1} color="black" pitch={(check % 11)} />);
+                        NewMeasureNoteList.push({
+                          props: {
+                            note: 1,
+                            length: .5,
+                            pitch: (check % 11),
+                            x: Math.floor(check / 11),
+                          }
+                        });
+                        // NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={Math.floor(check / 11)} y={this.props.navigation.getParam('yValue')} length={.5} note={1} color="black" pitch={(check % 11)} />);
                         break;
                       case 2:
                         draggables.push(
                           [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/2, 2, keyvalue++]
                         );
-                        NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={Math.floor(check / 11)} y={(check % 11)} length={1} note={2} color="black" pitch={(check % 11)} />);
+                        NewMeasureNoteList.push({
+                          props: {
+                            note: 2,
+                            length: 1,
+                            pitch: (check % 11),
+                            x: Math.floor(check / 11),
+                          }
+                        });
+                        // NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={Math.floor(check / 11)} y={this.props.navigation.getParam('yValue')} length={1} note={2} color="black" pitch={(check % 11)} />);
                         break;
                       case 3:
                         draggables.push(
                           [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/1.5, 3, keyvalue++]
                         );
-                        NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={Math.floor(check / 11)} y={(check % 11)} length={2} note={3} color="black" pitch={(check % 11)} />);
+                        NewMeasureNoteList.push({
+                          props: {
+                            note: 3,
+                            length: 2,
+                            pitch: (check % 11),
+                            x: Math.floor(check / 11),
+                          }
+                        });
+                        // NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={Math.floor(check / 11)} y={this.props.navigation.getParam('yValue')} length={2} note={3} color="black" pitch={(check % 11)} />);
                         break;
                       case 4:
                         // draggables.push(
@@ -343,8 +278,8 @@ class ViewMeasure extends React.Component {
   }
 
   NotesEditRender(notes, color, fill){
-    console.log("STARTING NOTESEDITRENDER");
-    console.log(notes);
+    // console.log("STARTING NOTESEDITRENDER");
+    // console.log(notes);
     if (notes.length == 0) {
       return;
     }
@@ -367,9 +302,9 @@ class ViewMeasure extends React.Component {
     return Notes;
   }
 
-  checkIntegraty(){
+  checkIntegraty(checker){
     let check = [];
-    fullList[measureNum] = NewMeasureNoteList;
+    // fullList[measureNum] = check;
     // console.log(NewMeasureNoteList);
     for (let i = measureNum; i < fullList.length; i++) {
       for (let j = measureNum; j < fullList[i].length; j++) {
@@ -381,7 +316,7 @@ class ViewMeasure extends React.Component {
     let tempy = [];
     for (let i = measureNum; i < check.length; i++) {
       if(!(check[i].props.note == 0 || check[i].props.note == 6 || check[i].props.note == 7)){
-        console.log("beats: " + beats);
+        // console.log("beats: " + beats);
         if(beats == 4){
           NewfullList.push(tempy);
           tempy = [];
@@ -391,7 +326,7 @@ class ViewMeasure extends React.Component {
               verfColor: "gray",
             });
             // NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={1} y={1} length={.25} note={2} color="black" pitch={1} />);
-            return;
+            return false;
         }
         beats += check[i].props.length;
         tempy.push(check[i]);
@@ -400,35 +335,82 @@ class ViewMeasure extends React.Component {
     this.setState({
       verfColor: "green",
     });
-    // console.log("\n\n NEW LIST\n\n");
-    // console.log(NewfullList);
-    // NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={1} y={1} length={.25} note={2} color="black" pitch={1} />);
-    // NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={1} y={1} length={1} note={2} color="black" pitch={1} />);
-    // NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={1} y={1} length={1} note={2} color="black" pitch={1} />);
-    // NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={1} y={1} length={1} note={2} color="black" pitch={1} />);
-    return;
+    return true;
   }
 
   verfyButtonPress(){
-    // if(notes[0].props.note == 0 || notes[0].props.note == 6){
-    //   // NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={1} y={1} length={0} note={0} color="black" pitch={1} />);
+    let sendupdated = [];
+    // if(NewMeasureNoteList.length == 0){
+    //   fullList.splice(measureNum, measureNum+1);
+    //   console.log(fullList);
+    //   this.props.navigation.navigate('EditMusicScreen', { arr: fullList, cleff: this.props.navigation.getParam('cleff')})
     // }
-    this.checkIntegraty();
-    if(this.verfColor == "green"){
-      //send it
-    }else{
-      //dont send it
-    }
     if(hasClef != -1){
-      NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={1} y={1} length={1} note={hasClef} color="black" pitch={1} />);
+      // NewMeasureNoteList.unshift({
+      //   props: {
+      //     note: hasClef,
+      //     length: 0,
+      //     pitch: 1,
+      //     x: 1,
+      //   }
+      // });
     }
-    console.log(fullList);
-    this.props.navigation.navigate('EditMusicScreen', { arr: fullList })
-    // NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={2} y={1} length={1} note={2} color="black" pitch={1} />);
-  }
+    fullList[measureNum] = NewMeasureNoteList;
+    let newFullList = [];
+    for (let i = 0; i < fullList.length; i++) {
+      for (let j = 0; j < fullList[i].length; j++) {
+        newFullList.push(fullList[i][j]);
+      }
+    }
 
-  onPressEditNote(note){
-    console.log(note);
+
+
+    let beats = 0;
+    let tempy = [];
+    let sendFullList = [];
+    let measure = 0;
+    let oldbeat = 0;
+    let addmesure = 0;
+    if(this.props.navigation.getParam('sheetType') == 1){
+      addmesure = 2;
+    }
+    // console.log(newFullList);
+    tempy.push(<NoteObjects key={keyvalue++} x={1} y={Math.ceil((measure/2) + .01)} length={0} note={0} color="black" pitch={1} />);
+    for (let i = 0; i < newFullList.length; i++) {
+      if(!(newFullList[i].props.note == 0 || newFullList[i].props.note == 6 || newFullList[i].props.note == 7)){
+        // console.log(newFullList[i].props.length);
+        beats += newFullList[i].props.length;
+        // console.log("Beats: " + beats);
+        if(beats > 4){
+          // console.log("TEMPY");
+          // console.log(tempy);
+          sendFullList.push(tempy);
+          tempy = [];
+          beats = newFullList[i].props.length;
+          measure++;
+          if(measure%2 == 0){
+            measure += addmesure;
+            tempy.push(<NoteObjects key={keyvalue++} x={1} y={Math.ceil((measure/2) + .01)} length={0} note={0} color="black" pitch={1} />);
+          }
+        }
+        // console.log("beats: " + beats);
+        tempy.push(<NoteObjects key={keyvalue++} x={2 + (beats - newFullList[i].props.length) + (4*(measure%2))} y={Math.ceil((measure/2) + .01)} length={newFullList[i].props.length} note={newFullList[i].props.note} color="black" pitch={newFullList[i].props.pitch} />);
+        // oldbeat = troubleCleff[i].length;
+      }
+    }
+    if(tempy.length != 0){
+      sendFullList.push(tempy);
+      // console.log(tempy);
+    }
+    // console.log("FEAWFEAWFEWA");
+    // console.log(sendFullList);
+
+    // console.log("SENDING");
+    // console.log(sendFullList);
+    // console.log("\n\n\n\n\n\n\n");
+    // console.log(fullList);
+
+    this.props.navigation.navigate('EditMusicScreen', { arr: sendFullList, cleff: this.props.navigation.getParam('cleff')})
   }
 
   editNewMeasure(){
@@ -481,7 +463,7 @@ class ViewMeasure extends React.Component {
         let b = y - ((SCREEN_HEIGHT/3.5) + (SCREEN_HEIGHT/20) + CIRCLE_RADIUS/2 + (((k+1) * SCREEN_HEIGHT / 25))/2 - SCREEN_HEIGHT/50);
         let dist = Math.sqrt(a*a + b*b);
 
-        if(dist < 10) {
+        if(dist < 13) {
           // console.log("g.x0 - clickedX = " + (g.x0 - clickedX));
           // console.log("g.y0 - clickedY = " + (g.y0 - clickedY));
           this.state.panLayouts[i].setValue({
