@@ -113,9 +113,9 @@ export default class NoteObjects extends React.Component {
    * Renders the note with its path
    */
   render() {
-    console.log("state: ");
-    console.log(this.state);
-    
+    // console.log("state: ");
+    // console.log(this.state);
+
     let mesureLength = SCREEN_WIDTH / 10;
     let start = SCREEN_HEIGHT / 8;
     let betweenNotes = SCREEN_WIDTH / 11;

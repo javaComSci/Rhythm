@@ -36,6 +36,7 @@ var clickedX = -1;
 var clickedY = -1;
 var hasClef;
 var draggables = [];
+var dontTouchMeasureList = [];
 
 var keyvalue;
 
@@ -49,7 +50,7 @@ class ViewMeasure extends React.Component {
       NewMeasureNoteList = [];
       keyvalue = 0;
       fullList = [];
-
+      dontTouchMeasureList = [];
       draggables.push(
         [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/7, 5, keyvalue++]
       );
@@ -62,16 +63,26 @@ class ViewMeasure extends React.Component {
       draggables.push(
         [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/1.5, 3, keyvalue++]
       );
-
+      draggables.push(
+        [SCREEN_HEIGHT/1.45, SCREEN_WIDTH/7, 8, keyvalue++]
+      );
+      draggables.push(
+        [SCREEN_HEIGHT/1.45, SCREEN_WIDTH/3, 9, keyvalue++]
+      );
       /* Grabbing the params sent through React Navigation */
       fullList = this.props.navigation.getParam('full');
       MeasureNoteList = this.props.navigation.getParam('arr');
+      dontTouchMeasureList = this.props.navigation.getParam('arr');
       measureNum = this.props.navigation.getParam('num');
 
       console.log("fullList");
       console.log(fullList);
 
       console.log("\n\nMeasureNoteList");
+      if(MeasureNoteList == undefined){
+        MeasureNoteList = [];
+        dontTouchMeasureList = [];
+      }
       console.log(MeasureNoteList);
 
       console.log("\n\nmeasureNum " + measureNum);
@@ -196,15 +207,31 @@ class ViewMeasure extends React.Component {
                         });
                         // NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={Math.floor(check / 11)} y={this.props.navigation.getParam('yValue')} length={2} note={3} color="black" pitch={(check % 11)} />);
                         break;
-                      case 4:
-                        // draggables.push(
-                        //   [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/1.5, 3, keyvalue++]
-                        // );
+                      case 8:
+                        draggables.push(
+                          [SCREEN_HEIGHT/1.45, SCREEN_WIDTH/7, 8, keyvalue++]
+                        );
+                        NewMeasureNoteList.push({
+                          props: {
+                            note: 8,
+                            length: 4,
+                            pitch: (check % 11),
+                            x: Math.floor(check / 11),
+                          }
+                        });
                         break;
-                      case 5:
-                        // draggables.push(
-                        //   [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/1.5, 3, keyvalue++]
-                        // );
+                      case 9:
+                        draggables.push(
+                          [SCREEN_HEIGHT/1.45, SCREEN_WIDTH/3, 9, keyvalue++]
+                        );
+                        NewMeasureNoteList.push({
+                          props: {
+                            note: 9,
+                            length: .5,
+                            pitch: (check % 11),
+                            x: Math.floor(check / 11),
+                          }
+                        });
                         break;
                     case 6:
                       // draggables.push(
@@ -278,8 +305,8 @@ class ViewMeasure extends React.Component {
   }
 
   NotesEditRender(notes, color, fill){
-    // console.log("STARTING NOTESEDITRENDER");
-    // console.log(notes);
+    console.log("STARTING NOTESEDITRENDER");
+    console.log(notes);
     if (notes.length == 0) {
       return;
     }
@@ -290,8 +317,8 @@ class ViewMeasure extends React.Component {
     for (var i = s; i < notes.length; i++) {
       // let x = FirstNote + (notes[i].props.length * (((i-s) * betweenNotes + (NoteSVG[notes[i].props.note].adjustX * 2))));
       // let y = halfHeight + (NoteSVG[notes[i].props.note].adjustY * 2) + (notes[i].props.pitch * SCREEN_HEIGHT/75);
-      let x = (SCREEN_WIDTH/8) + (NoteSVG[notes[i].props.note].adjustX * 1.8);
-      let y = 250;
+      let x = SCREEN_WIDTH/9 + (NoteSVG[notes[i].props.note].adjustX * 1.8) + 5*SCREEN_WIDTH/20;
+      let y = SCREEN_HEIGHT/3.65 + (NoteSVG[notes[i].props.note].adjustY * 1.8) + 5*SCREEN_HEIGHT/53;
       /* rendering the path of the note num */
       Notes.push(
         <G stroke="black" stroke-width="0" fill="black" key={keyvalue++} fillOpacity={fill} fill={color}>
@@ -357,14 +384,22 @@ class ViewMeasure extends React.Component {
     }
     console.log("measureNum: " + measureNum);
     fullList[measureNum] = NewMeasureNoteList;
+    console.log("measureNum: " + measureNum);
+    console.log(fullList);
     let newFullList = [];
+    // console.log(fullList);
     for (let i = 0; i < fullList.length; i++) {
+      if(fullList[i] == undefined){
+        fullList[i] = [];
+      }
+      // console.log(fullList[i].length);
       for (let j = 0; j < fullList[i].length; j++) {
+        console.log("i: " + i);
         newFullList.push(fullList[i][j]);
       }
     }
 
-
+    console.log("measureNum: " + measureNum);
 
     let beats = 0;
     let tempy = [];
@@ -395,7 +430,12 @@ class ViewMeasure extends React.Component {
           }
         }
         // console.log("beats: " + beats);
-        tempy.push(<NoteObjects key={keyvalue++} x={2 + (beats - newFullList[i].props.length) + (4*(measure%2))} y={Math.ceil((measure/2) + .01)} length={newFullList[i].props.length} note={newFullList[i].props.note} color="black" pitch={newFullList[i].props.pitch} />);
+        let x = 2 + (beats - newFullList[i].props.length) + (4*(measure%2));
+        if(newFullList[i].props.note == 8){
+          console.log("FEAFEAW");
+          x = (4*(measure%2)) + 3.5;
+        }
+        tempy.push(<NoteObjects key={keyvalue++} x={x} y={Math.ceil((measure/2) + .01)} length={newFullList[i].props.length} note={newFullList[i].props.note} color="black" pitch={newFullList[i].props.pitch} />);
         // oldbeat = troubleCleff[i].length;
       }
     }
@@ -515,7 +555,19 @@ class ViewMeasure extends React.Component {
     // console.log(drags);
       if(this.state.showDraggable){
         let ret = [];
+        let autoAdjustX = 0;
+        let autoAdjustY = 0;
         for (let i = 0; i < drags.length; i++) {
+          if (drags[i][2] == 3) {
+            autoAdjustX = 0;
+            autoAdjustY = -.0045;
+          }else if (drags[i][2] == 1) {
+            autoAdjustX = 0;
+            autoAdjustY = -.004;
+          }else if (drags[i][2] == 9) {
+            autoAdjustX = 0;
+            autoAdjustY = .0013;
+          }
           ret.push(
             <View style={{position: 'absolute', top: drags[i][0], left: drags[i][1]}}>
               <Animated.View
@@ -524,7 +576,7 @@ class ViewMeasure extends React.Component {
                   {backgroundColor: 'transparent', width: CIRCLE_RADIUS, height: CIRCLE_RADIUS, borderRadius: CIRCLE_RADIUS}]}
                   >
                   <Svg height="100%"  width="100%">
-                    <Path x={[CIRCLE_RADIUS/2.8 + (NoteSVG[drags[i][2]].adjustX)].join(' ')} y={([CIRCLE_RADIUS/1.3 + (NoteSVG[drags[i][2]].adjustY)].join(' '))} transform={['scale(', NoteSVG[drags[i][2]].scale1 * 1.2, NoteSVG[drags[i][2]].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[drags[i][2]].data].join(' ')}/>
+                    <Path x={[CIRCLE_RADIUS/2.8 + (NoteSVG[drags[i][2]].adjustX) + autoAdjustX*SCREEN_WIDTH].join(' ')} y={([CIRCLE_RADIUS/1.3 + (NoteSVG[drags[i][2]].adjustY) + autoAdjustY*SCREEN_HEIGHT].join(' '))} transform={['scale(', NoteSVG[drags[i][2]].scale1 * 1.2, NoteSVG[drags[i][2]].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[drags[i][2]].data].join(' ')}/>
                   </Svg>
               </Animated.View>
             </View>
@@ -532,6 +584,29 @@ class ViewMeasure extends React.Component {
         }
         return ret;
       }
+  }
+
+  renderNextNoteLine(){
+    // console.log("EFAFEAW");
+    let x = 0;
+    if(NewMeasureNoteList.length != 0){
+      x = NewMeasureNoteList[NewMeasureNoteList.length-1].props.x + (4 * NewMeasureNoteList[NewMeasureNoteList.length-1].props.length);
+    }
+    if(x >= 16){
+      x = -5;
+    }
+    return (
+      <Rect
+        x={SCREEN_WIDTH/9.9 + (x * SCREEN_WIDTH/20)}
+        y={SCREEN_HEIGHT/3.9}
+        width={SCREEN_WIDTH/20}
+        height={SCREEN_HEIGHT/4.5}
+        rx="15"
+        ry="15"
+        fill="red"
+        fillOpacity=".2" />
+    )
+    // console.log(beats);
   }
 
   render() {
@@ -566,11 +641,22 @@ class ViewMeasure extends React.Component {
 
         <Svg height="100%"  width="100%">
           <Rect x={SCREEN_WIDTH/2 - ((SCREEN_WIDTH/4)/2)} y={SCREEN_HEIGHT - (SCREEN_HEIGHT/4) - ((SCREEN_HEIGHT/15)/2)} width={SCREEN_WIDTH/4} height={SCREEN_HEIGHT/15} rx="15" ry="15" fill={this.state.verfColor} onPress={() => this.verfyButtonPress()} />
+          <Text
+              fill="white"
+              stroke="white"
+              fontSize="20"
+              fontWeight="bold"
+              x={SCREEN_WIDTH - SCREEN_WIDTH/2}
+              y={SCREEN_HEIGHT - (SCREEN_HEIGHT/4.1)}
+              textAnchor="middle"
+              onPress={() => this.verfyButtonPress()}
+          >Accept</Text>
           {/*this.lineSection()*/}
           {this.newLineSection()}
-          {/*this.NotesEditRender(MeasureNoteList, "gray", .7)*/}
+          {/*this.NotesEditRender(dontTouchMeasureList, "gray", .7)*/}
           {/*this.NotesEditRender(NewMeasureNoteList, "black", 1)*/}
-          {this.DropZonerendering()}
+          {/*this.DropZonerendering()*/}
+          {this.renderNextNoteLine()}
         </Svg>
         {this.renderDraggableNotes(draggables)}
 
@@ -581,10 +667,6 @@ class ViewMeasure extends React.Component {
     )
   }
 };
-// {this.renderDraggableNotes(SCREEN_HEIGHT/1.68, SCREEN_WIDTH/7, 5, 0)}
-// {this.renderDraggableNotes(SCREEN_HEIGHT/1.718, SCREEN_WIDTH/3, 1, 1)}
-// {this.renderDraggableNotes(SCREEN_HEIGHT/1.7, SCREEN_WIDTH/2, 2, 2)}
-// {this.renderDraggableNotes(SCREEN_HEIGHT/1.713, SCREEN_WIDTH/1.5, 3, 3)}
 //http://www.petercollingridge.co.uk/tutorials/svg/interactive/dragging/
 
   function mapStateToProps(state) {
@@ -658,179 +740,3 @@ class ViewMeasure extends React.Component {
   });
 
   export default connect(mapStateToProps, mapDispatchToProps)(ViewMeasure);
-
-
-
-
-
-//
-//
-// import React,{ Component } from 'react';
-// import { connect } from 'react-redux';
-// import {
-//     StyleSheet,
-//     View,
-//     PanResponder,
-//     Animated,
-//     Easing,
-//     Dimensions,
-//     Text
-// } from 'react-native';
-//
-// import { Svg } from 'expo';
-// const { Circle, Rect, Path, Line, G, Defs, Use } = Svg;
-//
-// const SCREEN_WIDTH = Dimensions.get('window').width
-// const SCREEN_HEIGHT = Dimensions.get('window').height
-// let CIRCLE_RADIUS = 100;
-//
-// var NoteSVG = require('./jsons/NotesData.json');
-// var MiscJson = require('./jsons/EditMisc.json');
-//
-// class ViewMeasure extends Component{
-//     constructor(props){
-//         super(props);
-//
-//         this.state = {
-//             showDraggable   : true,
-//             dropZoneValues  : null,
-//             pan             : new Animated.ValueXY()
-//         };
-//
-//         this.panResponder = PanResponder.create({
-//             onStartShouldSetPanResponder    : () => true,
-//             onPanResponderMove              : Animated.event([null,{
-//                 dx  : this.state.pan.x,
-//                 dy  : this.state.pan.y
-//             }]),
-//             onPanResponderRelease           : (e, gesture) => {
-//                 if(this.isDropZone(gesture)){
-//                     this.setState({
-//                         showDraggable : false
-//                     });
-//                 }else{
-//                     Animated.spring(
-//                         this.state.pan,
-//                         {toValue:{x:0,y:0}}
-//                     ).start();
-//                 }
-//             }
-//         });
-//     }
-//       static navigationOptions = {
-//           title: 'Welcome', header: null
-//       };
-//
-//
-//     isDropZone(gesture){
-//         var dz = this.state.dropZoneValues;
-//         return gesture.moveY > dz.y && gesture.moveY < dz.y + dz.height;
-//     }
-//
-//     setDropZoneValues(event){
-//         this.setState({
-//             dropZoneValues : event.nativeEvent.layout
-//         });
-//     }
-// //     <G stroke="black" stroke-width="0" fill="black" key={keyvalue++} fillOpacity={1} >
-// // <Rect x={[x + (0 * betweenNotes) + (NoteSVG[1].adjustX * 2) - (SCREEN_WIDTH/40)].join(' ')} y={([y + (NoteSVG[1].adjustY * 2) - (SCREEN_HEIGHT/20)].join(' '))} width={SCREEN_WIDTH/9} height={SCREEN_HEIGHT/15} fillOpacity=".3" onPress={() => this.onPressEditNote(1)}/>
-// //   </G>
-//     render(){
-//         return (
-//             <View style={styles.mainContainer}>
-//                 <View
-//                     onLayout={this.setDropZoneValues.bind(this)}
-//                     style={styles.dropZone}>
-//                     <Text style={styles.text}>Drop me here!</Text>
-//                 </View>
-//                 {/*this.renderDraggable()*/}
-//                 {this.renderDraggable2()}
-//             </View>
-//         );
-//     }
-//     // <Svg height="100%"  width="100%">
-//     //   <Path x={[50].join(' ')} y={([50].join(' '))} transform={['scale(', NoteSVG[1].scale1 * 1.2, NoteSVG[1].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[1].data].join(' ')}/>
-//     // </Svg>
-//     renderDraggable(){
-//         if(this.state.showDraggable){
-//             return (
-//                 <View style={styles.draggableContainer}>
-//                     <Animated.View
-//                         {...this.panResponder.panHandlers}
-//
-//                         style={[this.state.pan.getLayout(),
-//                           styles.circle
-//                         ]}>
-//
-//
-//                     </Animated.View>
-//                 </View>
-//             );
-//         }
-//     }
-//     renderDraggable2(){
-//         if(this.state.showDraggable){
-//             return (
-//                 <View style={styles.draggableContainer2}>
-//                     <Animated.View
-//                         {...this.panResponder.panHandlers}
-//                         style={[this.state.pan.getLayout(),
-//                         {backgroundColor: 'yellow', width: CIRCLE_RADIUS, height: CIRCLE_RADIUS, borderRadius: CIRCLE_RADIUS}]}
-//                         >
-//                         <Svg height="100%"  width="100%">
-//                           <Path x={[50].join(' ')} y={([50].join(' '))} transform={['scale(', NoteSVG[1].scale1 * 1.2, NoteSVG[1].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[1].data].join(' ')}/>
-//                         </Svg>
-//                     </Animated.View>
-//                 </View>
-//             );
-//         }
-//     }
-// }
-//
-// function mapStateToProps(state) {}
-//
-// function mapDispatchToProps(dispatch) {}
-//
-//
-//
-// let Window = Dimensions.get('window');
-// let styles = StyleSheet.create({
-//     mainContainer: {
-//         flex    : 1
-//     },
-//     dropZone    : {
-//         height  : SCREEN_HEIGHT/3,
-//         backgroundColor:'transparent'
-//     },
-//     text        : {
-//         marginTop   : 25,
-//         marginLeft  : 5,
-//         marginRight : 5,
-//         textAlign   : 'center',
-//         color       : 'black'
-//     },
-//     draggableContainer: {
-//         position    : 'absolute',
-//         top         : 50,
-//         left        : 50,
-//     },
-//     draggableContainer2: {
-//         position    : 'absolute',
-//         top         : SCREEN_HEIGHT,
-//         left        : 50,
-//     },
-//     circle      : {
-//         backgroundColor: 'blue',
-//         width               : CIRCLE_RADIUS*2,
-//         height              : CIRCLE_RADIUS*2,
-//         borderRadius        : CIRCLE_RADIUS
-//     },
-//     circle2      : {
-//         backgroundColor: 'yellow',
-//         width               : CIRCLE_RADIUS,
-//         height              : CIRCLE_RADIUS,
-//         borderRadius        : CIRCLE_RADIUS
-//     }
-// });
-//
-// export default connect(mapStateToProps, mapDispatchToProps)(ViewMeasure);

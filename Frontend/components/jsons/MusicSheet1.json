@@ -136,7 +136,72 @@
       "note": 2,
       "length": 1,
       "pitch": 3
-    }
+    },
+		{
+			"note": 2,
+			"length": 1,
+			"pitch": 1
+		},
+		{
+			"note": 2,
+			"length": 1,
+			"pitch": 3
+		},
+		{
+			"note": 8,
+			"length": 4,
+			"pitch": 4
+		},
+		{
+			"note": 8,
+			"length": 4,
+			"pitch": 5
+		},
+		{
+			"note": 2,
+			"length": 1,
+			"pitch": 1
+		},
+		{
+			"note": 2,
+			"length": 1,
+			"pitch": 3
+		},
+		{
+			"note": 2,
+			"length": 1,
+			"pitch": 1
+		},
+		{
+			"note": 2,
+			"length": 1,
+			"pitch": 3
+		},
+		{
+			"note": 9,
+			"length": .5,
+			"pitch": 6
+		},
+		{
+			"note": 1,
+			"length": .5,
+			"pitch": 6
+		},
+		{
+			"note": 9,
+			"length": .5,
+			"pitch": 6
+		},
+		{
+			"note": 3,
+			"length": 2,
+			"pitch": 6
+		},
+		{
+			"note": 9,
+			"length": .5,
+			"pitch": 6
+		},
 
 	]
 }
