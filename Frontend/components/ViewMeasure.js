@@ -355,6 +355,7 @@ class ViewMeasure extends React.Component {
       //   }
       // });
     }
+    console.log("measureNum: " + measureNum);
     fullList[measureNum] = NewMeasureNoteList;
     let newFullList = [];
     for (let i = 0; i < fullList.length; i++) {
@@ -402,6 +403,9 @@ class ViewMeasure extends React.Component {
       sendFullList.push(tempy);
       // console.log(tempy);
     }
+
+    console.log("sendFillList");
+    console.log(sendFullList);
     // console.log("FEAWFEAWFEWA");
     // console.log(sendFullList);
 

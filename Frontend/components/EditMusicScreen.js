@@ -353,19 +353,15 @@ class EditMusicScreen extends React.Component {
     // });
     // Send to measure Screen
     if(this.state.SheetType == 0){
-      if(((y * 2) + x) >= troubleCleffSplit.length){
-        this.props.navigation.navigate('ViewMeasure', { arr: [] });
-      }else{
-        this.props.navigation.navigate('ViewMeasure', {
-          arr: troubleCleffSplit[y+x],
-          full: troubleCleffSplit,
-          num: ((y) + x),
-          yValue: y,
-          xValue: x,
-          cleff: 0,
-          sheetType: this.state.SheetType,
-         });
-      }
+      this.props.navigation.navigate('ViewMeasure', {
+        arr: troubleCleffSplit[y+x],
+        full: troubleCleffSplit,
+        num: ((2 * (y + 1) + x) - 2),
+        yValue: y,
+        xValue: x,
+        cleff: 0,
+        sheetType: this.state.SheetType,
+       });
     } else if(this.state.SheetType == 1){
       if(y % 2 == 0){
         // console.log("x+y: " + (x+y));
@@ -374,7 +370,7 @@ class EditMusicScreen extends React.Component {
           this.props.navigation.navigate('ViewMeasure',{
              arr: [],
              full: troubleCleffSplit,
-             num: ((y) + x),
+             num: (y + x),
              yValue: y,
              xValue: x,
              cleff: 0,

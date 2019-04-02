@@ -101,22 +101,13 @@ export default class NoteObjects extends React.Component {
   ChangeNotePressed(n) {
     console.log("ChangeNotePressed");
   }
+
   ChangeColor(n) {
     this.setState({ color: "red" });
   }
-  shouldComponentUpdate(nextProps) {
-    console.log("WORKED\n");
-    console.log(nextProps);
+
+  componentWillReceiveProps(nextProps) {
     this.state = nextProps;
-  //   // console.log(nextProps);
-  //   console.log(this.state);
-  //   this.setState({});
-  //   // console.log("ERGFAWFEAW\n");
-  //   // console.log(nextProps);
-  //     // if(JSON.stringify(this.props.user) !== JSON.stringify(nextProps.user)) // Check if it's a new user, you can also use some unique property, like the ID
-  //     // {
-  //     //        this.updateUser();
-  //     // }
   }
   /**
    * Renders the note with its path
@@ -124,8 +115,7 @@ export default class NoteObjects extends React.Component {
   render() {
     console.log("state: ");
     console.log(this.state);
-    // console.log("Rendering Notes\n");
-    // console.log(this.props);
+    
     let mesureLength = SCREEN_WIDTH / 10;
     let start = SCREEN_HEIGHT / 8;
     let betweenNotes = SCREEN_WIDTH / 11;
