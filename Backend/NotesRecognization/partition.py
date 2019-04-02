@@ -455,7 +455,7 @@ def prune_objects(mask, SOL):
 		prune =  cw or ch or ca or coa
 
 		if prune:
-			cv2.imwrite("{}{}ob_{}{}{}{}.jpg".format("ExamplePredictions/predictions/",SOL[ob].R1,cw,ch,ca,coa), SO_to_array(SOL[ob]))
+			cv2.imwrite("{}{}ob_{}{}{}{}.jpg".format("ExamplePredictions/prunePredictions/",SOL[ob].R1,cw,ch,ca,coa), SO_to_array(SOL[ob]))
 
 			#update mask with removed object
 			update_mask(mask,SOL[ob],0)
