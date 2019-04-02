@@ -336,7 +336,7 @@ def test1():
 
 	MM.MIDI_to_file("first_test.mid")
 
-test1()
+# test1()
 
 
 
