@@ -52,22 +52,22 @@ class ViewMeasure extends React.Component {
       fullList = [];
       dontTouchMeasureList = [];
       draggables.push(
-        [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/7, 5, keyvalue++]
+        [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/7, 5, keyvalue++, false]
       );
       draggables.push(
-        [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/3, 1, keyvalue++]
+        [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/3, 1, keyvalue++, false]
       );
       draggables.push(
-        [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/2, 2, keyvalue++]
+        [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/2, 2, keyvalue++, false]
       );
       draggables.push(
-        [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/1.5, 3, keyvalue++]
+        [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/1.5, 3, keyvalue++, false]
       );
       draggables.push(
-        [SCREEN_HEIGHT/1.45, SCREEN_WIDTH/7, 8, keyvalue++]
+        [SCREEN_HEIGHT/1.45, SCREEN_WIDTH/7, 8, keyvalue++, false]
       );
       draggables.push(
-        [SCREEN_HEIGHT/1.45, SCREEN_WIDTH/3, 9, keyvalue++]
+        [SCREEN_HEIGHT/1.45, SCREEN_WIDTH/3, 9, keyvalue++, false]
       );
       /* Grabbing the params sent through React Navigation */
       fullList = this.props.navigation.getParam('full');
@@ -75,17 +75,17 @@ class ViewMeasure extends React.Component {
       dontTouchMeasureList = this.props.navigation.getParam('arr');
       measureNum = this.props.navigation.getParam('num');
 
-      console.log("fullList");
-      console.log(fullList);
-
-      console.log("\n\nMeasureNoteList");
+      // console.log("fullList");
+      // console.log(fullList);
+      //
+      // console.log("\n\nMeasureNoteList");
       if(MeasureNoteList == undefined){
         MeasureNoteList = [];
         dontTouchMeasureList = [];
       }
-      console.log(MeasureNoteList);
-
-      console.log("\n\nmeasureNum " + measureNum);
+      // console.log(MeasureNoteList);
+      //
+      // console.log("\n\nmeasureNum " + measureNum);
 
       if(MeasureNoteList.length != 0){
         if((MeasureNoteList[0].props.note == 0 || MeasureNoteList[0].props.note == 6 || MeasureNoteList[0].props.note == 7)){
@@ -116,26 +116,22 @@ class ViewMeasure extends React.Component {
           this.panResponder2 = PanResponder.create({
               onStartShouldSetPanResponder: (e, gesture) => {
                 // console.log("clicked");
+                // console.log(draggables[i][4]);
                 clickedY = e.nativeEvent.locationY;
                 clickedX = e.nativeEvent.locationX;
-                // console.log(e.nativeEvent.pageX + " : " + e.nativeEvent.pageY);
-                // console.log(this.state.panLayouts[i]);
-                // this.state.panLayouts[i].setValue({
-                //   x: e.nativeEvent.pageX, y: e.nativeEvent.pageY
-                // })
                 return true;
-
               },
               onPanResponderMove: (e, gesture) => {
                 // console.log("before");
                 // console.log(this.state.panLayouts[i]);
-                // console.log("moved");
+                if(draggables[i][4]){
+                  // console.log("moved");
+                  return;
+                }
                 if(this.checkDropBoxes(e.nativeEvent.pageX, e.nativeEvent.pageY, i, (e.nativeEvent.pageX - gesture.dx), (e.nativeEvent.pageY - gesture.dy), gesture, e) == -1){
-
                   this.state.panLayouts[i].setValue({
                     x: gesture.dx, y: gesture.dy
                   })
-
                 }
                 // console.log("after");
                 // console.log(this.state.panLayouts[i]);
@@ -144,9 +140,19 @@ class ViewMeasure extends React.Component {
                 // console.log("realsed");
                 // console.log(draggables);
                 // draggables[i][0] += (gesture.y0);
+                if(draggables[i][4]){
+                  // console.log("realsed");
+                  // console.log(draggables);
+                  // draggables.splice(i, 1);
+                  // console.log(draggables);
+                  // console.log("Done");
+                  // this.setState({ });
+                  return;
+                }
                 let check = this.checkDropBoxes(e.nativeEvent.pageX, e.nativeEvent.pageY, i, (e.nativeEvent.pageX - gesture.dx), (e.nativeEvent.pageY - gesture.dy), gesture, e)
                   if(check != -1){
-
+                    /* Has been dragged and dropped succesfully */
+                    draggables[i][4] = true;
                     switch (draggables[i][2]) {
                       case 5:
                         NewMeasureNoteList.push({
@@ -159,7 +165,7 @@ class ViewMeasure extends React.Component {
                         });
                         // NewMeasureNoteList.push(<NoteObjects key={keyvalue++} x={Math.floor(check / 11)} y={this.props.navigation.getParam('yValue')} length={.25} note={5} color="black" pitch={(check % 11)} />);
                         draggables.push(
-                          [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/7, 5]
+                          [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/7, 5, keyvalue++, false]
                         );
                         // draggables.push(
                         //   [SCREEN_HEIGHT/1.6 + gesture.y0, SCREEN_WIDTH/7 + gesture.x0, 5]
@@ -167,7 +173,7 @@ class ViewMeasure extends React.Component {
                         break;
                       case 1:
                         draggables.push(
-                          [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/3, 1, keyvalue++]
+                          [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/3, 1, keyvalue++, false]
                         );
                         NewMeasureNoteList.push({
                           props: {
@@ -181,7 +187,7 @@ class ViewMeasure extends React.Component {
                         break;
                       case 2:
                         draggables.push(
-                          [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/2, 2, keyvalue++]
+                          [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/2, 2, keyvalue++, false]
                         );
                         NewMeasureNoteList.push({
                           props: {
@@ -195,7 +201,7 @@ class ViewMeasure extends React.Component {
                         break;
                       case 3:
                         draggables.push(
-                          [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/1.5, 3, keyvalue++]
+                          [SCREEN_HEIGHT/1.6, SCREEN_WIDTH/1.5, 3, keyvalue++, false]
                         );
                         NewMeasureNoteList.push({
                           props: {
@@ -209,7 +215,7 @@ class ViewMeasure extends React.Component {
                         break;
                       case 8:
                         draggables.push(
-                          [SCREEN_HEIGHT/1.45, SCREEN_WIDTH/7, 8, keyvalue++]
+                          [SCREEN_HEIGHT/1.45, SCREEN_WIDTH/7, 8, keyvalue++, false]
                         );
                         NewMeasureNoteList.push({
                           props: {
@@ -222,7 +228,7 @@ class ViewMeasure extends React.Component {
                         break;
                       case 9:
                         draggables.push(
-                          [SCREEN_HEIGHT/1.45, SCREEN_WIDTH/3, 9, keyvalue++]
+                          [SCREEN_HEIGHT/1.45, SCREEN_WIDTH/3, 9, keyvalue++, false]
                         );
                         NewMeasureNoteList.push({
                           props: {
@@ -621,7 +627,7 @@ class ViewMeasure extends React.Component {
           barStyle="light-content" // or directly
           leftComponent={
             <Button
-              onPress={() => this.props.navigation.navigate('EditMusicScreen', { arr: [] })}
+              onPress={() => this.props.navigation.navigate('EditMusicScreen', this.verfyButtonPress())}
               icon={
                 <Icon
                   name="left"

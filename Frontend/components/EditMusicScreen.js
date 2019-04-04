@@ -43,6 +43,7 @@ var sampleJson1 = require('./jsons/MusicSheet1.json');
 var sampleJson2 = require('./jsons/MusicSheet2.json');
 var sampleJson3 = require('./jsons/MuiscSheet32Hands.json');
 var sampleJson4 = require('./jsons/MusicSheet3.json');
+var sampleJson4 = require('./jsons/test1.json');
 // var sampleJson3 = require('./jsons/MuiscSheet32Hands.json');
 // var sampleJson3 = require('./MusicSheet3.json');
 // var sampleJson = require('./SampleMusicSheet.json');
@@ -121,7 +122,7 @@ class EditMusicScreen extends React.Component {
           ]
       }
     }
-    sampleJson = sampleJson1;
+    sampleJson = sampleJson0;
 
     ids = [];
     ids.push(this.props.navigation.getParam('sheet_id'));

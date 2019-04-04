@@ -1,13 +1,3 @@
-/**
- 6 = whole
- 7 = 8th rest
- 8 = quter rest
- 9 = half rest
- 10 = sharp
- 11 = flat
- 12 = C-Clef
- 13 = F-Clef
-*/
 [
   {
     "_id": 0,
@@ -22,6 +12,7 @@
     "HitBoxX": 0,
     "HitBoxY": ".4",
   },
+
   {
     "_id": 1,
     "title": "8th Notes",
