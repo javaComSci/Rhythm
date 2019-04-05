@@ -7,6 +7,7 @@ import { Button, Header } from 'react-native-elements';
 import { Col, Row, Grid } from "react-native-easy-grid";
 import Icon from 'react-native-vector-icons/AntDesign'
 import PinchZoomView from 'react-native-pinch-zoom-view';
+import ImgToBase64 from 'react-native-image-base64';
 
 
   import { Svg } from 'expo';
@@ -42,9 +43,26 @@ export default class CameraExample extends React.Component {
         // let pizzaMan = atob(formData);
         // console.log(pizzaMan);
         // console.log(formdata._parts[1])
+
         console.log(formData._parts[0][1].uri.base64);
+        let myuri = formData._parts[0][1].uri.base64;
+
+        fetch("http://18.237.79.152:5000/uploadImage", {
+            method: 'POST',
+            //body: formData,
+            body: { "formData": myuri },
+            header: {
+                'content-type': 'application/json',
+            },
+        }).then(result => {
+            result.text().then(res => {
+                console.log("camera res", res)
+            }).catch(err => {
+                console.log("camera err", err)
+            })
+        });
+
           photo.exif.Orientation = 1;
-           // console.log(photo);
            console.log("I TOOOK A PHOTO!!!")
            });
      }
