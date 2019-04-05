@@ -25,26 +25,28 @@ export default class CameraExample extends React.Component {
     this.setState({ hasCameraPermission: status === 'granted' });
   }
 
-  async snapPhoto() {       
+  async snapPhoto() {
     console.log('Button Pressed');
     if (this.camera) {
        console.log('Taking photo');
-       const options = { quality: 1, base64: true, fixOrientation: true, 
+       const options = { quality: 1, base64: true, fixOrientation: true,
        exif: true};
        await this.camera.takePictureAsync(options).then(photo => {
-        
+
 
         // Upload the image using the fetch and FormData APIs
-        // let formData = new FormData();
+        let formData = new FormData();
         // Assume "photo" is the name of the form field the server expects
-        // formData.append('photo', { uri: photo, name: 'PHOTO.jpg', type: 'image' });
+        formData.append('photo', { uri: photo, name: 'PHOTO.jpg', type: 'image' });
         // btoa(formData);
         // let pizzaMan = atob(formData);
         // console.log(pizzaMan);
-          photo.exif.Orientation = 1;            
-           console.log(photo);  
-           console.log("I TOOOK A PHOTO!!!")          
-           });     
+        // console.log(formdata._parts[1])
+        console.log(formData._parts[0][1].uri.base64);
+          photo.exif.Orientation = 1;
+           // console.log(photo);
+           console.log("I TOOOK A PHOTO!!!")
+           });
      }
   }
 
@@ -78,7 +80,7 @@ export default class CameraExample extends React.Component {
                   alignItems: 'center',
                 }}
                 onPress={this.snapPhoto.bind(this)}>
-                <Image style={{width: 75, height: 75}} source={require('../assets/capture.png')}          
+                <Image style={{width: 75, height: 75}} source={require('../assets/capture.png')}
                 />
               </TouchableOpacity>
 
