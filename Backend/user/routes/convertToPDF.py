@@ -129,7 +129,7 @@ def createVerticalLines(notesData, notesArr, staffLinesStartingPos):
 				for j in range(10):
 
 					notesArr[staffLine + i][colPos + j] = 0
-		
+
 			colPos += 1000
 
 		colPos = 1350
@@ -141,17 +141,17 @@ def placeClefs(notesData, notesArr, staffLinesStartingPos):
 	if notesData['clef'] == 1:
 		# both clefs, need to alternate
 
-		# convert g clef to numpy arrays and make them with correct size 
+		# convert g clef to numpy arrays and make them with correct size
 		imgTreble = cv2.imread('./assets/gclef.jpg', cv2.IMREAD_GRAYSCALE)
 		(thresh, imgTrebleBW) = cv2.threshold(imgTreble, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-		imgTrebleResized = cv2.resize(imgTrebleBW, (200, 250)) 
+		imgTrebleResized = cv2.resize(imgTrebleBW, (200, 250))
 
-		# convert f clef to numpy arrays and make them with correct size 
+		# convert f clef to numpy arrays and make them with correct size
 		imgBass = cv2.imread('./assets/fclef.jpg', cv2.IMREAD_GRAYSCALE)
 		(thresh, imgBassBW) = cv2.threshold(imgBass, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 		imgBassResized = cv2.resize(imgBassBW, (200, 250))
 
-		staffLineCount = 0 
+		staffLineCount = 0
 
 		for staffLineStartingPos in staffLinesStartingPos:
 
@@ -184,10 +184,10 @@ def placeClefs(notesData, notesArr, staffLinesStartingPos):
 	elif notesData['clef'] == 0:
 		# just treble clef
 
-		# convert g clef to numpy arrays and make them with correct size 
+		# convert g clef to numpy arrays and make them with correct size
 		imgTreble = cv2.imread('./assets/gclef.jpg', cv2.IMREAD_GRAYSCALE)
 		(thresh, imgTrebleBW) = cv2.threshold(imgTreble, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-		imgTrebleResized = cv2.resize(imgTrebleBW, (200, 250)) 
+		imgTrebleResized = cv2.resize(imgTrebleBW, (200, 250))
 
 		for staffLineStartingPos in staffLinesStartingPos:
 
@@ -208,7 +208,7 @@ def placeClefs(notesData, notesArr, staffLinesStartingPos):
 	elif notesData['clef'] == 2:
 		# just bass clef
 
-		# convert f clef to numpy arrays and make them with correct size 
+		# convert f clef to numpy arrays and make them with correct size
 		imgBass = cv2.imread('./assets/fclef.jpg', cv2.IMREAD_GRAYSCALE)
 		(thresh, imgBassBW) = cv2.threshold(imgBass, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 		imgBassResized = cv2.resize(imgBassBW, (200, 250))
@@ -232,7 +232,7 @@ def placeClefs(notesData, notesArr, staffLinesStartingPos):
 	elif notesData['clef'] == 3:
 		# just alto clef
 
-		# convert c clef to numpy arrays and make them with correct size 
+		# convert c clef to numpy arrays and make them with correct size
 		imgBass = cv2.imread('./assets/cclef.png', cv2.IMREAD_GRAYSCALE)
 		(thresh, imgAltoBW) = cv2.threshold(imgAlto, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 		imgAltoResized = cv2.resize(imgAltoBW, (200, 250))
@@ -315,7 +315,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
 					if imgNoteResized[i][j] == 0:
 					# check if there is note there
-						
+
 						# need to shift everything up first so that the bottom of the note is first touching the top of the line
 						pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0]
 
@@ -340,7 +340,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
 					if imgNoteResized[i][j] == 0:
 					# check if there is note there
-						
+
 						# need to shift everything up first so that the bottom of the note is first touching the top of the line
 						pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0]
 
@@ -356,7 +356,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 			currColumn = currColumn + 100
 
 		elif noteType == 'quarter':
-			
+
 			# through the row
 			for i in range(imgNoteResized.shape[0]):
 
@@ -365,7 +365,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
 					if imgNoteResized[i][j] == 0:
 					# check if there is note there
-						
+
 						# need to shift everything up first so that the bottom of the note is first touching the top of the line
 						pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0]
 
@@ -390,7 +390,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
 					if imgNoteResized[i][j] == 0:
 					# check if there is note there
-						
+
 						# need to shift everything up first so that the bottom of the note is first touching the top of the line
 						pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0]
 
@@ -416,7 +416,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
 					if imgNoteResized[i][j] == 0:
 					# check if there is note there
-						
+
 						# need to shift everything up first so that the bottom of the note is first touching the top of the line
 						pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0]
 
@@ -441,7 +441,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
 			# move the column position for spacing after the note
 			currColumn = currColumn + imgNoteResized.shape[1] + 5
-		
+
 		elif noteType == 'flat':
 			# through the row
 			for i in range(imgNoteResized.shape[0]):
@@ -510,10 +510,9 @@ def conversion(file, fileName):
 
 
 
-notes = getNotes('./MusicSheet1.json')
-notesArrWithLines, staffLinesStartingPos = createLines(notes)
-notesArrWithVerticalLines, measureLinesStartingPos = createVerticalLines(notes, notesArrWithLines, staffLinesStartingPos)
-notesArrWithClefs = placeClefs(notes, notesArrWithVerticalLines, staffLinesStartingPos)
-notesArrWithTime = placeTime(notes, notesArrWithClefs, staffLinesStartingPos)
-notesArrWithNotes = placeNotes(notes, notesArrWithTime, staffLinesStartingPos, measureLinesStartingPos)
-
+# notes = getNotes('./MusicSheet1.json')
+# notesArrWithLines, staffLinesStartingPos = createLines(notes)
+# notesArrWithVerticalLines, measureLinesStartingPos = createVerticalLines(notes, notesArrWithLines, staffLinesStartingPos)
+# notesArrWithClefs = placeClefs(notes, notesArrWithVerticalLines, staffLinesStartingPos)
+# notesArrWithTime = placeTime(notes, notesArrWithClefs, staffLinesStartingPos)
+# notesArrWithNotes = placeNotes(notes, notesArrWithTime, staffLinesStartingPos, measureLinesStartingPos)
