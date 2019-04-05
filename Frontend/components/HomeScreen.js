@@ -53,46 +53,47 @@ class HomeScreen extends React.Component {
     }
 
     takeAndUploadPhotoAsync = async () => {
+      this.props.navigation.navigate("CameraScreen");
         // Display the camera to the user and wait for them to take a photo or to cancel
         // the action
-        await Permissions.askAsync(Permissions.CAMERA_ROLL);
-        await Permissions.askAsync(Permissions.CAMERA);
-        // changed
-        let result = await ImagePicker.launchCameraAsync();
-
-
-        if (result.cancelled) {
-            return;
-        }
-
-        // ImagePicker saves the taken photo to disk and returns a local URI to it
-        let localUri = result.uri;
-        let filename = localUri.split('/').pop();
-
-        // Infer the type of the image
-        let match = /\.(\w+)$/.exec(filename);
-        let type = match ? `image/${match[1]}` : `image`;
-
-        // Upload the image using the fetch and FormData APIs
-        let formData = new FormData();
-        // Assume "photo" is the name of the form field the server expects
-        formData.append('photo', { uri: localUri, name: filename, type });
-        console.log('photo file name', filename)
-        fetch("http://18.237.79.152:5000/uploadImage", {
-            method: 'POST',
-            //body: formData,
-            body: { "name": filename, "comp_id": 1 },
-            header: {
-                //'content-type': 'multipart/form-data',
-                'content-type': 'application/json',
-            },
-        }).then(result => {
-            result.text().then(res => {
-                console.log("camera res", res)
-            }).catch(err => {
-                console.log("camera err", err)
-            })
-        });
+        // await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        // await Permissions.askAsync(Permissions.CAMERA);
+        // // changed
+        // let result = await ImagePicker.launchCameraAsync();
+        //
+        //
+        // if (result.cancelled) {
+        //     return;
+        // }
+        //
+        // // ImagePicker saves the taken photo to disk and returns a local URI to it
+        // let localUri = result.uri;
+        // let filename = localUri.split('/').pop();
+        //
+        // // Infer the type of the image
+        // let match = /\.(\w+)$/.exec(filename);
+        // let type = match ? `image/${match[1]}` : `image`;
+        //
+        // // Upload the image using the fetch and FormData APIs
+        // let formData = new FormData();
+        // // Assume "photo" is the name of the form field the server expects
+        // formData.append('photo', { uri: localUri, name: filename, type });
+        // console.log('photo file name', filename)
+        // fetch("http://18.237.79.152:5000/uploadImage", {
+        //     method: 'POST',
+        //     //body: formData,
+        //     body: { "name": filename, "comp_id": 1 },
+        //     header: {
+        //         //'content-type': 'multipart/form-data',
+        //         'content-type': 'application/json',
+        //     },
+        // }).then(result => {
+        //     result.text().then(res => {
+        //         console.log("camera res", res)
+        //     }).catch(err => {
+        //         console.log("camera err", err)
+        //     })
+        // });
     }
 
     componentDidMount() {

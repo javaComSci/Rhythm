@@ -17,7 +17,7 @@ import EditMusicScreen from '../components/EditMusicScreen';
 import ViewMeasure from '../components/ViewMeasure';
 import ViewExportScreen from '../components/ViewExportScreen';
 import SelectMusicScreen from '../components/SelectMusicScreen';
-import CameraScreen from '../components/CameraScreen';
+import CameraScreen from '../components/Camera';
 
 const middleware = createReactNavigationReduxMiddleware(
   'root',

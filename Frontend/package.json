@@ -12,6 +12,7 @@
     "http": "0.0.0",
     "react": "^16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
+    "react-native-camera-kit": "^7.3.7",
     "react-native-dialog": "^5.5.0",
     "react-native-dialog-input": "^1.0.7",
     "react-native-easy-grid": "^0.2.1",
