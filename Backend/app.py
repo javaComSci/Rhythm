@@ -18,7 +18,7 @@ from user import users
 # from user import deleteUser
 import user.deleteUser as deleteUsers
 import user.routes.delete as deletes
-import user.routes.uploadImage as uploadImages
+# import user.routes.uploadImage as uploadImages
 # import user.routes.newMusicSheet as newMusicSheets
 import user.routes.update as updates
 import user.routes.delete as uploadImages
@@ -28,6 +28,7 @@ import user.routes.AccountRecovery as AccountRecoverys
 import user.routes.getInfo as getInfos
 import user.routes.createPDF as createPDFs
 import user.routes.selectInstrument as selectInstruments
+import user.routes.camera as cameras
 from flask_mail import Mail, Message
 ##
 # Creates an instance of the exisiting class/module
@@ -264,6 +265,13 @@ def selectInstrument():
 def checkKey():
     if request.method == 'POST':
         return AccountRecoverys.checkKey()
+    else:
+        return '\n\nDEBUG: Should not see this: app.py\n\n'
+
+@app.route('/uploadImage', methods=['POST'])
+def checkKey():
+    if request.method == 'POST':
+        return cameras.cameraPipeline()
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
