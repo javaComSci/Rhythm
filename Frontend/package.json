@@ -8,6 +8,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "atob": "^2.1.2",
     "expo": "^32.0.0",
     "http": "0.0.0",
     "react": "^16.5.0",
@@ -29,6 +30,7 @@
     "react-navigation-redux-helpers": "2.0.0",
     "react-redux": "^6.0.0",
     "redux": "^4.0.1",
+    "save": "^2.3.3",
     "why-did-you-update": "^1.0.6"
   },
   "devDependencies": {
