@@ -18,7 +18,7 @@ from user import users
 # from user import deleteUser
 import user.deleteUser as deleteUsers
 import user.routes.delete as deletes
-import user.routes.uploadImage as uploadImages
+import user.routes.uploadImage as uploadImagess
 # import user.routes.newMusicSheet as newMusicSheets
 import user.routes.update as updates
 # import user.routes.delete as uploadImages
@@ -268,10 +268,12 @@ def checkKey():
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
+
 @app.route('/uploadImage', methods=['POST'])
-def checkKey():
+def uploadImage():
+    print("IN PROCESS TO UPLOAD!")
     if request.method == 'POST':
-        return cameras.cameraPipeline()
+        return uploadImagess.cameraPipeline()
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
