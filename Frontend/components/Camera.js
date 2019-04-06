@@ -47,20 +47,20 @@ export default class CameraExample extends React.Component {
         console.log(formData._parts[0][1].uri.base64);
         let myuri = formData._parts[0][1].uri.base64;
 
-        fetch("http://18.237.79.152:5000/uploadImage", {
-            method: 'POST',
-            //body: formData,
-            body: { "img_data": myuri },
-            header: {
-                'content-type': 'application/json',
-            },
-        }).then(result => {
-            result.text().then(res => {
-                console.log("camera res", res)
-            }).catch(err => {
-                console.log("camera err", err)
-            })
-        });
+        fetch('http://18.237.79.152:5000/uploadImage', {
+              method: 'POST',
+              headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                'img_data': myuri,
+              }),
+          }).then((res) => {
+              console.log("I WORKED!")
+          }).catch((res) => {
+              console.log("err", res)
+          });
 
           photo.exif.Orientation = 1;
            console.log("I TOOOK A PHOTO!!!")
