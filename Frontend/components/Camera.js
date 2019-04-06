@@ -50,7 +50,7 @@ export default class CameraExample extends React.Component {
         fetch("http://18.237.79.152:5000/uploadImage", {
             method: 'POST',
             //body: formData,
-            body: { "formData": myuri },
+            body: { "img_data": myuri },
             header: {
                 'content-type': 'application/json',
             },
