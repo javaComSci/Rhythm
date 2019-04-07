@@ -277,6 +277,14 @@ def uploadImage():
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
+@app.route('/setAuthor', methods=['POST'])
+def setAuthor():
+    return newMusicSheets.updateAuthor()
+
+@app.route('/setTempo', methods=['POST'])
+def setTempo():
+    return newMusicSheets.updateTempo()
+
 
 
 ##

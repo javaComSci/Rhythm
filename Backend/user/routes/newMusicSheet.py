@@ -24,3 +24,13 @@ def duplicateSheet():
     content = request.json
     MySQLConnect.runQuery("INSERT INTO sheet_music(file,composition_id,name) SELECT file, %s, name from `sheet_music` where sheet_id=%s", (content['comp_id'], content['sheet_id']))
     return 'duplicateSheet'
+
+def updateAuthor():
+    content = request.json
+    MySQLConnect.runQuery("UPDATE sheet_music SET author=%s WHERE sheet_id=%s", (content['author'], content['sheet_id']))
+    return 'updateAuthor'
+
+def updateTempo():
+    content = request.json
+    MySQLConnect.runQuery("UPDATE sheet_music SET tempo=%s WHERE sheet_id=%s", (content['tempo'], content['sheet_id']))
+    return 'updateTempo'
