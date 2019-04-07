@@ -72,7 +72,7 @@ var SheetScreenTemplate = function () {
                                         onPress={(e) => {
                                             this.playSong(item.getID())
                                         }}>
-                                        <Text style={{ color: 'white', fontSize: 40 }}> </Text>
+                                        <Text style={{ color: 'white', fontSize: 40 }}> > </Text>
                                     </TouchableOpacity>
                                 </View>
 
