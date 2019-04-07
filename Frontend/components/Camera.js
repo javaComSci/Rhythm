@@ -15,7 +15,7 @@ import ImgToBase64 from 'react-native-image-base64';
   const SCREEN_WIDTH = Dimensions.get('window').width
   const SCREEN_HEIGHT = Dimensions.get('window').height
 
-export default class CameraExample extends React.Component {
+class CameraExample extends React.Component {
   state = {
     hasCameraPermission: null,
     type: Camera.Constants.Type.back,
@@ -24,6 +24,8 @@ export default class CameraExample extends React.Component {
   async componentDidMount() {
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     this.setState({ hasCameraPermission: status === 'granted' });
+    // composition id is this.props.target[0][0]
+    // sheet music id is this.props.target[0][1]
   }
 
   async snapPhoto() {
@@ -109,3 +111,21 @@ export default class CameraExample extends React.Component {
     }
   }
 }
+
+function mapStateToProps(state) {
+  return {
+      isRegistered: state.auth.email,
+      id: state.auth.id,
+      compositions: state.auth.compositions,
+      target: state.auth.target,
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+      dispatchAddComposition: composition => dispatch(addComposition(composition)),
+      dispatchAddTarget: target => dispatch(addTarget(target)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CameraExample);

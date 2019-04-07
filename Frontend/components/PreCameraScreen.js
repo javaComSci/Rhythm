@@ -3,6 +3,7 @@ import { View, Text, ImageBackground, Alert, TouchableOpacity } from 'react-nati
 import { connect } from 'react-redux';
 import RNPickerSelect from 'react-native-picker-select';
 import { addComposition } from '../actions/addComposition';
+import { addTarget } from '../actions/addTarget';
 var styles = require('../style')
 var background = require('../assets/backgroundImage.png')
 
@@ -81,6 +82,11 @@ class CameraScreen extends React.Component {
             console.log("SELECTED COMPOSITION: ", this.state.selectedComposition)
             this.getSheet()
         })
+    }
+
+    navToCamera = function () {
+        this.props.dispatchAddTarget([this.state.selectedComposition, this.state.selectedSheet]);
+        this.props.navigation.navigate('CameraScreen')
     }
 
     getInfo = function () {
@@ -207,8 +213,8 @@ class CameraScreen extends React.Component {
                     </View>
                 </View>
                 <View style={styles.footer}>
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('CameraScreen')} style={styles.navButton}>
-                        <Text style={styles.menuText}> Create </Text>
+                    <TouchableOpacity onPress={() => this.navToCamera()} style={styles.navButton}>
+                        <Text style={styles.menuText}> Take Picture </Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.footer}>
@@ -225,15 +231,15 @@ function mapStateToProps(state) {
     return {
         isRegistered: state.auth.email,
         id: state.auth.id,
-        compositions: state.auth.compositions
+        compositions: state.auth.compositions,
+        target: state.auth.target,
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        dispatchAddEmail: email => dispatch(addEmail(email)),
-        dispatchAddUser: id => dispatch(addUser(id)),
         dispatchAddComposition: composition => dispatch(addComposition(composition)),
+        dispatchAddTarget: target => dispatch(addTarget(target)),
     }
 }
 

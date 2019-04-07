@@ -28,7 +28,7 @@ function nav(state = initialNavState, action) {
     return nextState || state;
 }
 
-const initalRegisterState = { isRegistered: false, id: "26342", compositions: [] };
+const initalRegisterState = { isRegistered: false, id: "26342", compositions: [], target: [], };
 
 function containsComp(obj, list) {
     for (var i = 0; i < list.length; i++) {
@@ -50,6 +50,10 @@ function auth(state = initalRegisterState, action) {
                 return {
                     ...state, compositions: [...state.compositions, action.composition]
                 };
+        case 'ADD_TARGET':
+                return {
+                    ...state, target: [action.target]
+                }
         default:
             return state;
     }
