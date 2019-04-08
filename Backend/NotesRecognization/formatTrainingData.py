@@ -19,17 +19,22 @@ def splitData(symbols):
 
 	for symbol in symbols.keys():
 
+		print("THE NUMBER OF THINGS HIN HERE", symbols[symbol].shape)
+
+		# splitting into the number of training and testing data points
+		splitPoint = int(.9 * symbols[symbol].shape[0])
+
 		symbolName = re.split('/', symbol)[2]
 		translations[count] = symbolName
 
-		trainingIn = np.vstack((trainingIn, symbols[symbol][1:851]))
+		trainingIn = np.vstack((trainingIn, symbols[symbol][1:splitPoint + 1]))
 
-		currTrainingOut = np.array(np.ones(850) * count).reshape((850, 1))
+		currTrainingOut = np.array(np.ones(splitPoint) * count).reshape((splitPoint, 1))
 		trainingOut = np.vstack((trainingOut, currTrainingOut))
 
-		testingIn = np.vstack((testingIn, symbols[symbol][851:]))
+		testingIn = np.vstack((testingIn, symbols[symbol][splitPoint + 1:]))
 
-		currTestingOut = np.array((np.ones(len(symbols[symbol])-851) * count)).reshape(len(symbols[symbol])-851, 1)
+		currTestingOut = np.array((np.ones(len(symbols[symbol])-(splitPoint + 1)) * count)).reshape(len(symbols[symbol])-(splitPoint + 1), 1)
 		testingOut = np.vstack((testingOut, currTestingOut))
 
 		count += 1
@@ -138,7 +143,7 @@ def getTrainingAndTestingData():
 			pixelArrFlat = pixelArr.flatten()
 			pixelArrFlat = pixelArrFlat.reshape(pixelArrFlat.shape[0], 1).T
 
-			# for each of the symbols, there is an array of dimension (500, 3500) with 500 samples
+			# for each of the symbols, there is an array of dimension (numSamples, 3500) with numSamples samples
 			symbols[dirName] = np.append(symbols[dirName], pixelArrFlat, axis = 0)
 
 		# delete the first row as it was created for the array init
@@ -148,6 +153,8 @@ def getTrainingAndTestingData():
 
 		# split all the data into training and testing data
 	trainingIn, trainingOut, testingIn, testingOut, translations = splitData(symbols)
+
+	print("SHAPE OF DATA", trainingIn.shape, trainingOut.shape, testingIn.shape, testingOut.shape)
 
 	# write data to file
 	# np.save('trainingIn.npy', trainingIn)
