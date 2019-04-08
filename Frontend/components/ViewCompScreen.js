@@ -19,13 +19,15 @@ var background = require('../assets/backgroundImage.png')
 Composition class
 */
 class Composition {
-    constructor(title, id, description, file, instrument) {
+    constructor(title, id, description, file, instrument, tempo, author) {
         this.title = title;
         this.description = description;
         this.file = file
         this.key = id.toString(); // must be stored as string for FlatList
         this.sheetMusic = [];
         this.instrument = instrument;
+        this.tempo = tempo;
+        this.author = author;
     }
 
     getFile = function () {
@@ -47,6 +49,10 @@ class Composition {
     getInstrument = function () {
         return this.instrument;
     }
+
+    getTempo = function () { return this.tempo; }
+    
+    getAuthor = function () { return this.author; }
 }
 /* Profile Screen */
 // Provides basic info regarding user's email, allows option to change given email
@@ -69,6 +75,9 @@ class ViewCompScreen extends React.Component {
             selectedSheet: null,
             selectedComposition: null,
             text: "",
+            title: "",
+            tempo: "",
+            author: "",
             description: "",
             isDialogVisible: false,
             toEdit: '',
@@ -97,7 +106,7 @@ class ViewCompScreen extends React.Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                'table': "(SELECT sheet_id,composition_id,name,song_json,instrument FROM sheet_music where composition_id=" + this.props.navigation.getParam('compositionID') + ") as S;--",
+                'table': "(SELECT sheet_id,composition_id,name,song_json,instrument,tempo,author FROM sheet_music where composition_id=" + this.props.navigation.getParam('compositionID') + ") as S;--",
                 'id': this.props.navigation.getParam('compositionID'),
             }),
         }).then((res) => {
@@ -107,7 +116,7 @@ class ViewCompScreen extends React.Component {
                 JSON.parse(res).forEach(element => {
                     // title, id, compid
                     // console.log(JSON.parse(element[4]))
-                    dummyList.push(new Composition(element[2], element[0], element[1], JSON.parse(element[3]), element[4]));
+                    dummyList.push(new Composition(element[2], element[0], element[1], JSON.parse(element[3]), element[4], element[5], element[6]));
                 });
                 that.setState({ "sheet_music": dummyList })
                 that.sheetList = dummyList.map(sheet => ({ value: sheet.getID(), label: sheet.getTitle(), color: "red" }))
@@ -137,6 +146,8 @@ class ViewCompScreen extends React.Component {
             body: JSON.stringify({
                 'comp_id': this.props.navigation.getParam('compositionID'),
                 'name': this.state.text,
+                'tempo': this.state.tempo,
+                'author': this.state.author,
             }),
         }).then((res) => {
             this.getInfo()

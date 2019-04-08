@@ -32,13 +32,15 @@ class Composition {
 }
 
 class SheetMusic {
-    constructor(title, id, description, file, instrument) {
+    constructor(title, id, description, file, instrument, tempo, author) {
         this.title = title;
         this.description = description;
         this.file = file
         this.key = id.toString(); // must be stored as string for FlatList
         this.sheetMusic = [];
         this.instrument = instrument;
+        this.tempo = tempo;
+        this.author = author;
     }
 
     getFile = function () {
@@ -60,6 +62,10 @@ class SheetMusic {
     getInstrument = function () {
         return this.instrument;
     }
+
+    getTempo = function () { return this.tempo; }
+
+    getAuthor = function () { return this.author; }
 }
 
 class CameraScreen extends React.Component {
@@ -137,14 +143,14 @@ class CameraScreen extends React.Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                'table': "(SELECT sheet_id,composition_id,name,song_json,instrument FROM sheet_music where composition_id=" + that.state.selectedComposition + ") as S;--",
+                'table': "(SELECT sheet_id,composition_id,name,song_json,instrument,tempo,author FROM sheet_music where composition_id=" + that.state.selectedComposition + ") as S;--",
                 'id': that.state.selectedComposition,
             }),
         }).then((res) => {
             res.text().then(function (res) {
                 var dummyList = [] // temp list to hold compositions before being added to state
                 JSON.parse(res).forEach(element => {
-                    dummyList.push(new SheetMusic(element[2], element[0], element[1], JSON.parse(element[3]), element[4]));
+                    dummyList.push(new SheetMusic(element[2], element[0], element[1], JSON.parse(element[3]), element[4], element[5], element[6]));
                 });
                 that.setState({ "sheet_music": dummyList })
                 that.sheetList = dummyList.map(sheet => ({ value: sheet.getID(), label: sheet.getTitle(), color: "red" }))
