@@ -7,5 +7,5 @@ def cameraPipeline():
     print("THE FORM DATA", data)
     fh = open("uploadedImage.png", "wb")
     fh.write(data.decode('base64'))
-    fh.close()
+    # fh.close()
     return 'uploaded'
