@@ -8,8 +8,8 @@ from MySQL import MySQLConnect
 def newMusicSheets():
     content = request.json
     print("newSheetMusic Call")
-    col = ["composition_id", "name"];
-    values = ["'{}', '{}'".format(content['comp_id'], content['name'])];
+    col = ["composition_id", "name", "author", "tempo"];
+    values = ["'{}', '{}', '{}', '{}'".format(content['comp_id'], content['name'], content['author'], content['tempo'])];
     MySQLConnect.insert("sheet_music", ",".join(col), ",".join(values));
     return 'newMusicSheets'
 
