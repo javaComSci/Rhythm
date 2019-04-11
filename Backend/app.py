@@ -18,7 +18,7 @@ from user import users
 # from user import deleteUser
 import user.deleteUser as deleteUsers
 import user.routes.delete as deletes
-import user.routes.uploadImage as uploadImagess
+import user.routes.uploadImage as uploadImages
 # import user.routes.newMusicSheet as newMusicSheets
 import user.routes.update as updates
 # import user.routes.delete as uploadImages
@@ -28,7 +28,7 @@ import user.routes.AccountRecovery as AccountRecoverys
 import user.routes.getInfo as getInfos
 import user.routes.createPDF as createPDFs
 import user.routes.selectInstrument as selectInstruments
-import user.routes.camera as cameras
+import user.routes.camera as camerass
 from flask_mail import Mail, Message
 ##
 # Creates an instance of the exisiting class/module
@@ -269,11 +269,19 @@ def checkKey():
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> ccdbc730bf0bfacb1108e3f8b7d42c3481e83b4b
 @app.route('/uploadImage', methods=['POST'])
 def uploadImage():
     print("IN PROCESS TO UPLOAD!")
     if request.method == 'POST':
+<<<<<<< HEAD
+        return camerass.cameraPipeline()
+=======
         return uploadImagess.cameraPipeline()
+>>>>>>> ccdbc730bf0bfacb1108e3f8b7d42c3481e83b4b
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
