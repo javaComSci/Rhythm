@@ -7,7 +7,7 @@ def cameraPipeline():
 	img_data = content['img_data']
 
 	img = base64.b64decode(img_data)
-	filename = 'foo1.jpg'
+	filename = 'food1.jpg'
 	with open(filename, 'wb') as f:
 		f.write(img)
 

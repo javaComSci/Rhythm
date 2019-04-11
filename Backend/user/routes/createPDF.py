@@ -1,7 +1,7 @@
 from flask import Flask, render_template, json, url_for, request, jsonify
 from MySQL import MySQLConnect
 from flask_mail import Mail, Message
-import convertToPDF
+# import convertToPDF
 import random
 
 
