@@ -51,6 +51,9 @@ class sheet_object:
 		if ob.C2 > self.C2:
 			self.C2 = ob.C2
 
+	def remove_pixel(self, tup):
+		self.pixel_list.remove(tup)
+
 
 # @image - 2d numpy array
 # @return - list of rows that contain run blocks
@@ -604,6 +607,8 @@ def full_partition(path):
 
 	#locate objects in the image
 	mask, SOL = locate_objects(thick_mask)
+
+	mask, SOL = de_thicken(mask,SOL,im_bw)
 	#print "Completed 'object location'"
 
 	#locate row and staff lines
@@ -627,6 +632,15 @@ def thickener(im_bw):
 				expand_pixel(thick_mask, row, col)
 
 	return thick_mask
+
+def de_thicken(mask, SOL, im_bw):
+	for ob in SOL:
+		for p in ob.pixel_list:
+			if im_bw[p[0]][p[1]] == 255:
+				mask[p[0]][p[1]] = 0
+				ob.remove_pixel(p)
+
+	return mask, SOL
 
 #@ mask - mask to have expanded pixels added to
 #@ row - row of current pixel

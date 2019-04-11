@@ -64,13 +64,13 @@ if __name__ == "__main__":
 				gclef = True
 			elif ob_prediction[0] == 'CClef':
 				SOL[i].clef = 2
-				data['note'] = 6
+				data['note'] = 7
 				data['pitch'] = 1
 				data['length'] = 0
 				cclef = True
 			elif ob_prediction[0] == 'FClef':
 				SOL[i].clef = 3
-				data['note'] = 7
+				data['note'] = 6
 				data['pitch'] = 1
 				data['length'] = 0
 				fclef = True

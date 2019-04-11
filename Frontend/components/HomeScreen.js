@@ -53,7 +53,8 @@ class HomeScreen extends React.Component {
     }
 
     takeAndUploadPhotoAsync = async () => {
-      this.props.navigation.navigate("CameraScreen");
+      //this.props.navigation.navigate("CameraScreen");
+      this.props.navigation.navigate("PreCameraScreen");
         // Display the camera to the user and wait for them to take a photo or to cancel
         // the action
         // await Permissions.askAsync(Permissions.CAMERA_ROLL);

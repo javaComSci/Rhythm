@@ -72,6 +72,8 @@ def getData():
 # Train the general neural network with training inputs and labels
 def trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut):
 
+	print("THE SIZE OF THE DATA", trainingIn.shape, trainingOut.shape, testingIn.shape, testingOut.shape)
+
 	# modify the labels for clefs, notes, and times for training data
 	for t in range(0, len(trainingOut)):
 		output = trainingOut[t][0]
@@ -170,7 +172,7 @@ def testGeneralNN(testingIn, testingOut):
 		# 	break
 
 		# show the example of the image and the value wanted
-		if i % 200 == 0 and overallPredictions[i] != testingOut[i]:
+		if i % 400 == 0 and overallPredictions[i] == testingOut[i]:
 			testing = testingIn[i]
 			testing = testing * 255
 			testing = testing.reshape(70, 50)
@@ -369,7 +371,7 @@ def trainNoteNN(trainingIn, trainingOut, testingIn, testingOut):
 			# for the rests
 			trainingOut[t][0] = -3
 
-	# modify the labels for notes, sharp/flat, and rests in all training data first
+	# modify the labels for notes, sharp/flat, and rests in all testing data first
 	for t in range(0, len(testingOut)):
 		output = testingOut[t][0]
 		
@@ -978,22 +980,22 @@ def testRealNoteNN(testingIn, testingOut):
 		print("Prediction:", overallPredictions[i], "True Label", realNoteTestingOut[i])
 
 		# showing the incorrect image
-		if i % 1 == 0 and overallPredictions[i] != realNoteTestingOut[i]:
-			testing = realNoteTestingIn[i]
-			testing = testing * 255
-			testing = testing.reshape(70, 50)
-			img = Image.fromarray(testing)
-			img.show()
-			break
-
-		# show the example of the image and the value wanted
-		# if i % 50 == 0 and overallPredictions[i] == realNoteTestingOut[i]:
-		# 	print("Prediction:", overallPredictions[i], "True Label", realNoteTestingOut[i])
+		# if i % 1 == 0 and overallPredictions[i] != realNoteTestingOut[i]:
 		# 	testing = realNoteTestingIn[i]
 		# 	testing = testing * 255
 		# 	testing = testing.reshape(70, 50)
 		# 	img = Image.fromarray(testing)
 		# 	img.show()
+		# 	break
+
+		# show the example of the image and the value wanted
+		if i % 1000 == 0 and overallPredictions[i] == realNoteTestingOut[i]:
+			print("Prediction:", overallPredictions[i], "True Label", realNoteTestingOut[i])
+			testing = realNoteTestingIn[i]
+			testing = testing * 255
+			testing = testing.reshape(70, 50)
+			img = Image.fromarray(testing)
+			img.show()
 			
 
 	print("Accuracy on real note testing data:", (np.sum(overallPredictions == realNoteTestingOut)+0.0)/len(realNoteTestingOut))
@@ -1138,14 +1140,15 @@ def predict(testingIn):
 
 				# find the value that was predicted
 
-				overallPredictions[i] = np.argmax(generalPredictions[i])
-				print("PREDICTION WAS", generalPredictions[i], generalPredictions[i][0])
+				# overallPredictions[i] = np.argmax(generalPredictions[i])
+				# print("PREDICTION WAS", generalPredictions[i], generalPredictions[i][0])
 
+				print("THE PREDICTION", generalPredictions[i])
 				# find the value that was predicted
-				# if generalPredictions[i][0] < 0.5:
-					# overallPredictions[i] = 0
-				# else:
-					# overallPredictions[i] = 1
+				if generalPredictions[i] < 0.5:
+					overallPredictions[i] = 0
+				else:
+					overallPredictions[i] = 1
 
 				# if it was a clef
 				if overallPredictions[i] == 0:

@@ -58,7 +58,6 @@ var SheetScreenTemplate = function () {
                                             this.props.navigation.navigate('EditMusicScreen', { title: item.getTitle(), file: item.getFile(), sheet_id: item.getID(), email: this.props.isRegistered })
                                         }}
                                         onLongPress={(e) => {
-                                            console.log("pepper")
                                             this.setState({
                                                 isDialogVisible: true,
                                                 toEdit: [item.getTitle(), item.getID()], // getdescription actually gets the composition id
@@ -72,7 +71,7 @@ var SheetScreenTemplate = function () {
                                         onPress={(e) => {
                                             this.playSong(item.getID())
                                         }}>
-                                        <Text style={{ color: 'white', fontSize: 40 }}> </Text>
+                                        <Text style={{ color: 'white', fontSize: 40 }}> > </Text>
                                     </TouchableOpacity>
                                 </View>
 

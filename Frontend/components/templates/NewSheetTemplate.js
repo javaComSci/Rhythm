@@ -17,10 +17,19 @@ var NewSheetTemplate = function () {
                             placeholder="Title"
                             onChangeText={(text) => this.setState({ text })}
                             value={this.state.text} />
+                        <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1 }}
+                            placeholder="Author"
+                            onChangeText={(text) => this.setState({ author: text })}
+                            value={this.state.author} />
+                        <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1 }}
+                            placeholder="Tempo"
+                            onChangeText={(text) => this.setState({ tempo: text })}
+                            value={this.state.tempo} />
                         <TouchableOpacity style={styles.openButton} onPress={() => this.doneComposition()}>
                             <Text style={{ color: 'white', fontSize: 40 }}>Create</Text>
                         </TouchableOpacity>
                     </View>
+                    <View style={styles.footer}></View>
                     <View style={styles.footer}>
                         <TouchableOpacity onPress={() => this.setState({ newCompo: false })} style={styles.navButton}>
                             <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Back </Text>

@@ -21,7 +21,7 @@ import user.routes.delete as deletes
 import user.routes.uploadImage as uploadImages
 # import user.routes.newMusicSheet as newMusicSheets
 import user.routes.update as updates
-import user.routes.delete as uploadImages
+# import user.routes.delete as uploadImages
 import user.routes.newComposition as newCompositions
 import user.routes.newMusicSheet as newMusicSheets
 import user.routes.AccountRecovery as AccountRecoverys
@@ -269,13 +269,29 @@ def checkKey():
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> ccdbc730bf0bfacb1108e3f8b7d42c3481e83b4b
 @app.route('/uploadImage', methods=['POST'])
-def checkKey():
+def uploadImage():
+    print("IN PROCESS TO UPLOAD!")
     if request.method == 'POST':
+<<<<<<< HEAD
         return camerass.cameraPipeline()
+=======
+        return uploadImagess.cameraPipeline()
+>>>>>>> ccdbc730bf0bfacb1108e3f8b7d42c3481e83b4b
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
+
+@app.route('/setAuthor', methods=['POST'])
+def setAuthor():
+    return newMusicSheets.updateAuthor()
+
+@app.route('/setTempo', methods=['POST'])
+def setTempo():
+    return newMusicSheets.updateTempo()
 
 
 

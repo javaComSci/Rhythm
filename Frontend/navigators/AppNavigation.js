@@ -18,6 +18,7 @@ import ViewMeasure from '../components/ViewMeasure';
 import ViewExportScreen from '../components/ViewExportScreen';
 import SelectMusicScreen from '../components/SelectMusicScreen';
 import CameraScreen from '../components/Camera';
+import PreCameraScreen from '../components/PreCameraScreen'
 
 const middleware = createReactNavigationReduxMiddleware(
   'root',
@@ -35,7 +36,8 @@ const RootNavigator = createStackNavigator({
   ViewMeasure: { screen: ViewMeasure },
   ViewExportScreen: { screen: ViewExportScreen },
   SelectMusicScreen: { screen: SelectMusicScreen },
-  CameraScreen: { screen: CameraScreen }
+  CameraScreen: { screen: CameraScreen },
+  PreCameraScreen: { screen: PreCameraScreen },
 });
 
 const AppWithNavigationState = reduxifyNavigator(RootNavigator, 'root');
