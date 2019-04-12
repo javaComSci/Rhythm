@@ -9,7 +9,7 @@ var RegisterScreenTemplate = function () {
         <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 40 }}>
+                    <Text style={{ color: 'black', fontWeight: 'bold', fontSize: 40 }}>
                         Register
               </Text>
                     <View style={styles.lineBreak} />
@@ -18,7 +18,7 @@ var RegisterScreenTemplate = function () {
                     <View style={styles.inputContainer}>
                         <View style={{ alignItems: 'center', width: '90%' }}>
                             <Text
-                                style={{ color: 'white', fontWeight: 'bold', fontSize: 40 }}>
+                                style={{ color: 'black', fontWeight: 'bold', fontSize: 40 }}>
                                 Email:
                             </Text>
                         </View>

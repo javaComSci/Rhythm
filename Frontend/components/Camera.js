@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, TouchableOpacity, Dimensions, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Image } from 'react-native';
 import { Camera, Permissions } from 'expo';
 // import { Header } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -15,10 +15,16 @@ import ImgToBase64 from 'react-native-image-base64';
   const SCREEN_WIDTH = Dimensions.get('window').width
   const SCREEN_HEIGHT = Dimensions.get('window').height
 
+let flag = false;
+
 class CameraExample extends React.Component {
   state = {
     hasCameraPermission: null,
     type: Camera.Constants.Type.back,
+  };
+
+  static navigationOptions = {
+      title: 'Welcome', header: null
   };
 
   async componentDidMount() {
@@ -30,6 +36,15 @@ class CameraExample extends React.Component {
 
   async snapPhoto() {
     console.log('Button Pressed');
+
+    if(!flag){
+      console.log("HERE");
+      flag = true;
+      this.setState({ });
+      return;
+    }
+    console.log("THERE");
+
     if (this.camera) {
        console.log('Taking photo');
        const options = { quality: 1, base64: true, fixOrientation: true,
@@ -70,6 +85,40 @@ class CameraExample extends React.Component {
      }
   }
 
+  showButton(){
+    if(flag){
+      console.log("Steve");
+      let buttons = [];
+
+      buttons.push(
+        <TouchableOpacity
+          style={{position: "absolute", top: '30%', right: '25%', alignItems: 'center', backgroundColor:"#FF8C00", borderRadius: 10, opacity:.5}}
+          onPress={() => console.log("Extend Clicked")}
+          key="41"
+        >
+        <Text
+        style={{fontSize:40,}}
+        > Extend </Text>
+        </TouchableOpacity>
+      )
+
+      buttons.push(
+        <TouchableOpacity
+          style={{position: "absolute", top: '50%', right: '25%', alignItems: 'center', backgroundColor:"#FF8C00", borderRadius: 10, opacity:.5}}
+          onPress={() => console.log("Submit Clicked")}
+          key="42"
+        >
+          <Text
+          style={{fontSize:40,}}
+          > Submit </Text>
+        </TouchableOpacity>
+      )
+      return buttons;
+    }else{
+      return;
+    }
+  }
+
   render() {
     const { hasCameraPermission } = this.state;
     if (hasCameraPermission === null) {
@@ -86,13 +135,16 @@ class CameraExample extends React.Component {
                 backgroundColor: 'transparent',
                 flexDirection: 'row',
               }}>
+
               <Svg height="100%"  width="100%">
-                <Rect x={SCREEN_WIDTH/9} y={SCREEN_HEIGHT/10} width={SCREEN_WIDTH - SCREEN_WIDTH/9 - SCREEN_WIDTH/9} height={SCREEN_HEIGHT - SCREEN_HEIGHT/10 - (2 * SCREEN_HEIGHT/10)} fill="orange" strokeWidth="2" stroke="orange" strokeOpacity=".8" fillOpacity="0" />
-                <Rect x={0} y={0} width={SCREEN_WIDTH/9} height={SCREEN_HEIGHT} fill="orange" strokeWidth="0" stroke="orange" strokeOpacity=".6" fillOpacity=".2" />
-                <Rect x={SCREEN_WIDTH/9} y={0} width={SCREEN_WIDTH} height={SCREEN_HEIGHT/10} fill="orange" strokeWidth="0" stroke="orange" strokeOpacity=".6" fillOpacity=".2" />
-                <Rect x={SCREEN_WIDTH - SCREEN_WIDTH/9} y={SCREEN_HEIGHT/10} width={SCREEN_WIDTH} height={SCREEN_HEIGHT} fill="orange" strokeWidth="0" stroke="orange" strokeOpacity=".6" fillOpacity=".2" />
-                <Rect x={SCREEN_WIDTH/9} y={SCREEN_HEIGHT - SCREEN_HEIGHT/10 - (1 * SCREEN_HEIGHT/10)} width={SCREEN_WIDTH- 2*SCREEN_WIDTH/9} height={SCREEN_HEIGHT} fill="orange" strokeWidth="0" stroke="green" strokeOpacity=".6" fillOpacity=".2" />
+                <Rect x={SCREEN_WIDTH/25} y={SCREEN_HEIGHT/6.5} width={SCREEN_WIDTH - SCREEN_WIDTH/25 - SCREEN_WIDTH/25} height={SCREEN_HEIGHT - SCREEN_HEIGHT/6.5 - (2 * SCREEN_HEIGHT/6.5)} fill="orange" strokeWidth="2" stroke="orange" strokeOpacity=".8" fillOpacity="0" />
+
+                <Rect x={0} y={0} width={SCREEN_WIDTH/25} height={SCREEN_HEIGHT} fill="orange" strokeWidth="0" stroke="orange" strokeOpacity=".6" fillOpacity=".2" />
+                <Rect x={SCREEN_WIDTH/25} y={0} width={SCREEN_WIDTH} height={SCREEN_HEIGHT/6.5} fill="orange" strokeWidth="0" stroke="orange" strokeOpacity=".6" fillOpacity=".2" />
+                <Rect x={SCREEN_WIDTH - SCREEN_WIDTH/25} y={SCREEN_HEIGHT/6.5} width={SCREEN_WIDTH} height={SCREEN_HEIGHT} fill="orange" strokeWidth="0" stroke="orange" strokeOpacity=".6" fillOpacity=".2" />
+                <Rect x={SCREEN_WIDTH/25} y={SCREEN_HEIGHT - SCREEN_HEIGHT/6.5 - (1 * SCREEN_HEIGHT/6.5)} width={SCREEN_WIDTH - SCREEN_WIDTH/12.5} height={SCREEN_HEIGHT} fill="orange" strokeWidth="0" stroke="green" strokeOpacity=".6" fillOpacity=".2" />
               </Svg>
+              {this.showButton()}
               <TouchableOpacity style={{
                   position: "absolute",
                   top: '77%',
@@ -103,7 +155,6 @@ class CameraExample extends React.Component {
                 <Image style={{width: 75, height: 75}} source={require('../assets/capture.png')}
                 />
               </TouchableOpacity>
-
             </View>
           </Camera>
         </View>

@@ -51,7 +51,7 @@ class Composition {
     }
 
     getTempo = function () { return this.tempo; }
-    
+
     getAuthor = function () { return this.author; }
 }
 /* Profile Screen */
@@ -84,16 +84,16 @@ class ViewCompScreen extends React.Component {
         }
     }
 
-    async playSong (sheet_id) {
+    async playSong(sheet_id) {
         await Audio.setIsEnabledAsync(true);
         const soundObject = new Audio.Sound();
         try {
-          await soundObject.loadAsync({uri: 'http://18.237.79.152:5000/getSong?sheetid='+sheet_id});
-          await soundObject.playAsync();
-          // Your sound is playing!
+            await soundObject.loadAsync({ uri: 'http://18.237.79.152:5000/getSong?sheetid=' + sheet_id });
+            await soundObject.playAsync();
+            // Your sound is playing!
         } catch (error) {
-          // An error occurred!
-          Alert.alert("No song")
+            // An error occurred!
+            Alert.alert("No song")
         }
     }
 
@@ -131,12 +131,21 @@ class ViewCompScreen extends React.Component {
 
     componentWillMount() {
         this.getInfo()
+        this.setState({
+            cameFromCamera: this.props.navigation.getParam('cameFromCamera', false)
+        }, () => {
+            if (this.state.cameFromCamera) {
+                this.props.navigation.setParams({'compositionID': this.props.navigation.getParam('composition')})
+                this.state.newCompo = true;
+            }
+        })
     }
 
     static navigationOptions = {
         title: 'Welcome', header: null
     };
     makeCompositionCall() {
+        console.log("najvklafjg: ", this.props.navigation.getParam('composition'));
         fetch('http://18.237.79.152:5000/newMusicSheet', {
             method: 'POST',
             headers: {
@@ -150,6 +159,10 @@ class ViewCompScreen extends React.Component {
                 'author': this.state.author,
             }),
         }).then((res) => {
+            if (this.state.cameFromCamera) {
+                this.props.navigation.state.params.onGoBack();
+                this.props.navigation.goBack();
+            }
             this.getInfo()
             this.state.newCompo = false;
         }).catch((res) => {
