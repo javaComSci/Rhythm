@@ -22,7 +22,7 @@ var CompScreenTemplate = function () {
                     closeDialog={() => { this.setState({ isDialogVisible: false, toEdit: '' }) }}>
                 </DialogInput>
                 <View style={styles}>
-                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 40 }}> COMPOSITIONS </Text>
+                    <Text style={{ color: 'black', fontWeight: 'bold', fontSize: 40 }}> COMPOSITIONS </Text>
                     <View style={styles.lineBreak} />
                 </View>
                 <View style={{height: 100}}>
@@ -56,7 +56,7 @@ var CompScreenTemplate = function () {
                                         toEdit: [item.getTitle(), item.getID()], // getdescription actually gets the composition id
                                     })
                                 }}>
-                                <Text style={{ color: 'white', fontSize: 40 }}>{item.getTitle()}</Text>
+                                <Text style={{ color: 'black', fontSize: 40 }}>{item.getTitle()}</Text>
                             </TouchableOpacity>
                             <View style={styles.lineBreak} />
                         </View>}

@@ -23,7 +23,7 @@ var SheetScreenTemplate = function () {
                     }}
                     closeDialog={() => { this.setState({ isDialogVisible: false, toEdit: '' }) }}>
                 </DialogInput>
-                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 40, width: "80%" }}> {compositionTitle} </Text>
+                <Text style={{ color: 'black', fontWeight: 'bold', fontSize: 40, width: "80%" }}> {compositionTitle} </Text>
                 <View style={{ height: 100 }}>
                     <View style={styles.operatorContainer}>
                         <TouchableOpacity
@@ -44,7 +44,7 @@ var SheetScreenTemplate = function () {
                     </View>
                 </View>
 
-                <Text style={{ color: 'white', }}>{compositionDescription}</Text>
+                <Text style={{ color: 'black', }}>{compositionDescription}</Text>
                 <ScrollView>
                     <FlatList
                         data={this.state.sheet_music}
@@ -64,14 +64,14 @@ var SheetScreenTemplate = function () {
                                             })
                                         }}
                                     >
-                                        <Text style={{ color: 'white', fontSize: 40 }}>{item.getTitle()}</Text>
+                                        <Text style={{ color: 'black', fontSize: 40 }}>{item.getTitle()}</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         style={styles.sheetItem}
                                         onPress={(e) => {
                                             this.playSong(item.getID())
                                         }}>
-                                        <Text style={{ color: 'white', fontSize: 40 }}> > </Text>
+                                        <Text style={{ color: 'black', fontSize: 40 }}> > </Text>
                                     </TouchableOpacity>
                                 </View>
 
@@ -80,7 +80,7 @@ var SheetScreenTemplate = function () {
                                         this.props.navigation.navigate('SelectMusicScreen', {title: item.getTitle(), sheet_id: item.getID(), file: item.getFile()})
                                     }}
                                 >
-                                    <Text style={{color: 'white', backgroundColor: 'black', borderRadius: 2, borderWidth: 3, borderColor: 'white', fontSize: 20}}> {item.getInstrument() ? item.getInstrument() : "Piano"} </Text>
+                                    <Text style={{color: 'black', backgroundColor: 'white', borderRadius: 2, borderWidth: 3, borderColor: 'black', fontSize: 20}}> {item.getInstrument() ? item.getInstrument() : "Piano"} </Text>
                                 </TouchableOpacity>
                                 <View style={styles.lineBreak} />
                             </View>}
