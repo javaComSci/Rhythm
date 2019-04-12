@@ -51,6 +51,7 @@ class CompositionScreen extends React.Component {
             isDialogVisible: false,
             deleteText: "",
             toEdit: "",
+            cameFromCamera: false, // flag
         }
     }
     static navigationOptions = {
@@ -90,6 +91,13 @@ class CompositionScreen extends React.Component {
 
     componentWillMount() {
         this.getInfo()
+        this.setState({
+            cameFromCamera: this.props.navigation.getParam('cameFromCamera', false)
+        }, () => {
+            if (this.state.cameFromCamera) {
+                this.state.newCompo = true;
+            }
+        })
     }
 
     componentDidMount() {
@@ -110,6 +118,10 @@ class CompositionScreen extends React.Component {
             }),
         }).then((res) => {
             console.log("res: ", res)
+            if (this.state.cameFromCamera) {
+                this.props.navigation.state.params.onGoBack();
+                this.props.navigation.goBack();
+            }
             that.getInfo()
             that.state.newCompo = false;
         }).catch((res) => {
