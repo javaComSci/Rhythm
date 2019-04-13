@@ -273,7 +273,7 @@ def checkKey():
 def uploadImage():
     print("IN PROCESS TO UPLOAD!")
     if request.method == 'POST':
-        return uploadImagess.cameraPipeline()
+        return uploadImages.cameraPipeline()
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 

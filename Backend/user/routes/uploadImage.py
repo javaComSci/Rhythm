@@ -22,7 +22,7 @@ def cameraPipeline():
         compID = content['compID']
 	img = base64.b64decode(img_data)
 
-	filename = '{}-{}.jpg'.format(sheetID, compID)
+	filename = './convertedData/{}-{}.jpg'.format(sheetID, compID)
         imgs.append(filename)
             # Send to richard
 
