@@ -6,7 +6,7 @@ from MySQL import MySQLConnect
 def selectMusic():
     content = request.json
 
-    print content['instrument']
+    # print content['instrument']
     
     MySQLConnect.updateInstrumentById("sheet_music", content['sheet_id'], content['instrument'])
 

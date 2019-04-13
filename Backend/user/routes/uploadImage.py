@@ -2,9 +2,15 @@ from flask import Flask, render_template, json, url_for, request
 from MySQL import MySQLConnect
 import base64
 import random
-from './NotesRecognization/conversion' import conv
+import sys
+
+# from NotesRecognization.conversion import conv
 
 def cameraPipeline():
+	sys.path.insert(0, 'NotesRecognization/conversion')
+
+	import conversion
+	
 	content = request.json
 
 	# img data as an array with all the filepaths

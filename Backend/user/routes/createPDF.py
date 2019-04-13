@@ -17,8 +17,8 @@ def exportPDF(mail, app):
     for sheet_id in content['sheet_ids']:
         # information = MySQLConnect.findSheetBySheetID("sheet_music", 222)
         information = MySQLConnect.findSheetBySheetID("sheet_music", sheet_id)
-        print "INFORMATION"
-        print information
+        # print "INFORMATION"
+        # print information
     
         # has the actual information in the file
         file = information[0][1]
