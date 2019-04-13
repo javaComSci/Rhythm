@@ -9,36 +9,29 @@ import sendToCloud
 
 # from .. import MySQL
 
-if __name__ == "__main__":
-	file_path = "ExamplePredictions/DATA/myfile.jpg"
+def conv(filepaths):
+	bigData = {}
+	bigData['clef'] = 1
+	bigData['notes'] = []
 
-	mask, SOL, staff_lines = partition.full_partition(file_path)
+	for file_path in filepaths:
 
-	ob_counter = 0
+		mask, SOL, staff_lines = partition.full_partition(file_path)
 
-	partition.print_objects(mask, SOL, staff_lines, "ExamplePredictions/predictions/")
+		ob_counter = 0
 
-	dicty = {"clef":1, "notes":[]}
-
-	cv2.imwrite("ExamplePredictions/predictions/full_img.jpg", mask)
-
-
-	with open('data.json', 'w') as outfile:
-
-		bigData = {}
-
-		bigData['clef'] = 1
-		bigData['notes'] = []
+		#partition.print_objects(mask, SOL, staff_lines, "ExamplePredictions/predictions/")
+		#cv2.imwrite("ExamplePredictions/predictions/full_img.jpg", mask)
 
 		gclef = False
 		cclef = False
 		fclef = False
 
 		for i in range(len(SOL)):
-			print("I", i)
+			#print("I", i)
 			n_arr = partition.SO_to_array(SOL[i])
 
-			print(n_arr.shape)
+			#print(n_arr.shape)
 
 			flat_arr = n_arr.flatten().reshape((1,3500))
 
@@ -48,13 +41,13 @@ if __name__ == "__main__":
 			if ob_prediction == None or len(ob_prediction) == 0:
 				ob_prediction = "DEFAULT"
 
-			cv2.imwrite("ExamplePredictions/predictions/ob#{}_label:{}.jpg".format(ob_counter, ob_prediction[0]), im)
+			#cv2.imwrite("ExamplePredictions/predictions/ob#{}_label:{}.jpg".format(ob_counter, ob_prediction[0]), im)
 
 			data = {}
 
 			clefCount = 0
 
-			print("OB PREDICTION", ob_prediction[0])
+			#print("OB PREDICTION", ob_prediction[0])
 
 			if ob_prediction[0] == 'GClef':
 				SOL[i].clef = 1
@@ -125,15 +118,15 @@ if __name__ == "__main__":
 				data['pitch'] = SOL[i].run
 				data['length'] = 0
 
-			print(SOL[i].duration, SOL[i].accidental)
+			#print(SOL[i].duration, SOL[i].accidental)
 
 			ob_counter += 1
 
 			bigData['notes'].append(data)
 
-			print("NOTES", bigData["notes"])
+			#print("NOTES", bigData["notes"])
 
-			print("DATA", data)
+			#print("DATA", data)
 
 		if gclef == True and fclef == True:
 			bigData['clef'] = 1
@@ -144,23 +137,23 @@ if __name__ == "__main__":
 		elif cclef == True:
 			bigData['clef'] = 3
 
-		print("BIG DATA", bigData)
+	#print("BIG DATA", bigData)
 
-		jsonData = json.dumps(bigData)
+	jsonData = json.dumps(bigData)
 
-		print("bigData")
-		print(bigData)
+	#print("bigData")
+	#print(bigData)
 
-		with open('data.txt', 'w') as outfile:  
-			json.dump(jsonData, outfile)
+	with open('data.txt', 'w') as outfile:  
+		json.dump(jsonData, outfile)
 
-		sendToCloud.cloud(jsonData)
+	sendToCloud.cloud(jsonData)
 
-	MF = MIDImaker.MIDImaker()
-	MF.add_track(SOL)
-	MF.convert_to_MIDI(instruments = ["Piano"], start_times = [2], tempos=[80],
-	 tracks=1, channel=0, volume=100)
-	MF.MIDI_to_file(filepath="twinkle.mid")
+	# MF = MIDImaker.MIDImaker()
+	# MF.add_track(SOL)
+	# MF.convert_to_MIDI(instruments = ["Piano"], start_times = [2], tempos=[80],
+	#  tracks=1, channel=0, volume=100)
+	# MF.MIDI_to_file(filepath="twinkle.mid")
 
 
 
