@@ -3,6 +3,10 @@ import json
 import math
 import cv2
 import numpy as np
+import img2pdf
+from PIL import Image
+from PIL import ImageFont
+from PIL import ImageDraw 
 
 # boundaries for the lines
 colLeft = 200
@@ -52,8 +56,27 @@ def getNoteType(note, pitch, length):
 	return noteType
 
 
+def createTitle(sheetid):
+	# total size needed for numpy array, which is A4 size
+	notesArr = np.ones((5900, 4550))
 
-def createLines(notes):
+	for i in range(1125, 3375):
+		for j in range(4):
+			notesArr[400 + j][i] = 0
+
+	for i in range(1800, 2700):
+		for j in range(4):
+			notesArr[550 + j][i] = 0
+
+	return notesArr
+
+
+def createLines(notesArr, notes):
+
+	# creating multiple images
+	notesArrs = []
+	notesArrs.append(notesArr)
+
 	duration = 0
 
 	# find total duration of notes
@@ -66,13 +89,10 @@ def createLines(notes):
 	# find number of staff lines needed
 	staffLines = int(math.ceil(duration/16))
 
-	# total size needed for numpy array, which is A4 size
-	notesArr = np.ones((8300, 4550))
-
 	print("MEASURES", measures, staffLines)
 
 	# initial starting point for putting the pixels
-	row = 400
+	row = 1000
 
 	staffLinesStartingPos = []
 
@@ -90,7 +110,7 @@ def createLines(notes):
 				# for the thickness of the line with the actual line
 				for k in range(row, row + 5):
 
-					notesArr[k][j] = 0
+					notesArr[0][k][j] = 0
 
 			# to account for the whitespace between the lines
 			row = row + 50
@@ -258,7 +278,7 @@ def placeClefs(notesData, notesArr, staffLinesStartingPos):
 
 
 
-def placeTime(notesData, notesArr, staffLinesStartingPoss):
+def placeTime(notesData, notesArr, staffLinesStartingPos):
 	imgTime = cv2.imread('./assets/44time.jpg', cv2.IMREAD_GRAYSCALE)
 	(thresh, imgTimeBW) = cv2.threshold(imgTime, 50, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 	imgTimeResized = cv2.resize(imgTimeBW, (150, 250))
@@ -588,29 +608,37 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 	print("THIS IS IN THE NOTES ARRAY PRINTING\n\n\n\n")
 	cv2.imwrite("notes.jpg", notesArr)
 
+	return notesArr
 
 
 # returns the name of the converted pdf
-def conversion(file, fileName):
-	# fileName = 'hello.mid'
+# takes in the id of the sheet that needs to be converted
+def pdfPipeline(sheetId):
 
-	# substitute this with the place where MuseScore is stored
-	# cmd = "/Applications/MuseScore\ 3.app/Contents/MacOS/mscore -o "
+	# get the name of the sheet with the json extension
+	sheetIdWithJSONExtension = str(sheetId) + ".json"
 
-	# creating the name for the pdf
-	# pdfName = "'" + fileName[:fileName.find('.')] + '.pdf' "' "
-	# cmd = cmd + pdfName + "'" + fileName + "'"
+	notes = getNotes(sheetIdWithJSONExtension)
+	notesWithTitleLine = createTitle(sheetId)
+	notesArrWithLines, staffLinesStartingPos = createLines(notesWithTitleLine, notes)
+	notesArrWithVerticalLines, measureLinesStartingPos = createVerticalLines(notes, notesArrWithLines, staffLinesStartingPos)
+	notesArrWithClefs = placeClefs(notes, notesArrWithVerticalLines, staffLinesStartingPos)
+	notesArrWithTime = placeTime(notes, notesArrWithClefs, staffLinesStartingPos)
+	notesArrWithNotes = placeNotes(notes, notesArrWithTime, staffLinesStartingPos, measureLinesStartingPos)
 
-	# making the system call with the command for conversion
-	# os.system(cmd)
+	# save the image in a jpg
+	jpgName = "./convertedData/" + str(sheetId) + ".jpg"
+	cv2.imwrite(jpgName, notesArrWithNotes)
 
-	return pdfName
+	# get the name of the file in pdf form
+	pdfName = "./convertedData/" + str(sheetId) + ".pdf"
+	pdfFile = open(pdfName, "wb")
+
+	# save it as the pdf
+	pdfBytes = img2pdf.convert(jpgName)
+
+	pdfFile.write(pdfBytes)
+	
 
 
-
-notes = getNotes('./MusicSheet1.json')
-notesArrWithLines, staffLinesStartingPos = createLines(notes)
-notesArrWithVerticalLines, measureLinesStartingPos = createVerticalLines(notes, notesArrWithLines, staffLinesStartingPos)
-notesArrWithClefs = placeClefs(notes, notesArrWithVerticalLines, staffLinesStartingPos)
-notesArrWithTime = placeTime(notes, notesArrWithClefs, staffLinesStartingPos)
-notesArrWithNotes = placeNotes(notes, notesArrWithTime, staffLinesStartingPos, measureLinesStartingPos)
+pdfPipeline('./MusicSheet1')
