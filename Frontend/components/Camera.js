@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, TouchableOpacity, Dimensions, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Image } from 'react-native';
 import { Camera, Permissions } from 'expo';
 // import { Header } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -15,10 +15,27 @@ import ImgToBase64 from 'react-native-image-base64';
   const SCREEN_WIDTH = Dimensions.get('window').width
   const SCREEN_HEIGHT = Dimensions.get('window').height
 
+// let flag = false;
+
+let pictureData = [];
+
 class CameraExample extends React.Component {
+  constructor(props){
+    super(props);
+    pictureData = [];
+    // flag = false;
+    this.state = {
+      flag: false,
+    }
+  }
+
   state = {
     hasCameraPermission: null,
     type: Camera.Constants.Type.back,
+  };
+
+  static navigationOptions = {
+      title: 'Welcome', header: null
   };
 
   async componentDidMount() {
@@ -28,7 +45,7 @@ class CameraExample extends React.Component {
     // sheet music id is this.props.target[0][1]
   }
 
-  async snapPhoto() {
+  async snapPhoto(fl) {
     console.log('Button Pressed');
     if (this.camera) {
        console.log('Taking photo');
@@ -45,29 +62,76 @@ class CameraExample extends React.Component {
         // let pizzaMan = atob(formData);
         // console.log(pizzaMan);
         // console.log(formdata._parts[1])
+        let uri = formData._parts[0][1].uri.base64;
+        // pictureData.push(formData._parts[0][1].uri.base64);
+        console.log("fl " + fl);
+        if(!fl){
+          console.log("HERE");
+          this.setState({ flag: false })
+        }
+        console.log(uri);
+          let isfinal = false;
+          // for(let i = 0; i < pictureData.lengh; i++){
+            fetch('http://18.237.79.152:5000/uploadImage', {
+                  method: 'POST',
+                  headers: {
+                      Accept: 'application/json',
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    'img_data': uri,
+                    'final': fl,
+                  }),
+              }).then((res) => {
+                  console.log("I WORKED!")
+              }).catch((res) => {
+                  console.log("err", res)
+              });
+        // }
 
-        console.log(formData._parts[0][1].uri.base64);
-        let myuri = formData._parts[0][1].uri.base64;
+        photo.exif.Orientation = 1;
+       console.log("I TOOOK A PHOTO!!!")
+       });
+       if(fl){
+         this.props.navigation.navigate('Home');
+       }
 
-        fetch('http://18.237.79.152:5000/uploadImage', {
-              method: 'POST',
-              headers: {
-                  Accept: 'application/json',
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                'img_data': myuri,
-              }),
-          }).then((res) => {
-              console.log("I WORKED!")
-          }).catch((res) => {
-              console.log("err", res)
-          });
-
-          photo.exif.Orientation = 1;
-           console.log("I TOOOK A PHOTO!!!")
-           });
      }
+  }
+
+  showButton(){
+    console.log("FEAWFAEW " + this.state.flag);
+    if(this.state.flag){
+      console.log("Steve");
+      let buttons = [];
+
+      buttons.push(
+        <TouchableOpacity
+          style={{position: "absolute", top: '30%', right: '25%', alignItems: 'center', backgroundColor:"#FF8C00", borderRadius: 10, opacity:.5}}
+          onPress={() => this.snapPhoto(false)}
+          key="41"
+        >
+        <Text
+        style={{fontSize:40,}}
+        > Extend </Text>
+        </TouchableOpacity>
+      )
+
+      buttons.push(
+        <TouchableOpacity
+          style={{position: "absolute", top: '50%', right: '25%', alignItems: 'center', backgroundColor:"#FF8C00", borderRadius: 10, opacity:.5}}
+          onPress={() => this.snapPhoto(true)}
+          key="42"
+        >
+        <Text
+        style={{fontSize:40,}}
+        > Submit </Text>
+        </TouchableOpacity>
+      )
+      return buttons;
+    }else{
+      return;
+    }
   }
 
   render() {
@@ -86,24 +150,27 @@ class CameraExample extends React.Component {
                 backgroundColor: 'transparent',
                 flexDirection: 'row',
               }}>
+
               <Svg height="100%"  width="100%">
-                <Rect x={SCREEN_WIDTH/9} y={SCREEN_HEIGHT/10} width={SCREEN_WIDTH - SCREEN_WIDTH/9 - SCREEN_WIDTH/9} height={SCREEN_HEIGHT - SCREEN_HEIGHT/10 - (2 * SCREEN_HEIGHT/10)} fill="orange" strokeWidth="2" stroke="orange" strokeOpacity=".8" fillOpacity="0" />
-                <Rect x={0} y={0} width={SCREEN_WIDTH/9} height={SCREEN_HEIGHT} fill="orange" strokeWidth="0" stroke="orange" strokeOpacity=".6" fillOpacity=".2" />
-                <Rect x={SCREEN_WIDTH/9} y={0} width={SCREEN_WIDTH} height={SCREEN_HEIGHT/10} fill="orange" strokeWidth="0" stroke="orange" strokeOpacity=".6" fillOpacity=".2" />
-                <Rect x={SCREEN_WIDTH - SCREEN_WIDTH/9} y={SCREEN_HEIGHT/10} width={SCREEN_WIDTH} height={SCREEN_HEIGHT} fill="orange" strokeWidth="0" stroke="orange" strokeOpacity=".6" fillOpacity=".2" />
-                <Rect x={SCREEN_WIDTH/9} y={SCREEN_HEIGHT - SCREEN_HEIGHT/10 - (1 * SCREEN_HEIGHT/10)} width={SCREEN_WIDTH- 2*SCREEN_WIDTH/9} height={SCREEN_HEIGHT} fill="orange" strokeWidth="0" stroke="green" strokeOpacity=".6" fillOpacity=".2" />
+                <Rect x={SCREEN_WIDTH/25} y={SCREEN_HEIGHT/6.5} width={SCREEN_WIDTH - SCREEN_WIDTH/25 - SCREEN_WIDTH/25} height={SCREEN_HEIGHT - SCREEN_HEIGHT/6.5 - (2 * SCREEN_HEIGHT/6.5)} fill="orange" strokeWidth="2" stroke="orange" strokeOpacity=".8" fillOpacity="0" />
+
+                <Rect x={0} y={0} width={SCREEN_WIDTH/25} height={SCREEN_HEIGHT} fill="orange" strokeWidth="0" stroke="orange" strokeOpacity=".6" fillOpacity=".2" />
+                <Rect x={SCREEN_WIDTH/25} y={0} width={SCREEN_WIDTH} height={SCREEN_HEIGHT/6.5} fill="orange" strokeWidth="0" stroke="orange" strokeOpacity=".6" fillOpacity=".2" />
+                <Rect x={SCREEN_WIDTH - SCREEN_WIDTH/25} y={SCREEN_HEIGHT/6.5} width={SCREEN_WIDTH} height={SCREEN_HEIGHT} fill="orange" strokeWidth="0" stroke="orange" strokeOpacity=".6" fillOpacity=".2" />
+                <Rect x={SCREEN_WIDTH/25} y={SCREEN_HEIGHT - SCREEN_HEIGHT/6.5 - (1 * SCREEN_HEIGHT/6.5)} width={SCREEN_WIDTH - SCREEN_WIDTH/12.5} height={SCREEN_HEIGHT} fill="orange" strokeWidth="0" stroke="green" strokeOpacity=".6" fillOpacity=".2" />
               </Svg>
+              {this.showButton()}
               <TouchableOpacity style={{
                   position: "absolute",
                   top: '77%',
                   right: '41%',
                   alignItems: 'center',
                 }}
-                onPress={this.snapPhoto.bind(this)}>
+                onPress={() => this.setState({ flag: true })}
+                >
                 <Image style={{width: 75, height: 75}} source={require('../assets/capture.png')}
                 />
               </TouchableOpacity>
-
             </View>
           </Camera>
         </View>

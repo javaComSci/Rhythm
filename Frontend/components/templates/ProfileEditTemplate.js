@@ -14,11 +14,11 @@ var ProfileEditTemplate = function () {
                 </ScrollView>
                 <View>
                     <KeyboardAvoidingView keyboardVerticalOffset={-500} behavior="padding" style={styles.textHolder} enabled>
-                        <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1, color: "white" }}
+                        <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1, color: "black" }}
                             placeholder="Name"
                             onChangeText={(nameText) => this.setState({ nameText })}
                             value={this.state.nameText} />
-                        <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1, color: "white" }}
+                        <TextInput style={{ height: 50, width: '80%', borderColor: 'gray', borderWidth: 1, color: "black" }}
                             placeholder="Email"
                             onChangeText={(emailText) => this.setState({ emailText })}
                             value={this.state.emailText} />

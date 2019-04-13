@@ -90,6 +90,12 @@ class CameraScreen extends React.Component {
         })
     }
 
+    updateActiveSheet = function (val) {
+        this.setState({
+            selectedSheet: val,
+        })
+    }
+
     navToCamera = function () {
         this.props.dispatchAddTarget([this.state.selectedComposition, this.state.selectedSheet]);
         this.props.navigation.navigate('CameraScreen')
@@ -154,6 +160,7 @@ class CameraScreen extends React.Component {
                 });
                 that.setState({ "sheet_music": dummyList })
                 that.sheetList = dummyList.map(sheet => ({ value: sheet.getID(), label: sheet.getTitle(), color: "red" }))
+                that.sheetList.unshift({ value: -1, label: 'New Sheet Music...', color: "orange" })
                 that.setState({
                     sheetList: that.sheetList,
                 })
@@ -186,7 +193,7 @@ class CameraScreen extends React.Component {
             <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
                 <View>
                     <View>
-                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 30, width: "80%" }}> Select composition </Text>
+                        <Text style={{ color: 'black', fontWeight: 'bold', fontSize: 30, width: "80%" }}> Select composition </Text>
                     </View>
                     <View>
                         <RNPickerSelect
@@ -196,7 +203,11 @@ class CameraScreen extends React.Component {
                                 console.log("new value: ", value)
                                 if (value == -1) {
                                     // Create new composition
-                                    Alert.alert("hi");
+                                    this.props.navigation.navigate('Composition', {
+                                        cameFromCamera: true, onGoBack: () => {
+                                            this.getInfo()
+                                        }
+                                    })
                                 }
                                 this.updateActiveComposition(value)
                             }}>
@@ -204,16 +215,28 @@ class CameraScreen extends React.Component {
                     </View>
                     <View style={styles.lineBreak} />
                     <View>
-                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 30, width: "80%" }}> Select sheet music </Text>
+                        <Text style={{ color: 'black', fontWeight: 'bold', fontSize: 30, width: "80%" }}> Select sheet music </Text>
                     </View>
                     <View>
                         <RNPickerSelect
                             placeholder={placeholder}
                             items={this.state.sheetList}
                             onValueChange={(value) => {
-                                this.setState({
-                                    selectedSheet: value,
-                                })
+                                if (value == -1) {
+                                    //this.props.navigation.navigate('CompositionScreen', {cameFromCamera: true})
+                                    if (this.state.selectedComposition < 1) {
+                                        Alert.alert("Need to select a composition")
+                                    }
+                                    else {
+                                        this.props.navigation.navigate('ViewCompScreen', {
+                                            composition: this.state.selectedComposition,
+                                            cameFromCamera: true, onGoBack: () => {
+                                                this.getSheet()
+                                            }
+                                        })
+                                    }
+                                }
+                                this.updateActiveSheet(value)
                             }}>
                         </RNPickerSelect>
                     </View>

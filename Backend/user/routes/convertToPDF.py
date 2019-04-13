@@ -3,6 +3,10 @@ import json
 import math
 import cv2
 import numpy as np
+import img2pdf
+from PIL import Image
+from PIL import ImageFont
+from PIL import ImageDraw 
 
 # boundaries for the lines
 colLeft = 200
@@ -52,27 +56,40 @@ def getNoteType(note, pitch, length):
 	return noteType
 
 
+def createTitle(sheetid):
+	# total size needed for numpy array, which is A4 size
+	# 5900 is the ideal space for a single page
+	notesArr = np.ones((5350 * 5, 4550))
 
-def createLines(notes):
+	for i in range(1125, 3375):
+		for j in range(4):
+			notesArr[400 + j][i] = 0
+
+	for i in range(1800, 2700):
+		for j in range(4):
+			notesArr[550 + j][i] = 0
+
+	return notesArr
+
+
+def createLines(notesArr, notes):
+
 	duration = 0
 
 	# find total duration of notes
 	for note in notes['notes']:
 		duration += note['length']
 
-	duration *= 4
-
 	# find number of measures needed
 	measures = int(math.ceil(duration/4))
 
 	# find number of staff lines needed
-	staffLines = int(math.ceil(measures/4))
+	staffLines = int(math.ceil(duration/16))
 
-	# total size needed for numpy array, which is A4 size
-	notesArr = np.ones((6300, 4550))
+	print("MEASURES", measures, staffLines)
 
 	# initial starting point for putting the pixels
-	row = 400
+	row = 1000
 
 	staffLinesStartingPos = []
 
@@ -156,7 +173,7 @@ def placeClefs(notesData, notesArr, staffLinesStartingPos):
 		for staffLineStartingPos in staffLinesStartingPos:
 
 			# current column position on the staff line
-			column = 200
+			column = 150
 
 			# put gclef
 			if staffLineCount % 2 == 0:
@@ -192,7 +209,7 @@ def placeClefs(notesData, notesArr, staffLinesStartingPos):
 		for staffLineStartingPos in staffLinesStartingPos:
 
 			# current column position on the staff line
-			column = 200
+			column = 150
 
 			# for the rows in the clef
 			for i in range(imgTrebleResized.shape[0]):
@@ -216,7 +233,7 @@ def placeClefs(notesData, notesArr, staffLinesStartingPos):
 		for staffLineStartingPos in staffLinesStartingPos:
 
 			# current column position on the staff line
-			column = 200
+			column = 150
 
 			# for the rows in the clef
 			for i in range(imgBassResized.shape[0]):
@@ -240,7 +257,7 @@ def placeClefs(notesData, notesArr, staffLinesStartingPos):
 		for staffLineStartingPos in staffLinesStartingPos:
 
 			# current column position on the staff line
-			column = 200
+			column = 150
 
 			# for the rows in the clef
 			for i in range(imgAltoResized.shape[0]):
@@ -258,12 +275,12 @@ def placeClefs(notesData, notesArr, staffLinesStartingPos):
 
 
 
-def placeTime(notesData, notesArr, staffLinesStartingPoss):
+def placeTime(notesData, notesArr, staffLinesStartingPos):
 	imgTime = cv2.imread('./assets/44time.jpg', cv2.IMREAD_GRAYSCALE)
 	(thresh, imgTimeBW) = cv2.threshold(imgTime, 50, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 	imgTimeResized = cv2.resize(imgTimeBW, (150, 250))
 
-	currCol = colLeft + 200
+	currCol = colLeft + 150
 
 	for staffLineStartingPos in staffLinesStartingPos:
 
@@ -285,7 +302,7 @@ def placeTime(notesData, notesArr, staffLinesStartingPoss):
 def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingPos):
 
 	# must start at position now in terms of the columns
-	currColumn = 600
+	currColumn = 450
 
 	durationCount = 0
 
@@ -306,6 +323,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
 		# check the note type and do spacing and fill in note
 		if noteType == 'sixteenth':
+			print("sixteenth")
 
 			# through the row
 			for i in range(imgNoteResized.shape[0]):
@@ -331,7 +349,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 			currColumn = currColumn + 50
 
 		elif noteType == 'eighth':
-
+			print("eighth")
 			# through the row
 			for i in range(imgNoteResized.shape[0]):
 
@@ -356,7 +374,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 			currColumn = currColumn + 100
 
 		elif noteType == 'quarter':
-
+			print("quarter")
 			# through the row
 			for i in range(imgNoteResized.shape[0]):
 
@@ -381,7 +399,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 			currColumn = currColumn + imgNoteResized.shape[1] + 100
 
 		elif noteType == 'half':
-
+			print("half")
 			# through the row
 			for i in range(imgNoteResized.shape[0]):
 
@@ -406,8 +424,8 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 			currColumn = currColumn + imgNoteResized.shape[1] + 320
 
 
-		elif noteType == 'whole':
-
+		elif noteType == 'whole':	
+			print("whole")
 			# through the row
 			for i in range(imgNoteResized.shape[0]):
 
@@ -428,7 +446,14 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
 						notesArr[pixelRow + i][pixelCol] = 0
 
+			# move the column position for spacing after the note
+			currColumn = currColumn + imgNoteResized.shape[1] + 500
+
+
 		elif noteType == 'sharp':
+			print("sharp")
+			imgNoteResized = cv2.resize(imgNoteResized, (70, 70))
+
 			# through the row
 			for i in range(imgNoteResized.shape[0]):
 
@@ -437,12 +462,25 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
 					if imgNoteResized[i][j] == 0:
 					# check if there is note there
-						notesArr[staffLinesStartingPos[k] + (note['pitch'] * 10)][currColumn + j] = 0
+
+						# need to shift everything up first so that the bottom of the note is first touching the top of the line
+						pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0]
+
+						# need to shift the note down for the pitch
+						pixelRow = pixelRow + 10
+
+						# keep track of the column needed
+						pixelCol = currColumn + j
+
+						notesArr[pixelRow + i][pixelCol] = 0
 
 			# move the column position for spacing after the note
-			currColumn = currColumn + imgNoteResized.shape[1] + 5
+			# currColumn = currColumn + 10
 
 		elif noteType == 'flat':
+			print("falt")
+			imgNoteResized = cv2.resize(imgNoteResized, (70, 70))
+
 			# through the row
 			for i in range(imgNoteResized.shape[0]):
 
@@ -451,12 +489,23 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
 					if imgNoteResized[i][j] == 0:
 					# check if there is note there
-						notesArr[staffLinesStartingPos[k] + (note['pitch'] * 10)][currColumn + j] = 0
+
+						# need to shift everything up first so that the bottom of the note is first touching the top of the line
+						pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0]
+
+						# need to shift the note down for the pitch
+						pixelRow = pixelRow + 10
+
+						# keep track of the column needed
+						pixelCol = currColumn + j
+
+						notesArr[pixelRow + i][pixelCol] = 0
 
 			# move the column position for spacing after the note
-			currColumn = currColumn + imgNoteResized.shape[1] + 5
+			# currColumn = currColumn + 10
 
-		elif noteType == 'eighthrest' or noteType == 'quarterrest' or noteType == 'wholerest':
+		elif noteType == 'eighthrest' or noteType == 'quarterrest':
+			print("rest-eighth")
 			# through the row
 			for i in range(imgNoteResized.shape[0]):
 
@@ -464,15 +513,82 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 				for j in range(imgNoteResized.shape[1]):
 
 					if imgNoteResized[i][j] == 0:
-					# check if there is note there
-						notesArr[staffLinesStartingPos[k] + (note['pitch'] * 10)][currColumn + j] = 0
+						# need to shift everything up first so that the bottom of the note is first touching the top of the line
+						pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0]
+
+						# need to shift the note down for the pitch
+						pixelRow = pixelRow + 200
+
+						# keep track of the column needed
+						pixelCol = currColumn + j
+
+						notesArr[pixelRow + i][pixelCol] = 0
+
+			if noteType == 'eighthrest':
+				# move the column position for spacing after the note
+				currColumn = currColumn + imgNoteResized.shape[1] - 25
+			elif noteType == 'quarterrest':
+				# move the column position for spacing after the note
+				currColumn = currColumn + imgNoteResized.shape[1] + 100
+
+		elif noteType == 'halfrest':
+			print("halfrest")
+			imgNoteResized = cv2.resize(imgNoteResized, (90, 70))
+
+			# need to move it for some space
+			currColumn = currColumn + 10
+			# through the row
+			for i in range(imgNoteResized.shape[0]):
+
+				# through the column
+				for j in range(imgNoteResized.shape[1]):
+
+					if imgNoteResized[i][j] == 0:
+						# need to shift everything up first so that the bottom of the note is first touching the top of the line
+						pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0]
+
+						# need to shift the note down for the pitch
+						pixelRow = pixelRow + 130
+
+						# keep track of the column needed
+						pixelCol = currColumn + j
+
+						notesArr[pixelRow + i][pixelCol] = 0
 
 			# move the column position for spacing after the note
-			currColumn = currColumn + imgNoteResized.shape[1] + 5
+			currColumn = currColumn + imgNoteResized.shape[1] + 290
+
+		elif noteType == 'wholerest':
+			print("wholerest")
+			imgNoteResized = cv2.resize(imgNoteResized, (230, 230))
+			print("THE SHAPE OF THE OBJECT IS ", imgNoteResized.shape)
+
+			# through the row
+			for i in range(imgNoteResized.shape[0]):
+
+				# through the column
+				for j in range(imgNoteResized.shape[1]):
+
+					if imgNoteResized[i][j] == 0:
+						# need to shift everything up first so that the bottom of the note is first touching the top of the line
+						pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0]
+
+						# need to shift the note down for the pitch
+						pixelRow = pixelRow + 141
+
+						# keep track of the column needed
+						pixelCol = currColumn + j
+
+						notesArr[pixelRow + i][pixelCol] = 0
+
+			# move the column position for spacing after the note
+			currColumn = currColumn + imgNoteResized.shape[1] + 300
+
 
 		# add to the duration of the notes
 		durationCount += note['length']
 
+		print("THE CURRENT COLUMN", currColumn)
 
 		print("MEASURE LINES POS", measureLinesStartingPos)
 		# align for the first measure
@@ -485,34 +601,64 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 		if durationCount == int(durationCount) and durationCount % 16 == 0 and durationCount != 0:
 			print "MOVIGN TO NEXT LINE"
 			k += 1
-			currColumn = 600
+			currColumn = 450
 
 	print("THIS IS IN THE NOTES ARRAY PRINTING\n\n\n\n")
 	cv2.imwrite("notes.jpg", notesArr)
 
+	return notesArr
 
 
 # returns the name of the converted pdf
-def conversion(file, fileName):
-	# fileName = 'hello.mid'
+# takes in the id of the sheet that needs to be converted
+def pdfPipeline(sheetId):
 
-	# substitute this with the place where MuseScore is stored
-	# cmd = "/Applications/MuseScore\ 3.app/Contents/MacOS/mscore -o "
+	# get the name of the sheet with the json extension
+	sheetIdWithJSONExtension = str(sheetId) + ".json"
 
-	# creating the name for the pdf
-	# pdfName = "'" + fileName[:fileName.find('.')] + '.pdf' "' "
-	# cmd = cmd + pdfName + "'" + fileName + "'"
+	notes = getNotes(sheetIdWithJSONExtension)
+	notesWithTitleLine = createTitle(sheetId)
+	notesArrWithLines, staffLinesStartingPos = createLines(notesWithTitleLine, notes)
+	notesArrWithVerticalLines, measureLinesStartingPos = createVerticalLines(notes, notesArrWithLines, staffLinesStartingPos)
+	notesArrWithClefs = placeClefs(notes, notesArrWithVerticalLines, staffLinesStartingPos)
+	notesArrWithTime = placeTime(notes, notesArrWithClefs, staffLinesStartingPos)
+	notesArrWithNotes = placeNotes(notes, notesArrWithTime, staffLinesStartingPos, measureLinesStartingPos)
 
-	# making the system call with the command for conversion
-	# os.system(cmd)
+	pdfFiles = []
 
-	return pdfName
+	#break up the image into many images
+	for i in range(5):
+		# save the image in a jpg
+		jpgName = "./convertedData/" + str(sheetId) + "number" + str(i) + ".jpg"
 
+		# break it up into multiple pieces
+		miniNotes = notesArrWithNotes[i * 5350:(i+1) * 5350,]
 
+		# checking if there are any black pixels
+		exist = False
 
-# notes = getNotes('./MusicSheet1.json')
-# notesArrWithLines, staffLinesStartingPos = createLines(notes)
-# notesArrWithVerticalLines, measureLinesStartingPos = createVerticalLines(notes, notesArrWithLines, staffLinesStartingPos)
-# notesArrWithClefs = placeClefs(notes, notesArrWithVerticalLines, staffLinesStartingPos)
-# notesArrWithTime = placeTime(notes, notesArrWithClefs, staffLinesStartingPos)
-# notesArrWithNotes = placeNotes(notes, notesArrWithTime, staffLinesStartingPos, measureLinesStartingPos)
+		# check if there are any notes in this or not
+		for j in range(miniNotes.shape[0]):
+			for k in range(miniNotes.shape[1]):
+				if miniNotes[j][k] == 0:
+					exist = True
+
+		# means that there are no black pixels and it is okay to do that
+		if exist == False:
+			break
+
+		cv2.imwrite(jpgName, miniNotes)
+
+		# get the name of the file in pdf form
+		pdfName = "./convertedData/" + str(sheetId) +"number" + str(i) + ".pdf"
+		pdfFile = open(pdfName, "wb")
+
+		# save it as the pdf
+		pdfBytes = img2pdf.convert(jpgName)
+
+		pdfFile.write(pdfBytes)
+
+		pdfFiles.append(pdfFile)
+	
+	return pdfFiles
+# pdfPipeline('./MusicSheet1')
