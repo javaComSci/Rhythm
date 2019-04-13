@@ -1,4 +1,4 @@
-##
+##i
 # Steps to make this thing run:
 # 1. export FLASK_APP=app.py => Ran in Backend/ => This will make it so you
 #    auto connect to the Virtual box/container
@@ -269,19 +269,11 @@ def checkKey():
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> ccdbc730bf0bfacb1108e3f8b7d42c3481e83b4b
 @app.route('/uploadImage', methods=['POST'])
 def uploadImage():
     print("IN PROCESS TO UPLOAD!")
     if request.method == 'POST':
-<<<<<<< HEAD
-        return camerass.cameraPipeline()
-=======
         return uploadImagess.cameraPipeline()
->>>>>>> ccdbc730bf0bfacb1108e3f8b7d42c3481e83b4b
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 

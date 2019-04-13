@@ -9,6 +9,7 @@ class SelectMusicScreen extends React.Component {
 		super(props);
 
 		let clefData = this.props.navigation.getParam('file');
+		clefData = clefData['notes'];
 		console.log("CLEF INTO");
 		console.log(clefData)
 
