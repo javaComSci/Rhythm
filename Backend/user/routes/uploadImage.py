@@ -3,6 +3,7 @@ from MySQL import MySQLConnect
 import base64
 import random
 import sys
+from conversion import conv
 
 # from NotesRecognization.conversion import conv
 
@@ -19,7 +20,8 @@ def cameraPipeline():
         compID = content['compID']
 	img = base64.b64decode(img_data)
 
-	filename = './convertedData/{}-{}.jpg'.format(sheetID, compID)
+        filename = './convertedData/{}-{}.jpg'.format(sheetID, compID)
+        global imgs
         imgs.append(filename)
             # Send to richard
 
@@ -27,7 +29,6 @@ def cameraPipeline():
 	# filePathsToConvert = []
 
 	#for img_file in img_data:
-
 	img = base64.b64decode(img_file)
 		# randInt = random.randint(1, 20000)
 		# randStr = str(randInt)
@@ -43,7 +44,7 @@ def cameraPipeline():
 	# fh.write(img_data.decode('base64'))
 	# fh.close()
         if flag == True:
-            jsonName = conversion.conv(imgs)
+            jsonName = conv(imgs)
             imgs = []
 
 	return 'cameraPipeline'
