@@ -17,7 +17,7 @@ def addSheetFile():
     sheetFile = request.files['file']
     sheetID = request.form['sheet_id']
     MySQLConnect.runQuery("UPDATE sheet_music SET file=%s WHERE sheet_id=%s", (sheetFile.read(), sheetID))
-    MySQLConnect.runQuery("SELECT file FROM sheet_music WHERE sheet_id=%s", (15))
+    # MySQLConnect.runQuery("SELECT file FROM sheet_music WHERE sheet_id=%s", (15))
     return 'addFile'
 
 def duplicateSheet():
