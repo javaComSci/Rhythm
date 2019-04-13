@@ -15,9 +15,20 @@ import ImgToBase64 from 'react-native-image-base64';
   const SCREEN_WIDTH = Dimensions.get('window').width
   const SCREEN_HEIGHT = Dimensions.get('window').height
 
-let flag = false;
+// let flag = false;
+
+let pictureData = [];
 
 class CameraExample extends React.Component {
+  constructor(props){
+    super(props);
+    pictureData = [];
+    // flag = false;
+    this.state = {
+      flag: false,
+    }
+  }
+
   state = {
     hasCameraPermission: null,
     type: Camera.Constants.Type.back,
@@ -34,17 +45,8 @@ class CameraExample extends React.Component {
     // sheet music id is this.props.target[0][1]
   }
 
-  async snapPhoto() {
+  async snapPhoto(fl) {
     console.log('Button Pressed');
-
-    if(!flag){
-      console.log("HERE");
-      flag = true;
-      this.setState({ });
-      return;
-    }
-    console.log("THERE");
-
     if (this.camera) {
        console.log('Taking photo');
        const options = { quality: 1, base64: true, fixOrientation: true,
@@ -60,40 +62,53 @@ class CameraExample extends React.Component {
         // let pizzaMan = atob(formData);
         // console.log(pizzaMan);
         // console.log(formdata._parts[1])
+        let uri = formData._parts[0][1].uri.base64;
+        // pictureData.push(formData._parts[0][1].uri.base64);
+        console.log("fl " + fl);
+        if(!fl){
+          console.log("HERE");
+          this.setState({ flag: false })
+        }
+        console.log(uri);
+          let isfinal = false;
+          // for(let i = 0; i < pictureData.lengh; i++){
+            fetch('http://18.237.79.152:5000/uploadImage', {
+                  method: 'POST',
+                  headers: {
+                      Accept: 'application/json',
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    'img_data': uri,
+                    'final': fl,
+                  }),
+              }).then((res) => {
+                  console.log("I WORKED!")
+              }).catch((res) => {
+                  console.log("err", res)
+              });
+        // }
 
-        console.log(formData._parts[0][1].uri.base64);
-        let myuri = formData._parts[0][1].uri.base64;
+        photo.exif.Orientation = 1;
+       console.log("I TOOOK A PHOTO!!!")
+       });
+       if(fl){
+         this.props.navigation.navigate('Home');
+       }
 
-        fetch('http://18.237.79.152:5000/uploadImage', {
-              method: 'POST',
-              headers: {
-                  Accept: 'application/json',
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                'img_data': myuri,
-              }),
-          }).then((res) => {
-              console.log("I WORKED!")
-          }).catch((res) => {
-              console.log("err", res)
-          });
-
-          photo.exif.Orientation = 1;
-           console.log("I TOOOK A PHOTO!!!")
-           });
      }
   }
 
   showButton(){
-    if(flag){
+    console.log("FEAWFAEW " + this.state.flag);
+    if(this.state.flag){
       console.log("Steve");
       let buttons = [];
 
       buttons.push(
         <TouchableOpacity
           style={{position: "absolute", top: '30%', right: '25%', alignItems: 'center', backgroundColor:"#FF8C00", borderRadius: 10, opacity:.5}}
-          onPress={() => console.log("Extend Clicked")}
+          onPress={() => this.snapPhoto(false)}
           key="41"
         >
         <Text
@@ -105,12 +120,12 @@ class CameraExample extends React.Component {
       buttons.push(
         <TouchableOpacity
           style={{position: "absolute", top: '50%', right: '25%', alignItems: 'center', backgroundColor:"#FF8C00", borderRadius: 10, opacity:.5}}
-          onPress={() => console.log("Submit Clicked")}
+          onPress={() => this.snapPhoto(true)}
           key="42"
         >
-          <Text
-          style={{fontSize:40,}}
-          > Submit </Text>
+        <Text
+        style={{fontSize:40,}}
+        > Submit </Text>
         </TouchableOpacity>
       )
       return buttons;
@@ -151,7 +166,8 @@ class CameraExample extends React.Component {
                   right: '41%',
                   alignItems: 'center',
                 }}
-                onPress={this.snapPhoto.bind(this)}>
+                onPress={() => this.setState({ flag: true })}
+                >
                 <Image style={{width: 75, height: 75}} source={require('../assets/capture.png')}
                 />
               </TouchableOpacity>
