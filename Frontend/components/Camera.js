@@ -81,6 +81,8 @@ class CameraExample extends React.Component {
                   body: JSON.stringify({
                     'img_data': uri,
                     'final': fl,
+                    'sheetID': this.props.target[0][1] ? this.props.target[0][1] : 0,
+                    'compID': this.props.target[0][0] ? this.props.target[0][0] : 0,
                   }),
               }).then((res) => {
                   console.log("I WORKED!")
