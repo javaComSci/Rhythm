@@ -9,9 +9,6 @@ import sys
 imgs = []
 
 def cameraPipeline():
-	sys.path.insert(0, 'NotesRecognization/conversion')
-
-	import conversion
 	
 	content = request.json
 
