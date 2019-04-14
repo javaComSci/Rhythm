@@ -1229,9 +1229,6 @@ def predict(testingIn):
 											return stringPredictions, testingIn
 
 										session4.close()
-
-						session3.close()
-
 							
 							# real note
 							elif notePrediction == 1:
@@ -1268,7 +1265,6 @@ def predict(testingIn):
 
 									session5.close()
 
-
 							# rest 
 							elif notePrediction == 2:
 
@@ -1298,6 +1294,8 @@ def predict(testingIn):
 										return stringPredictions, testingIn
 
 									session6.close()
+									
+							session3.close()
 
 		session1.close()
 
