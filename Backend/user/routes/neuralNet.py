@@ -49,18 +49,18 @@ print("TRANLSATIONS INVERSE", translationsInverse)
 
 # @return - 2d numpy arrays with training and testing data 
 # Loads the data from the numpy files
-def getData():
-	# data with lines
-	trainingIn = np.load('trainingInWithLines.npy')
-	trainingOut = np.load('trainingOutWithLines.npy')
-	testingIn = np.load('testingInWithLines.npy')
-	testingOut = np.load('testingOutWithLines.npy')
+# def getData():
+# 	# data with lines
+# 	trainingIn = np.load('/home/Rhythm/Backend/user/routes/trainingInWithLines.npy')
+# 	trainingOut = np.load('/home/Rhythm/Backend/user/routes/trainingOutWithLines.npy')
+# 	testingIn = np.load('/home/Rhythm/Backend/user/routes/testingInWithLines.npy')
+# 	testingOut = np.load('/home/Rhythm/Backend/user/routes/testingOutWithLines.npy')
 
-	# print("TRAINING IN")
-	# for i in testingIn[0]:
-		# print(i)
+# 	# print("TRAINING IN")
+# 	# for i in testingIn[0]:
+# 		# print(i)
 
-	return trainingIn, trainingOut, testingIn, testingOut
+# 	return trainingIn, trainingOut, testingIn, testingOut
 
 
 
@@ -130,7 +130,7 @@ def trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut):
 def testGeneralNN(testingIn, testingOut):
 
 	# load the general model for testing
-	model = load_model('general_model.h5')
+	model = load_model('/home/Rhythm/Backend/user/routes/general_model.h5')
 
 	# modify the labels for clefs, notes, and times for testing data
 	for t in range(0, len(testingOut)):
@@ -273,7 +273,7 @@ def trainClefNN(trainingIn, trainingOut, testingIn, testingOut):
 	model = hyperparameterTuning(clefTrainingIn, clefTrainingOut, clefTestingIn, clefTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam', epochs=8)
 
 	# save the model for later use
-	model.save('clef_model.h5')
+	model.save('/home/Rhythm/Backend/user/routes/clef_model.h5')
 
 
 
@@ -282,7 +282,7 @@ def trainClefNN(trainingIn, trainingOut, testingIn, testingOut):
 # @return - void
 # Tests the accuracy of the neural network trained with clefs
 def testClefNN(testingIn, testingOut):
-	model = load_model('clef_model.h5')
+	model = load_model('/home/Rhythm/Backend/user/routes/clef_model.h5')
 
 	cclef = translationsInverse["CClef"]
 	gclef = translationsInverse["GClef"]
@@ -445,7 +445,7 @@ def trainNoteNN(trainingIn, trainingOut, testingIn, testingOut):
 	model = hyperparameterTuning(notesTrainingIn, notesTrainingOut, notesTestingIn, notesTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam', epochs=10)
 
 	# save the model for later use
-	model.save('notes_model.h5')
+	model.save('/home/Rhythm/Backend/user/routes/notes_model.h5')
 
 
 
@@ -454,7 +454,7 @@ def trainNoteNN(trainingIn, trainingOut, testingIn, testingOut):
 # @return - void
 # Tests the accuracy of the neural network for the base
 def testNoteNN(testingIn, testingOut):
-	model = load_model('notes_model.h5')
+	model = load_model('/home/Rhythm/Backend/user/routes/notes_model.h5')
 
 	# modify the labels for notes, sharp/flat, and rests in all training data first
 	for t in range(0, len(testingOut)):
@@ -595,7 +595,7 @@ def trainExtrasNN(trainingIn, trainingOut, testingIn, testingOut):
 	model = hyperparameterTuning(extraTrainingIn, extraTrainingOut, extraTestingIn, extraTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam', epochs=5)
 
 	# save the model for later use
-	model.save('extras_model.h5')
+	model.save('/home/Rhythm/Backend/user/routes/extras_model.h5')
 
 
 # @testingIn - 2d numpy array of testing inputs
@@ -603,7 +603,7 @@ def trainExtrasNN(trainingIn, trainingOut, testingIn, testingOut):
 # @return - void
 # Tests the accuracy of the neural network trained with sharps/falts
 def testExtrasNN(testingIn, testingOut):
-	model = load_model('extras_model.h5')
+	model = load_model('/home/Rhythm/Backend/user/routes/extras_model.h5')
 
 	sharp = translationsInverse["Sharp"]
 	flat = translationsInverse["Flat"]
@@ -742,7 +742,7 @@ def trainRestNN(trainingIn, trainingOut, testingIn, testingOut):
 	model = hyperparameterTuning(restTrainingIn, restTrainingOut, restTestingIn, restTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam', epochs=3)
 
 	# save the model for later use
-	model.save('rest_model.h5')
+	model.save('/home/Rhythm/Backend/user/routes/rest_model.h5')
 
 
 # @testingIn - 2d numpy array of testing inputs
@@ -750,7 +750,7 @@ def trainRestNN(trainingIn, trainingOut, testingIn, testingOut):
 # @return - void
 # Tests the accuracy of the real note network trained with the real notes
 def testRestNN(testingIn, testingOut):
-	model = load_model('rest_model.h5')
+	model = load_model('/home/Rhythm/Backend/user/routes/rest_model.h5')
 
 	# get the inverse translations
 	eighthRest = translationsInverse["Eighth-Rest"]
@@ -917,7 +917,7 @@ def trainRealNoteNN(trainingIn, trainingOut, testingIn, testingOut):
 	model = hyperparameterTuning(realNoteTrainingIn, realNoteTrainingOut, realNoteTestingIn, realNoteTestingOut, layersForTraining, 'sparse_categorical_crossentropy', 'adam', epochs=20)
 
 	# save the model for later use
-	model.save('real_note_model.h5')
+	model.save('/home/Rhythm/Backend/user/routes/real_note_model.h5')
 
 
 # @testingIn - 2d numpy array of testing inputs
@@ -925,7 +925,7 @@ def trainRealNoteNN(trainingIn, trainingOut, testingIn, testingOut):
 # @return - void
 # Tests the accuracy of the real note network trained with the real notes
 def testRealNoteNN(testingIn, testingOut):
-	model = load_model('real_note_model.h5')
+	model = load_model('/home/Rhythm/Backend/user/routes/real_note_model.h5')
 
 	# get the inverse translations
 	sixteenthNote = translationsInverse["Sixteenth-Note"]
@@ -1122,7 +1122,7 @@ def predict(testingIn):
 		with session1.as_default():
 
 			# load general prediction model
-			model = load_model('general_model.h5')
+			model = load_model('/home/Rhythm/Backend/user/routes/general_model.h5')
 
 			# do the prediction with the general model
 			generalPredictions = model.predict(testingIn)
@@ -1161,7 +1161,7 @@ def predict(testingIn):
 						with session2.as_default():
 
 							#load clef model
-							model = load_model("clef_model.h5")
+							model = load_model("/home/Rhythm/Backend/user/routes/clef_model.h5")
 
 							# do the predictions with the clef model
 							predictions = model.predict(testingIn)
@@ -1191,7 +1191,7 @@ def predict(testingIn):
 						with session3.as_default():
 
 							#load general notes model
-							model = load_model("notes_model.h5")
+							model = load_model("/home/Rhythm/Backend/user/routes/notes_model.h5")
 
 							# do the predictions on the notes model
 							predictions = model.predict(testingIn)
@@ -1212,7 +1212,7 @@ def predict(testingIn):
 										with session4.as_default():
 
 											#load extras model
-											model = load_model("extras_model.h5")
+											model = load_model("/home/Rhythm/Backend/user/routes/extras_model.h5")
 
 											predictions = model.predict(testingIn)
 
@@ -1240,7 +1240,7 @@ def predict(testingIn):
 									with session5.as_default():
 
 										#load model real note model
-										model = load_model("real_note_model.h5")
+										model = load_model("/home/Rhythm/Backend/user/routes/real_note_model.h5")
 
 										predictions = model.predict(testingIn)
 	
@@ -1273,7 +1273,7 @@ def predict(testingIn):
 									with session6.as_default():
 
 										#load rest model
-										model = load_model("rest_model.h5")
+										model = load_model("/home/Rhythm/Backend/user/routes/rest_model.h5")
 
 										predictions = model.predict(testingIn)
 	
