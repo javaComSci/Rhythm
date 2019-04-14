@@ -158,10 +158,14 @@ def conv(filepaths):
 	#print("bigData")
 	#print(bigData)
 
-	with open('data.txt', 'w') as outfile:  
+	with open('{}.txt'.format(sheet_id), 'w') as outfile:  
 		json.dump(jsonData, outfile)
         print("AFTER TEH WROTE")
+
 	sendToCloud.cloud(jsonData,sheet_id)
+
+	return '{}.txt'.format(sheet_id)
+
 
 	# MF = MIDImaker.MIDImaker()
 	# MF.add_track(SOL)
