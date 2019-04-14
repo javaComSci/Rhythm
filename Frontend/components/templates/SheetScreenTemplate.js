@@ -15,7 +15,7 @@ var SheetScreenTemplate = function () {
 
     let sheet_ids = [];
     // to get all the sheet ids
-    for(let i = 0; i < this.state.sheet_music.length; i++){
+    for (let i = 0; i < this.state.sheet_music.length; i++) {
         sheet_ids.push(this.state.sheet_music[i].getID());
     }
 
@@ -44,6 +44,18 @@ var SheetScreenTemplate = function () {
                         <TouchableOpacity style={styles.neutralButton} onPress={() => this.setState({ "duplicateVisible": true })}>
                             <Text style={styles.buttonText}>Duplicate</Text>
                         </TouchableOpacity>
+                        <TouchableOpacity style={styles.neutralButton}
+                            onPress={() => this.props.navigation.navigate('ViewExportScreen', {
+                                sheet_ids,
+                                email: this.props.isRegistered,
+                            })}
+                        >
+                            <Icon
+                                name="mail"
+                                size={15}
+                                color="white"
+                            />
+                        </TouchableOpacity>
                         {/* <TouchableOpacity style={styles.neutralButton} onPress={() => this.props.navigation.navigate('EditMusicScreen', {title: ""})}>
                             <Text style={styles.buttonText}>Edit</Text>
                         </TouchableOpacity> */}
@@ -52,20 +64,6 @@ var SheetScreenTemplate = function () {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <Button
-                      onPress={() => this.props.navigation.navigate('ViewExportScreen', {
-                         sheet_ids,
-                         email: this.props.isRegistered,
-                      })}
-                      icon={
-                        <Icon
-                          name="mail"
-                          size={15}
-                          color="white"
-                        />
-                      }
-                    type="clear"
-                />
 
                 <Text style={{ color: 'black', }}>{compositionDescription}</Text>
                 <ScrollView>
@@ -100,10 +98,10 @@ var SheetScreenTemplate = function () {
 
                                 <TouchableOpacity
                                     onPress={(e) => {
-                                        this.props.navigation.navigate('SelectMusicScreen', {title: item.getTitle(), sheet_id: item.getID(), file: item.getFile()})
+                                        this.props.navigation.navigate('SelectMusicScreen', { title: item.getTitle(), sheet_id: item.getID(), file: item.getFile() })
                                     }}
                                 >
-                                    <Text style={{color: 'black', backgroundColor: 'white', borderRadius: 2, borderWidth: 3, borderColor: 'black', fontSize: 20}}> {item.getInstrument() ? item.getInstrument() : "Piano"} </Text>
+                                    <Text style={{ color: 'black', backgroundColor: 'white', borderRadius: 2, borderWidth: 3, borderColor: 'black', fontSize: 20 }}> {item.getInstrument() ? item.getInstrument() : "Piano"} </Text>
                                 </TouchableOpacity>
                                 <View style={styles.lineBreak} />
                             </View>}
