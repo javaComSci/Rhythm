@@ -629,11 +629,11 @@ class EditMusicScreen extends React.Component {
             <Button
               onPress={() => this.props.navigation.navigate('ViewExportScreen', {
                  sheet_ids: this.state.sheet_ids,
-                 email: this.state.email,
+                 email: this.state.email
               })}
               icon={
                 <Icon
-                  name="right"
+                  name="mail"
                   size={15}
                   color="white"
                 />

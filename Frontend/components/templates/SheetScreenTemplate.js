@@ -1,6 +1,7 @@
 import React from 'react';
 import { TextInput, FlatList, TouchableOpacity, Button, ScrollView, StyleSheet, Text, View, KeyboardAvoidingView, ImageBackground } from 'react-native';
 import DialogInput from 'react-native-dialog-input';
+import Icon from 'react-native-vector-icons/AntDesign'
 
 var styles = require('../../style')
 var background = require('../../assets/backgroundImage.png')
@@ -10,6 +11,14 @@ var SheetScreenTemplate = function () {
     const compositionID = navigation.getParam('compositionID', 'NO_ID');
     const compositionTitle = navigation.getParam('compositionTitle', 'NO_TITLE')
     const compositionDescription = navigation.getParam('compositionDescription', '')
+
+
+    let sheet_ids = [];
+    // to get all the sheet ids
+    for(let i = 0; i < this.state.sheet_music.length; i++){
+        sheet_ids.push(this.state.sheet_music[i].getID());
+    }
+
     return (
         <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
             <View style={styles.container}>
@@ -43,6 +52,20 @@ var SheetScreenTemplate = function () {
                         </TouchableOpacity>
                     </View>
                 </View>
+                <Button
+                      onPress={() => this.props.navigation.navigate('ViewExportScreen', {
+                         sheet_ids,
+                         email: this.props.isRegistered,
+                      })}
+                      icon={
+                        <Icon
+                          name="mail"
+                          size={15}
+                          color="white"
+                        />
+                      }
+                    type="clear"
+                />
 
                 <Text style={{ color: 'black', }}>{compositionDescription}</Text>
                 <ScrollView>

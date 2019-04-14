@@ -63,7 +63,7 @@ def getNoteType(note, pitch, length):
 def createTitle(sheetid):
     # total size needed for numpy array, which is A4 size
     # 5900 is the ideal space for a single page
-    notesArr = np.ones((5350 * 5, 4550))
+    notesArr = np.ones((5350 * 3, 4550))
 
     for i in range(1125, 3375):
         for j in range(4):
