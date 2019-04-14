@@ -14,9 +14,21 @@ def conv(filepaths):
 	bigData = {}
 	bigData['clef'] = 1
 	bigData['notes'] = []
-
+        
+        count = 0
+        sheet_id = ""
 	for file_path in filepaths:
-                print("FILE PATH", filePath)
+                if count == 0:
+                    indy = file_path.find('-')
+                    for i in range(indy-1, 0, -1):
+                        if file_path[i] == '/':
+                            break
+
+                        sheet_id = file_path[i] + sheet_id
+                count = 1
+
+                print("SHEET ID", sheet_id)
+                print("FILE PATH", file_path)
                 
 		mask, SOL, staff_lines = partition.full_partition(file_path)
                 print("AFTER PARITIOTN")
@@ -149,7 +161,7 @@ def conv(filepaths):
 	with open('data.txt', 'w') as outfile:  
 		json.dump(jsonData, outfile)
         print("AFTER TEH WROTE")
-	sendToCloud.cloud(jsonData)
+	sendToCloud.cloud(jsonData,sheet_id)
 
 	# MF = MIDImaker.MIDImaker()
 	# MF.add_track(SOL)

@@ -1138,14 +1138,14 @@ def predict(testingIn):
 
 				# find the value that was predicted
 
-				overallPredictions[i] = np.argmax(generalPredictions[i])
+				# overallPredictions[i] = np.argmax(generalPredictions[i])
 				print("PREDICTION WAS", generalPredictions[i], generalPredictions[i][0])
 
 				# find the value that was predicted
-				# if generalPredictions[i][0] < 0.5:
-					# overallPredictions[i] = 0
-				# else:
-					# overallPredictions[i] = 1
+				if generalPredictions[i][0] < 0.5:
+					overallPredictions[i] = 0
+				else:
+					overallPredictions[i] = 1
 
 				# if it was a clef
 				if overallPredictions[i] == 0:
@@ -1178,6 +1178,8 @@ def predict(testingIn):
 								stringPredictions.append('FClef')
 
 							return stringPredictions, testingIn
+
+						session2.close()
 
 				else:
 
@@ -1226,6 +1228,7 @@ def predict(testingIn):
 
 											return stringPredictions, testingIn
 
+										session4.close()
 							
 							# real note
 							elif notePrediction == 1:
@@ -1260,6 +1263,7 @@ def predict(testingIn):
 
 										return stringPredictions, testingIn
 
+									session5.close()
 
 							# rest 
 							elif notePrediction == 2:
@@ -1288,6 +1292,13 @@ def predict(testingIn):
 											stringPredictions.append('Whole-Half-Rest')
 
 										return stringPredictions, testingIn
+
+									session6.close()
+									
+							session3.close()
+
+		session1.close()
+
 
 
 
