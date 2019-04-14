@@ -90,7 +90,7 @@ def createLines(notesArr, notes):
     # find number of staff lines needed
     staffLines = int(math.ceil(duration/16))
 
-    print("MEASURES", duration, measures, staffLines)
+    # print("MEASURES", duration, measures, staffLines)
 
     # initial starting point for putting the pixels
     row = 1000
@@ -121,7 +121,7 @@ def createLines(notesArr, notes):
 
 
     notesArr = notesArr * 255
-    cv2.imwrite("lines.jpg", notesArr)
+    # cv2.imwrite("lines.jpg", notesArr)
 
     return notesArr, staffLinesStartingPos
 
@@ -224,7 +224,7 @@ def placeClefs(notesData, notesArr, staffLinesStartingPos):
                     if imgTrebleResized[i][j] == 0:
                         notesArr[i + staffLineStartingPos][j + column] = 0
 
-        cv2.imwrite("clefs.jpg", notesArr)
+       #  cv2.imwrite("clefs.jpg", notesArr)
 
 
     elif notesData['clef'] == 2:
@@ -248,7 +248,7 @@ def placeClefs(notesData, notesArr, staffLinesStartingPos):
                     if imgBassResized[i][j] == 0:
                         notesArr[i + staffLineStartingPos][j + column] = 0
 
-        cv2.imwrite("clefs.jpg", notesArr)
+        # cv2.imwrite("clefs.jpg", notesArr)
 
 
     elif notesData['clef'] == 3:
@@ -272,7 +272,7 @@ def placeClefs(notesData, notesArr, staffLinesStartingPos):
                     if imgAltoResized[i][j] == 0:
                         notesArr[i + staffLineStartingPos][j + column] = 0
 
-        cv2.imwrite("clefs.jpg", notesArr)
+        # cv2.imwrite("clefs.jpg", notesArr)
 
 
     # return the modified notes array with the clefs
@@ -298,7 +298,7 @@ def placeTime(notesData, notesArr, staffLinesStartingPos):
                 if imgTimeResized[i][j] == 0:
                     notesArr[staffLineStartingPos + i - 20][currCol + j] = 0
 
-    cv2.imwrite("time.jpg", notesArr)
+    # cv2.imwrite("time.jpg", notesArr)
 
     return notesArr
 
@@ -632,7 +632,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
             
 
     print("THIS IS IN THE NOTES ARRAY PRINTING\n\n\n\n")
-    cv2.imwrite("notes.jpg", notesArr)
+    # cv2.imwrite("notes.jpg", notesArr)
 
     return notesArr
 

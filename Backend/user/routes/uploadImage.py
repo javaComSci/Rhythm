@@ -3,7 +3,7 @@ from MySQL import MySQLConnect
 import base64
 import random
 import sys
-# from conversion import conv
+from conversion import conv
 
 # from NotesRecognization.conversion import conv
 
@@ -19,21 +19,26 @@ def cameraPipeline():
 	sheetID = content['sheetID']
 	compID = content['compID']
 
-	filename = './convertedData/{}-{}.jpg'.format(sheetID, compID)
-	global imgs
-	imgs.append(filename)
+        filename = '/home/Rhythm/Backend/user/routes/convertedData/{}-{}.jpg'.format(sheetID, compID)
+        global imgs
+        imgs.append(filename)
+            # Send to richard
 
-	img = base64.b64decode(img_file)
-	# randInt = random.randint(1, 20000)
-	# randStr = str(randInt)
-	# filename = randStr + '.jpg'
+
+	# filePathsToConvert = []
+
+	#for img_file in img_data:
+	img = base64.b64decode(img_data)
+		# randInt = random.randint(1, 20000)
+		# randStr = str(randInt)
+		# filename = randStr + '.jpg'
 
 	with open(filename, 'wb') as f:
 	    f.write(img)
 
 	# check if all images have been recieved
 	if flag == True:
-	    # jsonName = conv(imgs)
+	    jsonName = conv(imgs)
 	    imgs = []
 
 	return 'cameraPipeline'
