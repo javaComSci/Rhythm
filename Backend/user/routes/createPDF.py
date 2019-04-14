@@ -446,6 +446,8 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
 
         elif noteType == 'whole':   
+            imgNoteResized = cv2.resize(imgNoteResized, (250, 200))
+
             print("whole")
             # through the row
             for i in range(imgNoteResized.shape[0]):
@@ -723,7 +725,7 @@ def exportPDF(mail, app):
         # pdfNames = pdfPipeline(sheet_id, file)
 
         # json for testing purpose
-        file = open('./MusicSheet3.json')
+        file = open('./MusicSheet1.json')
         notes = json.load(file)
         file.close()
 
