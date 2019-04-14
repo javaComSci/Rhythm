@@ -30,7 +30,7 @@ class ProfileScreen extends React.Component {
 
     getInfo = function () {
         const that = this; // a reference to the previous value of "this" is required as there is a context change going into the promise of the fetch
-        fetch('http://18.237.79.152:5000/getInfo', {
+        fetch('http://68.183.140.180:5000/getInfo', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -71,7 +71,7 @@ class ProfileScreen extends React.Component {
             // only email, no name
             updateInfo = ['email']
             updateInfo.push(this.state.emailText);
-            fetch('http://18.237.79.152:5000/update', {
+            fetch('http://68.183.140.180:5000/update', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -94,7 +94,7 @@ class ProfileScreen extends React.Component {
             // only name, no email
             updateInfo = ['name'];
             updateInfo.push(this.state.nameText);
-            fetch('http://18.237.79.152:5000/update', {
+            fetch('http://68.183.140.180:5000/update', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -118,7 +118,7 @@ class ProfileScreen extends React.Component {
             updateInfo.push(this.state.emailText);
             updateInfo.push('name');
             updateInfo.push(this.state.nameText);
-            fetch('http://18.237.79.152:5000/updateMulti', {
+            fetch('http://68.183.140.180:5000/updateMulti', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',

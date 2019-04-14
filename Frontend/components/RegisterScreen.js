@@ -73,7 +73,7 @@ class RegisterScreen extends React.Component {
             Alert.alert("Please enter a verification code")
             return
         }
-        fetch('http://18.237.79.152:5000/checkKey', {
+        fetch('http://68.183.140.180:5000/checkKey', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -116,7 +116,7 @@ class RegisterScreen extends React.Component {
         that.setState({
             loading: true
         })
-        fetch('http://18.237.79.152:5000/recoverEmail', {
+        fetch('http://68.183.140.180:5000/recoverEmail', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -154,7 +154,7 @@ class RegisterScreen extends React.Component {
             Alert.alert("Please enter an email address");
             return;
         }
-        fetch('http://18.237.79.152:5000/register', {
+        fetch('http://68.183.140.180:5000/register', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

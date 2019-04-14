@@ -61,7 +61,7 @@ class CompositionScreen extends React.Component {
     getInfo = function () {
         const that = this; // a reference to the previous value of "this" is required as there is a context change going into the promise of the fetch
         console.log("USER ID:", that.props.id)
-        fetch('http://18.237.79.152:5000/getInfo', {
+        fetch('http://68.183.140.180:5000/getInfo', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -105,7 +105,7 @@ class CompositionScreen extends React.Component {
 
     makeCompositionCall() {
         const that = this;
-        fetch('http://18.237.79.152:5000/newComposition', {
+        fetch('http://68.183.140.180:5000/newComposition', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -136,7 +136,7 @@ class CompositionScreen extends React.Component {
             'title': newName,
             'comp_id': parseInt(that.state.toEdit[1]),
         }
-        fetch('http://18.237.79.152:5000/duplicateComposition', {
+        fetch('http://68.183.140.180:5000/duplicateComposition', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -169,7 +169,7 @@ class CompositionScreen extends React.Component {
         deleteArr = ['name']
         const that = this;
         deleteArr.push(this.state.deleteText)
-        fetch('http://18.237.79.152:5000/delete', {
+        fetch('http://68.183.140.180:5000/delete', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

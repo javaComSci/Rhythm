@@ -41,7 +41,7 @@ class SelectMusicScreen extends React.Component {
 	chooseInstrument(instrument) {
 		console.log("YOU CHOSE" + instrument + "  with sheet id as " + this.state.sheet_id + " " + this.props.testing);
 
-		fetch('http://18.237.79.152:5000/selectInstrument', {
+		fetch('http://68.183.140.180:5000/selectInstrument', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',

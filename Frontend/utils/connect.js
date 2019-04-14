@@ -1,5 +1,5 @@
 export default class Connection {
-    static url = "http://18.237.79.152:5000"
+    static url = "http://68.183.140.180:5000"
 
     static connect(endpoint, method, body, flags, callback) {
         const request = {

@@ -72,7 +72,7 @@ class CameraExample extends React.Component {
         console.log(uri);
           let isfinal = false;
           // for(let i = 0; i < pictureData.lengh; i++){
-            fetch('http://18.237.79.152:5000/uploadImage', {
+            fetch('http://68.183.140.180:5000/uploadImage', {
                   method: 'POST',
                   headers: {
                       Accept: 'application/json',

@@ -29,7 +29,7 @@ class ViewExportScreen extends React.Component{
   		if (this.state.email != '') {
             // has entered email
             console.log("IN HERE");
-            fetch('http://18.237.79.152:5000/createPDF', {
+            fetch('http://68.183.140.180:5000/createPDF', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',

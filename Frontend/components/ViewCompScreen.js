@@ -88,7 +88,7 @@ class ViewCompScreen extends React.Component {
         await Audio.setIsEnabledAsync(true);
         const soundObject = new Audio.Sound();
         try {
-            await soundObject.loadAsync({ uri: 'http://18.237.79.152:5000/getSong?sheetid=' + sheet_id });
+            await soundObject.loadAsync({ uri: 'http://68.183.140.180:5000/getSong?sheetid=' + sheet_id });
             await soundObject.playAsync();
             // Your sound is playing!
         } catch (error) {
@@ -99,7 +99,7 @@ class ViewCompScreen extends React.Component {
 
     getInfo = function () {
         const that = this; // a reference to the previous value of "this" is required as there is a context change going into the promise of the fetch
-        fetch('http://18.237.79.152:5000/getInfoBySheet', {
+        fetch('http://68.183.140.180:5000/getInfoBySheet', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -146,7 +146,7 @@ class ViewCompScreen extends React.Component {
     };
     makeCompositionCall() {
         console.log("najvklafjg: ", this.props.navigation.getParam('composition'));
-        fetch('http://18.237.79.152:5000/newMusicSheet', {
+        fetch('http://68.183.140.180:5000/newMusicSheet', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -187,7 +187,7 @@ class ViewCompScreen extends React.Component {
     duplicateComposition() {
         console.log("called")
         console.log(this.state.selectedComposition);
-        fetch('http://18.237.79.152:5000/duplicateSheet', {
+        fetch('http://68.183.140.180:5000/duplicateSheet', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -208,7 +208,7 @@ class ViewCompScreen extends React.Component {
     doneDeleteComposition() {
         deleteArr = ['name']
         deleteArr.push(this.state.deleteText)
-        fetch('http://18.237.79.152:5000/delete', {
+        fetch('http://68.183.140.180:5000/delete', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -232,7 +232,7 @@ class ViewCompScreen extends React.Component {
         //     # 	"update": ["name", "Chucken"],
         //     # 	"where": ["composition_id", 2]
         //     # }
-        fetch('http://18.237.79.152:5000/update', {
+        fetch('http://68.183.140.180:5000/update', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
