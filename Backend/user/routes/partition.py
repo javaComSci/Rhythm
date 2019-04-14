@@ -562,15 +562,17 @@ def SO_to_array(ob, resize=True):
 #	list of the objects
 def full_partition(path):
 	#load image as grayscale
+        print("BEFORE LOAD")
 	im_gray =  cv2.imread(path, cv2.IMREAD_GRAYSCALE)
 
 	#cv2.imwrite("{}starter.jpg".format(path), im_gray)
-
+        
 	if (type(im_gray) == None):
+                print("IN THE EXCEPTION")
 		raise Exception("IMAGE LOAD FAIL")
 		return
 
-
+        print("AFTER")
 	#convert image to binary
 	(thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 	#print "Completed 'image load'"
