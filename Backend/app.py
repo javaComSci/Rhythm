@@ -247,7 +247,7 @@ def recoverEmail():
 # will send the pdf to the user
 @app.route('/createPDF', methods=['POST'])
 def createPDF():
-    print "CALLING TO PDF"
+    # print "CALLING TO PDF"
     return createPDFs.exportPDF(mail, app)
 
 
@@ -256,7 +256,7 @@ def createPDF():
 # will select instrument for sheet music
 @app.route('/selectInstrument', methods=['POST'])
 def selectInstrument():
-    print "Selected Instrument!"
+    # print "Selected Instrument!"
     return selectInstruments.selectMusic()
 
 
