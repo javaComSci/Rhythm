@@ -8,6 +8,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import Icon from 'react-native-vector-icons/AntDesign'
 import PinchZoomView from 'react-native-pinch-zoom-view';
 import ImgToBase64 from 'react-native-image-base64';
+import { placeJson } from '../actions/placeJson';
 
 
   import { Svg } from 'expo';
@@ -72,6 +73,7 @@ class CameraExample extends React.Component {
         console.log(uri);
           let isfinal = false;
           // for(let i = 0; i < pictureData.lengh; i++){
+          const that = this;
             fetch('http://68.183.140.180:5000/uploadImage', {
                   method: 'POST',
                   headers: {
@@ -85,7 +87,8 @@ class CameraExample extends React.Component {
                     'compID': this.props.target[0][0] ? this.props.target[0][0] : 0,
                   }),
               }).then((res) => {
-                  console.log("I WORKED!")
+                  console.log("I WORKED!???\n" + res)
+                  that.props.dispatchPlaceJSON(res);
               }).catch((res) => {
                   console.log("err", res)
               });
@@ -194,6 +197,7 @@ function mapDispatchToProps(dispatch) {
   return {
       dispatchAddComposition: composition => dispatch(addComposition(composition)),
       dispatchAddTarget: target => dispatch(addTarget(target)),
+      dispatchPlaceJSON: myjson => dispatch(placeJson(myjson)),
   }
 }
 

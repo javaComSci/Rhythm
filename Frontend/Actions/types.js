@@ -1,1 +1,2 @@
 export const ADD_COMPOSITION = 'ADD_COMPOSITION'
+export const PLACE_JSON = 'PLACE_JSON'

@@ -30,6 +30,12 @@ function nav(state = initialNavState, action) {
 
 const initalRegisterState = { isRegistered: false, id: "26342", compositions: [], target: [], };
 
+function placeJson(state, action){
+  if (action.type == 'PLACE_JSON') {
+    return { ...state, file: action.filejsoninfo };
+  }
+}
+
 function containsComp(obj, list) {
     for (var i = 0; i < list.length; i++) {
         if (list[i].key == obj.key)

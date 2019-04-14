@@ -122,7 +122,7 @@ class EditMusicScreen extends React.Component {
           ]
       }
     }
-    sampleJson = sampleJson0;
+    // sampleJson = sampleJson0;
 
     ids = [];
     ids.push(this.props.navigation.getParam('sheet_id'));
