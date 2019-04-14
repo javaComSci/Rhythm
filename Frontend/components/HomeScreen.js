@@ -42,7 +42,7 @@ class HomeScreen extends React.Component {
             formData: formData,
             headers: {'Content-Type':'multipart/form-data', 'Accept-Encoding': 'gzip, deflate', 'Cache-Control': 'no-cache'},
         }
-        fetch("http://18.237.79.152:5000/addSheetFile", options).then(result => {
+        fetch("http://68.183.140.180:5000/addSheetFile", options).then(result => {
             result.text().then(res => {
                 console.log("camera res", res)
             }).catch(err => {
@@ -80,7 +80,7 @@ class HomeScreen extends React.Component {
         // // Assume "photo" is the name of the form field the server expects
         // formData.append('photo', { uri: localUri, name: filename, type });
         // console.log('photo file name', filename)
-        // fetch("http://18.237.79.152:5000/uploadImage", {
+        // fetch("http://68.183.140.180:5000/uploadImage", {
         //     method: 'POST',
         //     //body: formData,
         //     body: { "name": filename, "comp_id": 1 },

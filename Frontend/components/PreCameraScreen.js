@@ -104,7 +104,7 @@ class CameraScreen extends React.Component {
     getInfo = function () {
         const that = this; // a reference to the previous value of "this" is required as there is a context change going into the promise of the fetch
         console.log("USER ID:", that.props.id)
-        fetch('http://18.237.79.152:5000/getInfo', {
+        fetch('http://68.183.140.180:5000/getInfo', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -142,7 +142,7 @@ class CameraScreen extends React.Component {
 
     getSheet = function () {
         var that = this;
-        fetch('http://18.237.79.152:5000/getInfoBySheet', {
+        fetch('http://68.183.140.180:5000/getInfoBySheet', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

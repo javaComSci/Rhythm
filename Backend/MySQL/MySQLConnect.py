@@ -36,7 +36,7 @@ def update(table, update, where):
     cursor.execute(sql)
     db.commit()
     cursor.close()
-    print("MYSQL COMMAND: {}".format(sql))
+    # print("MYSQL COMMAND: {}".format(sql))
     db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
     db.close()
     return
@@ -197,7 +197,7 @@ def insert(table, query, value):
     return
 
 def getSong(sheet_id):
-    print os.path.abspath(os.curdir)
+    # print os.path.abspath(os.curdir)
     subprocess.call(shlex.split('/home/ubuntu/Rhythm/Backend/MidiConversion/ConvertToMP3.sh '+sheet_id+'.mid'))
     flPath = '/home/ubuntu/Rhythm/Backend/MidiConversion/'+sheet_id+'.mp3'
     return send_file(flPath, as_attachment=True,attachment_filename=sheet_id+".mp3",mimetype="audio/mpeg")
