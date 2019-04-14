@@ -3,7 +3,7 @@ from MySQL import MySQLConnect
 import base64
 import random
 import sys
-# from conversion import conv
+from conversion import conv
 
 # from NotesRecognization.conversion import conv
 
@@ -38,7 +38,7 @@ def cameraPipeline():
 
 	# check if all images have been recieved
 	if flag == True:
-	    # jsonName = conv(imgs)
+	    jsonName = conv(imgs)
 	    imgs = []
 
 	return 'cameraPipeline'

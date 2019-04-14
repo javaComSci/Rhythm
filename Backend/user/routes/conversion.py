@@ -10,14 +10,16 @@ import sendToCloud
 # from .. import MySQL
 
 def conv(filepaths):
+        print("IN CONVERSION")
 	bigData = {}
 	bigData['clef'] = 1
 	bigData['notes'] = []
 
 	for file_path in filepaths:
-
+                print("FILE PATH", filePath)
+                
 		mask, SOL, staff_lines = partition.full_partition(file_path)
-
+                print("AFTER PARITIOTN")
 		ob_counter = 0
 
 		#partition.print_objects(mask, SOL, staff_lines, "ExamplePredictions/predictions/")
@@ -28,7 +30,7 @@ def conv(filepaths):
 		fclef = False
 
 		for i in range(len(SOL)):
-			#print("I", i)
+			print("I", i)
 			n_arr = partition.SO_to_array(SOL[i])
 
 			#print(n_arr.shape)
@@ -138,7 +140,7 @@ def conv(filepaths):
 			bigData['clef'] = 3
 
 	#print("BIG DATA", bigData)
-
+        print("before write")
 	jsonData = json.dumps(bigData)
 
 	#print("bigData")
@@ -146,7 +148,7 @@ def conv(filepaths):
 
 	with open('data.txt', 'w') as outfile:  
 		json.dump(jsonData, outfile)
-
+        print("AFTER TEH WROTE")
 	sendToCloud.cloud(jsonData)
 
 	# MF = MIDImaker.MIDImaker()
