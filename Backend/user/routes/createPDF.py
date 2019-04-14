@@ -27,7 +27,7 @@ def getNotes(fileName):
 def getNoteType(note, pitch, length):
 
     noteType = False
-
+    print("I GOT", note, pitch, length)
     if note == 0 and pitch == 1 and length == 0:
         noteType = 'gclef'
     elif note == 7 and pitch == 1 and length == 0:
@@ -90,7 +90,7 @@ def createLines(notesArr, notes):
     # find number of staff lines needed
     staffLines = int(math.ceil(duration/16))
 
-    print("MEASURES", measures, staffLines)
+    print("MEASURES", duration, measures, staffLines)
 
     # initial starting point for putting the pixels
     row = 1000
@@ -326,6 +326,10 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
         name = noteType + '.jpg'
 
+        if currColumn + imgNoteResized.shape[1] > colRight + 30:
+            print("IGNORING NOTE")
+            continue
+
         # check the note type and do spacing and fill in note
         if noteType == 'sixteenth':
             print("sixteenth")
@@ -351,7 +355,10 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
                         notesArr[pixelRow + i][pixelCol] = 0
 
             # move the column position for spacing after the note
-            currColumn = currColumn + 50
+            currColumn = currColumn + 45
+
+             # add to the duration of the notes
+            durationCount += note['length']
 
         elif noteType == 'eighth':
             print("eighth")
@@ -363,7 +370,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
                     if imgNoteResized[i][j] == 0:
                     # check if there is note there
-
+                        print("STAFF LINE START", k, staffLinesStartingPos, "REIZED", imgNoteResized.shape[0])
                         # need to shift everything up first so that the bottom of the note is first touching the top of the line
                         pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0]
 
@@ -377,6 +384,9 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
             # move the column position for spacing after the note
             currColumn = currColumn + 100
+
+             # add to the duration of the notes
+            durationCount += note['length']
 
         elif noteType == 'quarter':
             print("quarter")
@@ -403,6 +413,9 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
             # move the column position for spacing after the note
             currColumn = currColumn + imgNoteResized.shape[1] + 100
 
+             # add to the duration of the notes
+            durationCount += note['length']
+
         elif noteType == 'half':
             print("half")
             # through the row
@@ -427,6 +440,9 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
             # move the column position for spacing after the note
             currColumn = currColumn + imgNoteResized.shape[1] + 320
+
+             # add to the duration of the notes
+            durationCount += note['length']
 
 
         elif noteType == 'whole':   
@@ -453,6 +469,9 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
             # move the column position for spacing after the note
             currColumn = currColumn + imgNoteResized.shape[1] + 500
+
+             # add to the duration of the notes
+            durationCount += note['length']
 
 
         elif noteType == 'sharp':
@@ -536,6 +555,9 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
                 # move the column position for spacing after the note
                 currColumn = currColumn + imgNoteResized.shape[1] + 100
 
+             # add to the duration of the notes
+            durationCount += note['length']
+
         elif noteType == 'halfrest':
             print("halfrest")
             imgNoteResized = cv2.resize(imgNoteResized, (90, 70))
@@ -563,6 +585,9 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
             # move the column position for spacing after the note
             currColumn = currColumn + imgNoteResized.shape[1] + 290
 
+             # add to the duration of the notes
+            durationCount += note['length']
+
         elif noteType == 'wholerest':
             print("wholerest")
             imgNoteResized = cv2.resize(imgNoteResized, (230, 230))
@@ -589,24 +614,20 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
             # move the column position for spacing after the note
             currColumn = currColumn + imgNoteResized.shape[1] + 300
 
+            # add to the duration of the notes
+            durationCount += note['length']
 
-        # add to the duration of the notes
-        durationCount += note['length']
-
-        print("THE CURRENT COLUMN", currColumn)
-
-        print("MEASURE LINES POS", measureLinesStartingPos)
         # align for the first measure
         if durationCount == int(durationCount) and durationCount % 4 == 0 and durationCount % 16 != 0 and durationCount != 0:
             currColumn = measureLinesStartingPos[int((durationCount % 16)/4) - 1]
-
-
         # need to move to next staff line if the current staff line is full
         # rest the current column position to be beginning of the line
-        if durationCount == int(durationCount) and durationCount % 16 == 0 and durationCount != 0:
-            # print "MOVIGN TO NEXT LINE"
-            k += 1
+        elif durationCount == int(durationCount) and durationCount % 16 == 0 and durationCount != 0:
+            print("GOING TO THE NEXT LINE", durationCount, k)
             currColumn = 450
+            if noteType != 'sharp' and noteType != 'flat' and noteType != 'cclef' and noteType != 'gclef' and noteType != 'fclef':
+                k += 1
+            
 
     print("THIS IS IN THE NOTES ARRAY PRINTING\n\n\n\n")
     cv2.imwrite("notes.jpg", notesArr)
@@ -702,7 +723,7 @@ def exportPDF(mail, app):
         # pdfNames = pdfPipeline(sheet_id, file)
 
         # json for testing purpose
-        file = open('./MusicSheet1.json')
+        file = open('./MusicSheet3.json')
         notes = json.load(file)
         file.close()
 
