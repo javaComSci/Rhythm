@@ -20,7 +20,7 @@ def cameraPipeline():
         compID = content['compID']
 	img = base64.b64decode(img_data)
 
-        filename = './convertedData/{}-{}.jpg'.format(sheetID, compID)
+        filename = '/home/Rhythm/Backend/user/routes/convertedData/{}-{}.jpg'.format(sheetID, compID)
         global imgs
         imgs.append(filename)
             # Send to richard
@@ -29,7 +29,7 @@ def cameraPipeline():
 	# filePathsToConvert = []
 
 	#for img_file in img_data:
-	img = base64.b64decode(img_file)
+	img = base64.b64decode(img_data)
 		# randInt = random.randint(1, 20000)
 		# randStr = str(randInt)
 		# filename = randStr + '.jpg'

@@ -18,7 +18,7 @@ os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 
 # load all translations
-translations = np.load('translationsWithLines.npy')
+translations = np.load('/home/Rhythm/Backend/user/routes/translationsWithLines.npy')
 translations = translations.item()
 
 # create the inversion of the translations for value by key
