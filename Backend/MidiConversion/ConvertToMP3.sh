@@ -6,4 +6,4 @@ find=".mid"
 replace=".mp3"
 result=${str//$find/$replace}
 echo $result
-timidity /home/ubuntu/Rhythm/Backend/MidiConversion/$str -Ow -o - | ffmpeg -i - -acodec libmp3lame -ab 64k /home/ubuntu/Rhythm/Backend/MidiConversion/$result
+timidity /home/Rhythm/Backend/$str -Ow -o - | ffmpeg -i - -acodec libmp3lame -ab 64k /home/Rhythm/Backend/$result
