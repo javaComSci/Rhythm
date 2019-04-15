@@ -9,20 +9,21 @@ import sendToCloud
 
 # from .. import MySQL
 
+
 def conv(filepaths):
 	print("IN CONVERSION")
 	bigData = {}
 	bigData['clef'] = 1
 	bigData['notes'] = []
-	    
+
 	count = 0
 	sheet_id = ""
 	for file_path in filepaths:
-	    if count == 0:
-	    indy = file_path.find('-')
-	    for i in range(indy-1, 0, -1):
-	        if file_path[i] == '/':
-	            break
+		if count == 0:
+			indy = file_path.find('-')
+		for i in range(indy-1, 0, -1):
+			if file_path[i] == '/':
+				break
 
 	sheet_id = file_path[i] + sheet_id
 	count = 1
@@ -34,8 +35,8 @@ def conv(filepaths):
 	print("AFTER PARITIOTN")
 	ob_counter = 0
 
-	#partition.print_objects(mask, SOL, staff_lines, "ExamplePredictions/predictions/")
-	#cv2.imwrite("ExamplePredictions/predictions/full_img.jpg", mask)
+	# partition.print_objects(mask, SOL, staff_lines, "ExamplePredictions/predictions/")
+	# cv2.imwrite("ExamplePredictions/predictions/full_img.jpg", mask)
 
 	gclef = False
 	cclef = False
@@ -45,7 +46,7 @@ def conv(filepaths):
 		print("I", i)
 		n_arr = partition.SO_to_array(SOL[i])
 
-		#print(n_arr.shape)
+		# print(n_arr.shape)
 
 		flat_arr = n_arr.flatten().reshape((1,3500))
 
@@ -56,13 +57,13 @@ def conv(filepaths):
 		if ob_prediction == None or len(ob_prediction) == 0:
 			ob_prediction = "DEFAULT"
 
-		#cv2.imwrite("ExamplePredictions/predictions/ob#{}_label:{}.jpg".format(ob_counter, ob_prediction[0]), im)
+		# cv2.imwrite("ExamplePredictions/predictions/ob#{}_label:{}.jpg".format(ob_counter, ob_prediction[0]), im)
 
 		data = {}
 
 		clefCount = 0
 
-		#print("OB PREDICTION", ob_prediction[0])
+		# print("OB PREDICTION", ob_prediction[0])
 
 		if ob_prediction[0] == 'GClef':
 			SOL[i].clef = 1
@@ -133,15 +134,15 @@ def conv(filepaths):
 			data['pitch'] = SOL[i].run
 			data['length'] = 0
 
-		#print(SOL[i].duration, SOL[i].accidental)
+		# print(SOL[i].duration, SOL[i].accidental)
 
 		ob_counter += 1
 
 		bigData['notes'].append(data)
 
-		#print("NOTES", bigData["notes"])
+		# print("NOTES", bigData["notes"])
 
-		#print("DATA", data)
+		# print("DATA", data)
 
 		if gclef == True and fclef == True:
 			bigData['clef'] = 1
@@ -152,14 +153,14 @@ def conv(filepaths):
 		elif cclef == True:
 			bigData['clef'] = 3
 
-	#print("BIG DATA", bigData)
+	# print("BIG DATA", bigData)
 	print("before write")
 	jsonData = json.dumps(bigData)
 
 
 	with open('{}.txt'.format(sheet_id), 'w') as outfile:  
 		json.dump(jsonData, outfile)
-	    print("AFTER TEH WROTE")
+		print("AFTER TEH WROTE")
 
 	sendToCloud.cloud(jsonData,sheet_id)
 
