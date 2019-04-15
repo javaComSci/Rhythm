@@ -164,6 +164,13 @@ def addSheetFile():
     else:
         return '\n\nDEBUG: Sollte das nicht sehen'
 
+@app.route('/addSheetJSON', methods=['POST'])
+def addSheetJSON():
+    if request.method == 'POST':
+        return newMusicSheets.addSheetJSON()
+    else:
+        return '\n\nDEBUG: Sollte das nicht sehen'
+
 ##
  # Call this to get info on a specific user from a specific table.
  # This will return a json array of the results
