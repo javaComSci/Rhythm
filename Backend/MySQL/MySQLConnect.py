@@ -5,7 +5,7 @@ from flask import Flask, render_template, json, url_for, send_file
 # Importing a MySQL helper
 import pymysql
 import subprocess
-from user.routes import MIDImaker
+from user.routes.MIDImaker import MIDImaker
 import os
 import shlex
 import io
@@ -194,7 +194,7 @@ def insert(table, query, value):
     cursor.execute(sql)
     db.commit()
     cursor.close()
-    db.close()g
+    db.close()
     return
 
 def getSong(sheet_id):
@@ -209,9 +209,10 @@ def getSong(sheet_id):
     db.close()
     # def jsons_to_MIDI(self, json_arr, sheet_id, instruments=["Piano"], start_times=[1]):
     makermidi = MIDImaker()
-    makermidi.jsons_to_MIDI([song_json, sheet_id, ["Piano"], [1]])
+    print 'TYPE of THING' + str(type(song_json))
+    makermidi.jsons_to_MIDI([song_json[0]], sheet_id, ["Piano"], [1])
 
-    subprocess.call(shlex.split('/home/Rhythm/Backend/MidiConversion/ConvertToMP3.sh '+'/home/Rhythm/Backend/user/routes/'+sheet_id+'.mid'))
+    subprocess.call(shlex.split('/home/Rhythm/Backend/MidiConversion/ConvertToMP3.sh '+sheet_id+'.mid'))
     flPath = '/home/Rhythm/Backend/MidiConversion/'+sheet_id+'.mp3'
     return send_file(flPath, as_attachment=True,attachment_filename=sheet_id+".mp3",mimetype="audio/mpeg")
     '''db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
