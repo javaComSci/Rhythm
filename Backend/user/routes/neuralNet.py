@@ -1110,6 +1110,8 @@ def checkPredictions(testingInput, testingOut):
 # @return - prediction for given note
 # Does the prediction for the given notes
 def predict(testingIn):
+	# reset the tensorflow graph
+	tf.reset_default_graph()
 
 	# create a graph for the general prediction: NOTE or CLEF?
 	generalPredGraph = Graph()
@@ -1303,8 +1305,8 @@ def predict(testingIn):
 
 
 if __name__ == '__main__':
-
-	trainingIn, trainingOut, testingIn, testingOut = getData()
+	predict([[234,234]], [[345,456]])
+	# trainingIn, trainingOut, testingIn, testingOut = getData()
 
 	# trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testGeneralNN(testingIn, testingOut)
