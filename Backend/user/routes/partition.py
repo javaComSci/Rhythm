@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import gc
 
 #allows creating individual objects found on a piece of sheet music
 class sheet_object:
@@ -473,12 +474,12 @@ def prune_objects(mask, SOL):
 # @path - path that jpgs will be written to
 # @return - void
 #	Prints all objects in sheet object list as jpgs
-def print_objects(mask,SOL,sl,path="",staff_lines=False):
+def print_objects(shape,SOL,sl,path="",staff_lines=False):
 	#Ensures path is in correct format
 	if path.endswith("/") == False:
 		path = path + "/"
 
-	full_img = np.zeros(mask.shape)
+	full_img = np.zeros(shape)
 	county = 0
 
 	#for every object in sheet object list
@@ -562,17 +563,17 @@ def SO_to_array(ob, resize=True):
 #	list of the objects
 def full_partition(path):
 	#load image as grayscale
-        print("BEFORE LOAD")
+	print("BEFORE LOAD")
 	im_gray =  cv2.imread(path, cv2.IMREAD_GRAYSCALE)
 
 	#cv2.imwrite("{}starter.jpg".format(path), im_gray)
-        
+	    
 	if (type(im_gray) == None):
-                print("IN THE EXCEPTION")
+		print("IN THE EXCEPTION")
 		raise Exception("IMAGE LOAD FAIL")
 		return
 
-        print("AFTER")
+	print("AFTER")
 	#convert image to binary
 	(thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 	#print "Completed 'image load'"
@@ -586,12 +587,13 @@ def full_partition(path):
 	#locate runs in the image
 	runs = locate_run_blocks(im_bw)
 
-
 	#merge runs into pruned format
 	pruned_runs = prune_runs(runs)
 
 	#group runs by measures, add in-between rows for runs
 	staff_lines = augment_runs(pruned_runs)
+	del pruned_runs
+	gc.collect()
 
 	#print "Completed 'run segmenting'"
 
@@ -602,6 +604,10 @@ def full_partition(path):
 	remove_vertical_dividers_and_fill(im_bw, dividers)
 	#remove runs in the image
 	remove_runs_and_fill(im_bw, runs)
+
+	del runs
+	del dividers
+	gc.collect()
 	#print "Completed 'divider segmenting'"
 
 	#Thickens the iamge around black pixels
@@ -609,9 +615,13 @@ def full_partition(path):
 
 	#locate objects in the image
 	mask, SOL = locate_objects(thick_mask)
+	del thick_mask
+	gc.collect()
 
 	mask, SOL = de_thicken(mask,SOL,im_bw)
 	#print "Completed 'object location'"
+	del im_bw
+	gc.collect()
 
 	#locate row and staff lines
 	locate_note_run(SOL, staff_lines)
@@ -619,7 +629,12 @@ def full_partition(path):
 	#sort SOL
 	sort_SOL(SOL)
 
-	return mask, SOL, staff_lines
+	img_shape = mask.shape
+
+	del mask
+	gc.collect()
+
+	return SOL, img_shape, staff_lines
 
 #@ im_bw - A binary image
 #@ return - A binary image where black pixels have been expanded
@@ -817,8 +832,8 @@ def sort_SOL(SOL):
 
 
 if __name__ == "__main__":
-	mask, SOL, sl = full_partition("ExamplePredictions/DATA/t.jpg")
-	print_objects(mask,SOL,sl,path="ExamplePredictions/predictions",staff_lines=True)
+	SOL, shape, sl = full_partition("ExamplePredictions/DATA/s1.jpg")
+	print_objects(shape,SOL,sl,path="ExamplePredictions/predictions",staff_lines=True)
 
 
 

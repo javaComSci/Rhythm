@@ -253,7 +253,7 @@ class MIDImaker:
 
 		self.MIDI = MIDI_File
 
-	def JSON_to_SOL(self,filepath):
+	def JSON_file_to_SOL(self,filepath):
 		#New sheet object list
 		SOL = []
 
@@ -296,6 +296,59 @@ class MIDImaker:
 
 		return SOL
 
+	def JSON_string_to_SOL(self,json_string):
+		#New sheet object list
+		SOL = []
+
+		music_sheet = json.load(json_string)
+
+		for ob in music_sheet['notes']:
+			new_ob = partition.sheet_object((-1,-1),-1)
+			if ob['note'] == 0:#GClef
+				new_ob.clef = 1
+				new_ob.run = 1
+				new_ob.duration = 0
+			elif ob['note'] == 6:#CClef
+				new_ob.clef = 2
+				new_ob.run = 1
+				new_ob.duration = 0
+			elif ob['note'] == 7:#FClef
+				new_ob.clef = 3
+				new_ob.run = 1
+				new_ob.duration = 0
+			elif ob['note'] == 5 or ob['note'] == 1 or ob['note'] == 2 or ob['note'] == 3 or ob['note'] == 8: #Note
+				new_ob.run = ob['pitch']
+				new_ob.duration = ob['length']
+			elif ob['note'] == 9 or ob['note'] == 10 or ob['note'] == 11 or ob['note'] == 12: #rest
+				new_ob.rest = 1
+				new_ob.run = ob['pitch']
+				new_ob.duration = ob['length']
+			elif ob['note'] == 13: #sharp
+				new_ob.accidental = 1
+				new_ob.run = ob['pitch']
+				new_ob.duration = 0
+			elif ob['note'] == 14: #flat
+				new_ob.accidental = 1
+				new_ob.run = ob['pitch']
+				new_ob.duration = 0
+
+			#print(ob['note'],new_ob.clef,new_ob.run,new_ob.duration,new_ob.accidental)
+
+			SOL.append(new_ob)
+
+		return SOL
+
+	def jsons_to_MIDI(self, json_arr, sheet_id, instruments=["Piano"], start_times=[1]):
+
+		MM = MIDImaker()
+
+		for json_str in json_arr:
+			MM.SOLset.append(MM.JSON_string_to_SOL(json_str))
+
+		MM.convert_to_MIDI(len(json_arr), instruments, start_times)
+
+		MM.MIDI_to_file("{}.mid".format(sheet_id))
+
 	#Writes MIDI file to disk
 	def MIDI_to_file(self, filepath):
 		with open(filepath, "wb") as op:
@@ -305,7 +358,7 @@ class MIDImaker:
 def test1():
 	MM = MIDImaker()
 
-	MM.SOLset.append(MM.JSON_to_SOL("../../Frontend/components/jsons/MusicSheet3.json"))
+	MM.SOLset.append(MM.JSON_file_to_SOL("../../Frontend/components/jsons/MusicSheet3.json"))
 	MM.SOLset.append(MM.JSON_to_SOL("../../Frontend/components/jsons/MusicSheet3.json"))
 
 	MM.convert_to_MIDI(tracks = 2, instruments=["Flute", "Violin"], start_times=[1,0])

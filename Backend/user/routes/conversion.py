@@ -30,7 +30,7 @@ def conv(filepaths):
                 print("SHEET ID", sheet_id)
                 print("FILE PATH", file_path)
                 
-		mask, SOL, staff_lines = partition.full_partition(file_path)
+		SOL, shape, sl = partition.full_partition(file_path)
                 print("AFTER PARITIOTN")
 		ob_counter = 0
 
@@ -50,8 +50,8 @@ def conv(filepaths):
 			flat_arr = n_arr.flatten().reshape((1,3500))
 
 
-			ob_prediction, im = neuralNet.predict(flat_arr)
-			im = im.reshape((70,50)) * 255
+			ob_prediction = neuralNet.predict(flat_arr)
+			# im = im.reshape((70,50)) * 255
 			if ob_prediction == None or len(ob_prediction) == 0:
 				ob_prediction = "DEFAULT"
 
@@ -152,7 +152,7 @@ def conv(filepaths):
 			bigData['clef'] = 3
 
 	#print("BIG DATA", bigData)
-        print("before write")
+    print("before write")
 	jsonData = json.dumps(bigData)
 
 	#print("bigData")
