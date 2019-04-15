@@ -20,6 +20,7 @@ os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 # load all translations
 translations = np.load('/home/Rhythm/Backend/user/routes/translationsWithLines.npy')
+# translations = np.load('translationsWithLines.npy')
 translations = translations.item()
 
 # create the inversion of the translations for value by key
@@ -1107,230 +1108,379 @@ def checkPredictions(testingInput, testingOut):
 
 
 
+class Model:
+	def loadmodel(self,path):
+		return load_model(path)
+
+	def __init__(self, path):
+		self.model = self.loadmodel(path)
+		self.graph = tf.get_default_graph()
+
+	def predict(self, X):
+		with self.graph.as_default():
+			return self.model.predict(X)
+
+
+# load up all the models
+modelGeneral = Model('/home/Rhythm/Backend/user/routes/general_model.h5')
+
+modelClef = Model("/home/Rhythm/Backend/user/routes/clef_model.h5")
+
+modelNotes = Model("/home/Rhythm/Backend/user/routes/notes_model.h5")
+
+modelExtras = Model("/home/Rhythm/Backend/user/routes/extras_model.h5")
+
+modelRealNotes = Model("/home/Rhythm/Backend/user/routes/real_note_model.h5")
+
+modelRests = Model("/home/Rhythm/Backend/user/routes/rest_model.h5")
+
+# modelGeneral = Model('general_model.h5')
+
+# modelClef = Model("clef_model.h5")
+
+# modelNotes = Model("notes_model.h5")
+
+# modelExtras = Model("extras_model.h5")
+
+# modelRealNotes = Model("real_note_model.h5")
+
+# modelRests = Model("rest_model.h5")
+
 # @testingInput - 2d numpy array of testing input
 # @return - prediction for given note
 # Does the prediction for the given notes
 def predict(testingIn):
-        
-	# reset the tensorflow graph
-	tf.reset_default_graph()
-        tf.keras.backend.clear_session()
     
-	# create a graph for the general prediction: NOTE or CLEF?
-	generalPredGraph = Graph()
+	# do the prediction with the general model
+	generalPredictions = modelGeneral.predict(testingIn)
 
-	with generalPredGraph.as_default():
+	# actual value of the predictions
+	overallPredictions = -np.ones((testingIn.shape[0],1))
 
-		# open new session
-		session1 = Session()
+	# predicted values of the strings
+	stringPredictions = []
 
-		with session1.as_default():
+	# for each of the general predictions
+	for i in range(generalPredictions.shape[0]):
 
-			# load general prediction model
-			model = load_model('/home/Rhythm/Backend/user/routes/general_model.h5')
+		# find the value that was predicted
+		# overallPredictions[i] = np.argmax(generalPredictions[i])
+		print("PREDICTION WAS", generalPredictions[i], generalPredictions[i][0])
 
-			# do the prediction with the general model
-			generalPredictions = model.predict(testingIn)
+		# find the value that was predicted
+		if generalPredictions[i][0] < 0.5:
+			overallPredictions[i] = 0
+		else:
+			overallPredictions[i] = 1
+
+		# if it was a clef
+		if overallPredictions[i] == 0:
+
+		# do the predictions with the clef model
+			predictions = modelClef.predict(testingIn)
+
+			# find the clef prediction
+			clefPrediction = np.argmax(predictions[i])
+			print("Clef Prediction", predictions, clefPrediction)
+
+			if clefPrediction == 0:
+				stringPredictions.append('CClef')
+			elif clefPrediction == 1:
+				stringPredictions.append('GClef')
+			elif clefPrediction == 2:
+				stringPredictions.append('FClef')
+
+			return stringPredictions, testingIn
+
+		# it was not a clef
+		else:
+			# do the predictions on the notes model
+			predictions = modelNotes.predict(testingIn)
+
+			notePrediction = np.argmax(predictions[i])
+			print("Note Prediction", predictions, notePrediction)
+
+			# extras note
+			if notePrediction == 0:
+
+				predictions = modelExtras.predict(testingIn)
+
+				extraPrediction = np.argmax(predictions[i])
+				print("Extras Prediction", predictions)
+
+				if extraPrediction == 0:
+					stringPredictions.append('Flat')
+				elif extraPrediction == 1:
+					stringPredictions.append('Sharp')
+
+				return stringPredictions, testingIn
+
+				# real note
+			elif notePrediction == 1:
+
+				predictions = modelRealNotes.predict(testingIn)
+
+				realNotePrediction = np.argmax(predictions[i])
+				print("Real Note Prediction", predictions)
+
+				if realNotePrediction == 0:
+					stringPredictions.append('Sixteenth-Note')
+				elif realNotePrediction == 1:
+					stringPredictions.append('Eighth-Note')
+				elif realNotePrediction == 2:
+					stringPredictions.append('Quarter-Note')
+				elif realNotePrediction == 3:
+					stringPredictions.append('Half-Note')
+				elif realNotePrediction == 4:
+					stringPredictions.append('Whole-Note')
+
+				return stringPredictions, testingIn
+
+			elif notePrediction == 2:
+
+					predictions = modelExtras.predict(testingIn)
+
+					restPrediction = np.argmax(predictions[i])
+					print("Rest Prediction", predictions)
+
+					if restPrediction == 0:
+						stringPredictions.append('Eighth-Rest')
+					elif restPrediction == 1:
+						stringPredictions.append('Quarter-Rest')
+					elif restPrediction == 2:
+						stringPredictions.append('Whole-Half-Rest')
+
+					return stringPredictions, testingIn
+
+
+# # @testingInput - 2d numpy array of testing input
+# # @return - prediction for given note
+# # Does the prediction for the given notes
+# def predict(testingIn):
+        
+# 	# reset the tensorflow graph
+# 	tf.reset_default_graph()
+#         tf.keras.backend.clear_session()
+    
+# 	# create a graph for the general prediction: NOTE or CLEF?
+# 	generalPredGraph = Graph()
+
+# 	with generalPredGraph.as_default():
+
+# 		# open new session
+# 		session1 = Session()
+
+# 		with session1.as_default():
+
+# 			# load general prediction model
+# 			model = load_model('/home/Rhythm/Backend/user/routes/general_model.h5')
+
+# 			# do the prediction with the general model
+# 			generalPredictions = model.predict(testingIn)
                         
-                        # delete the variable after used
-                        del model
+#                         # delete the variable after used
+#                         del model
 
-			# actual value of the predictions
-			overallPredictions = -np.ones((testingIn.shape[0],1))
+# 			# actual value of the predictions
+# 			overallPredictions = -np.ones((testingIn.shape[0],1))
 
-			# predicted values of the strings
-			stringPredictions = []
+# 			# predicted values of the strings
+# 			stringPredictions = []
 
-			# for each of the general predictions
-			for i in range(generalPredictions.shape[0]):
+# 			# for each of the general predictions
+# 			for i in range(generalPredictions.shape[0]):
 
-				# find the value that was predicted
+# 				# find the value that was predicted
 
-				# overallPredictions[i] = np.argmax(generalPredictions[i])
-				print("PREDICTION WAS", generalPredictions[i], generalPredictions[i][0])
+# 				# overallPredictions[i] = np.argmax(generalPredictions[i])
+# 				print("PREDICTION WAS", generalPredictions[i], generalPredictions[i][0])
 
-				# find the value that was predicted
-				if generalPredictions[i][0] < 0.5:
-					overallPredictions[i] = 0
-				else:
-					overallPredictions[i] = 1
+# 				# find the value that was predicted
+# 				if generalPredictions[i][0] < 0.5:
+# 					overallPredictions[i] = 0
+# 				else:
+# 					overallPredictions[i] = 1
 
-				# if it was a clef
-				if overallPredictions[i] == 0:
+# 				# if it was a clef
+# 				if overallPredictions[i] == 0:
 
-					# create a graph for clef model: CCLEF, GCLEF, FCELF?
-					clefPredGraph = Graph()
+# 					# create a graph for clef model: CCLEF, GCLEF, FCELF?
+# 					clefPredGraph = Graph()
 
-					with clefPredGraph.as_default():
+# 					with clefPredGraph.as_default():
 
-						# create a new session for the clef
-						session2 = Session()
+# 						# create a new session for the clef
+# 						session2 = Session()
 
-						with session2.as_default():
+# 						with session2.as_default():
 
-							#load clef model
-							model = load_model("/home/Rhythm/Backend/user/routes/clef_model.h5")
+# 							#load clef model
+# 							model = load_model("/home/Rhythm/Backend/user/routes/clef_model.h5")
                                                             
-                                                        del model
+#                                                         del model
 
-							# do the predictions with the clef model
-							predictions = model.predict(testingIn)
+# 							# do the predictions with the clef model
+# 							predictions = model.predict(testingIn)
 
-							# find the clef prediction
-							clefPrediction = np.argmax(predictions[i])
-							print("Clef Prediction", predictions, clefPrediction)
+# 							# find the clef prediction
+# 							clefPrediction = np.argmax(predictions[i])
+# 							print("Clef Prediction", predictions, clefPrediction)
 
-							if clefPrediction == 0:
-								stringPredictions.append('CClef')
-							elif clefPrediction == 1:
-								stringPredictions.append('GClef')
-							elif clefPrediction == 2:
-								stringPredictions.append('FClef')
+# 							if clefPrediction == 0:
+# 								stringPredictions.append('CClef')
+# 							elif clefPrediction == 1:
+# 								stringPredictions.append('GClef')
+# 							elif clefPrediction == 2:
+# 								stringPredictions.append('FClef')
 
-							return stringPredictions, testingIn
+# 							return stringPredictions, testingIn
                                                 
-                                                tf.keras.backend.clear_session()
-						session2.close()
-                                                gc.collect()
-				else:
+#                                                 tf.keras.backend.clear_session()
+# 						session2.close()
+#                                                 gc.collect()
+# 				else:
 
-					# find the general note - REAL NOTE, REST, EXTRA?
-					notePredGraph = Graph()
+# 					# find the general note - REAL NOTE, REST, EXTRA?
+# 					notePredGraph = Graph()
 
-					with notePredGraph.as_default():
+# 					with notePredGraph.as_default():
 
-						session3 = Session()
+# 						session3 = Session()
 
-						with session3.as_default():
+# 						with session3.as_default():
 
-							#load general notes model
-							model = load_model("/home/Rhythm/Backend/user/routes/notes_model.h5")
+# 							#load general notes model
+# 							model = load_model("/home/Rhythm/Backend/user/routes/notes_model.h5")
 
-							# do the predictions on the notes model
-							predictions = model.predict(testingIn)
+# 							# do the predictions on the notes model
+# 							predictions = model.predict(testingIn)
 
-                                                        del model
+#                                                         del model
 
-							notePrediction = np.argmax(predictions[i])
-							print("Note Prediction", predictions, notePrediction)
+# 							notePrediction = np.argmax(predictions[i])
+# 							print("Note Prediction", predictions, notePrediction)
 
-							# extras note
-							if notePrediction == 0:
+# 							# extras note
+# 							if notePrediction == 0:
 
-									# predict the extras - SHARP, FLAT?
-									extrasPredGraph = Graph()
+# 									# predict the extras - SHARP, FLAT?
+# 									extrasPredGraph = Graph()
 
-									with extrasPredGraph.as_default():
+# 									with extrasPredGraph.as_default():
 
-										session4 = Session()
+# 										session4 = Session()
 
-										with session4.as_default():
+# 										with session4.as_default():
 
-											#load extras model
-											model = load_model("/home/Rhythm/Backend/user/routes/extras_model.h5")
+# 											#load extras model
+# 											model = load_model("/home/Rhythm/Backend/user/routes/extras_model.h5")
                                                                                     
 
-											predictions = model.predict(testingIn)
+# 											predictions = model.predict(testingIn)
 
-                                                                                        del model
+#                                                                                         del model
 
-											extraPrediction = np.argmax(predictions[i])
-											print("Extras Prediction", predictions)
+# 											extraPrediction = np.argmax(predictions[i])
+# 											print("Extras Prediction", predictions)
 
-											if extraPrediction == 0:
-												stringPredictions.append('Flat')
-											elif extraPrediction == 1:
-												stringPredictions.append('Sharp')
+# 											if extraPrediction == 0:
+# 												stringPredictions.append('Flat')
+# 											elif extraPrediction == 1:
+# 												stringPredictions.append('Sharp')
 
-											return stringPredictions, testingIn
-                                                                                tf.keras.backend.clear_session()
-										session4.close()
-							                        gc.collect()
-							# real note
-							elif notePrediction == 1:
+# 											return stringPredictions, testingIn
+#                                                                                 tf.keras.backend.clear_session()
+# 										session4.close()
+# 							                        gc.collect()
+# 							# real note
+# 							elif notePrediction == 1:
 
-								# real note graph - SIXTEENTH, EIGHTH, QUARTER, HALF, WHOLE
-								realNotePredGraph = Graph()
+# 								# real note graph - SIXTEENTH, EIGHTH, QUARTER, HALF, WHOLE
+# 								realNotePredGraph = Graph()
 
-								with realNotePredGraph.as_default():
+# 								with realNotePredGraph.as_default():
 
-									session5 = Session()
+# 									session5 = Session()
 
-									with session5.as_default():
+# 									with session5.as_default():
 
 
-										#load model real note model
-										model = load_model("/home/Rhythm/Backend/user/routes/real_note_model.h5")
+# 										#load model real note model
+# 										model = load_model("/home/Rhythm/Backend/user/routes/real_note_model.h5")
                                                                                     
 
-										predictions = model.predict(testingIn)
+# 										predictions = model.predict(testingIn)
 	
 
-                                                                                del model
+#                                                                                 del model
 
-										realNotePrediction = np.argmax(predictions[i])
-										print("Real Note Prediction", predictions)
+# 										realNotePrediction = np.argmax(predictions[i])
+# 										print("Real Note Prediction", predictions)
 
-										if realNotePrediction == 0:
-											stringPredictions.append('Sixteenth-Note')
-										elif realNotePrediction == 1:
-											stringPredictions.append('Eighth-Note')
-										elif realNotePrediction == 2:
-											stringPredictions.append('Quarter-Note')
-										elif realNotePrediction == 3:
-											stringPredictions.append('Half-Note')
-										elif realNotePrediction == 4:
-											stringPredictions.append('Whole-Note')
+# 										if realNotePrediction == 0:
+# 											stringPredictions.append('Sixteenth-Note')
+# 										elif realNotePrediction == 1:
+# 											stringPredictions.append('Eighth-Note')
+# 										elif realNotePrediction == 2:
+# 											stringPredictions.append('Quarter-Note')
+# 										elif realNotePrediction == 3:
+# 											stringPredictions.append('Half-Note')
+# 										elif realNotePrediction == 4:
+# 											stringPredictions.append('Whole-Note')
 
-										return stringPredictions, testingIn
-                                                                        tf.keras.clear_session()
-									session5.close()
-                                                                        gc.collect()
-							# rest 
-							elif notePrediction == 2:
+# 										return stringPredictions, testingIn
+#                                                                         tf.keras.clear_session()
+# 									session5.close()
+#                                                                         gc.collect()
+# 							# rest 
+# 							elif notePrediction == 2:
 
-								# rest - EIGHTH, QUARTER, WHOLE?
-								restPredGraph = Graph()
+# 								# rest - EIGHTH, QUARTER, WHOLE?
+# 								restPredGraph = Graph()
 
-								with restPredGraph.as_default():
+# 								with restPredGraph.as_default():
 
-									session6 = Session()
-									with session6.as_default():
+# 									session6 = Session()
+# 									with session6.as_default():
 
-										#load rest model
-										model = load_model("/home/Rhythm/Backend/user/routes/rest_model.h5")
+# 										#load rest model
+# 										model = load_model("/home/Rhythm/Backend/user/routes/rest_model.h5")
 
-										predictions = model.predict(testingIn)
+# 										predictions = model.predict(testingIn)
 	
-                                                                                del model
+#                                                                                 del model
 
-										restPrediction = np.argmax(predictions[i])
-										print("Rest Prediction", predictions)
+# 										restPrediction = np.argmax(predictions[i])
+# 										print("Rest Prediction", predictions)
 
-										if restPrediction == 0:
-											stringPredictions.append('Eighth-Rest')
-										elif restPrediction == 1:
-											stringPredictions.append('Quarter-Rest')
-										elif restPrediction == 2:
-											stringPredictions.append('Whole-Half-Rest')
+# 										if restPrediction == 0:
+# 											stringPredictions.append('Eighth-Rest')
+# 										elif restPrediction == 1:
+# 											stringPredictions.append('Quarter-Rest')
+# 										elif restPrediction == 2:
+# 											stringPredictions.append('Whole-Half-Rest')
 
-										return stringPredictions, testingIn
-                                                                        tf.keras.backend.clear_session()
-									session6.close()
-									gc.collect()
-							tf.keras.backend.clear_session()
-                                                        session3.close()
-                                                        gc.collect()
+# 										return stringPredictions, testingIn
+#                                                                         tf.keras.backend.clear_session()
+# 									session6.close()
+# 									gc.collect()
+# 							tf.keras.backend.clear_session()
+#                                                         session3.close()
+#                                                         gc.collect()
 
-		session1.close()
-                tf.reset_default_graph()
-                tf.keras.backend.clear_session()
-                gc.collect()
+# 		session1.close()
+#                 tf.reset_default_graph()
+#                 tf.keras.backend.clear_session()
+#                 gc.collect()
 
 if __name__ == '__main__':
-        for i in range(24):
-	    predict(np.ones((1, 3500)))
-            gc.collect()
+	for i in range(240):
+		data = np.random.randint(255, size = 3500)
+		# print("DATA", data)
+		# data = np.zeros((1, 3500))
+		predict(np.resize(data, (1, 3500)))
+		gc.collect()
+
 	# trainingIn, trainingOut, testingIn, testingOut = getData()
 
 	# trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut)
