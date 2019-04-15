@@ -1091,14 +1091,14 @@ def checkPredictions(testingInput, testingOut):
 
 		print("PREDICTION: ", prediction[0][0], "ACTUAL:", stringOutputs[t])
 
-		if prediction[0][0] == stringOutputs[t] and t % 60 == 0:
+		if prediction[0] == stringOutputs[t] and t % 60 == 0:
 			testing = testingInput[t]
 			testing = testing * 255
 			testing = testing.reshape(70, 50)
 			img = Image.fromarray(testing)
 			img.show()
 
-		if prediction[0][0] == stringOutputs[t]:
+		if prediction[0] == stringOutputs[t]:
 			correct += 1
 		else:
 			incorrect += 1
@@ -1190,7 +1190,7 @@ def predict(testingIn):
 			elif clefPrediction == 2:
 				stringPredictions.append('FClef')
 
-			return stringPredictions, testingIn
+			return stringPredictions
 
 		# it was not a clef
 		else:
@@ -1213,7 +1213,7 @@ def predict(testingIn):
 				elif extraPrediction == 1:
 					stringPredictions.append('Sharp')
 
-				return stringPredictions, testingIn
+				return stringPredictions
 
 				# real note
 			elif notePrediction == 1:
@@ -1234,7 +1234,7 @@ def predict(testingIn):
 				elif realNotePrediction == 4:
 					stringPredictions.append('Whole-Note')
 
-				return stringPredictions, testingIn
+				return stringPredictions
 
 			elif notePrediction == 2:
 
@@ -1250,7 +1250,7 @@ def predict(testingIn):
 					elif restPrediction == 2:
 						stringPredictions.append('Whole-Half-Rest')
 
-					return stringPredictions, testingIn
+					return stringPredictions
 
 
 # # @testingInput - 2d numpy array of testing input

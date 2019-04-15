@@ -63,70 +63,70 @@ def conv(filepaths):
 
 			#print("OB PREDICTION", ob_prediction[0])
 
-			if ob_prediction[0] == 'GClef':
+			if ob_prediction == 'GClef':
 				SOL[i].clef = 1
 				data['note'] = 0
 				data['pitch'] = 1
 				data['length'] = 0
 				gclef = True
-			elif ob_prediction[0] == 'CClef':
+			elif ob_prediction == 'CClef':
 				SOL[i].clef = 2
 				data['note'] = 6
 				data['pitch'] = 1
 				data['length'] = 0
 				cclef = True
-			elif ob_prediction[0] == 'FClef':
+			elif ob_prediction == 'FClef':
 				SOL[i].clef = 3
 				data['note'] = 7
 				data['pitch'] = 1
 				data['length'] = 0
 				fclef = True
-			elif ob_prediction[0] == 'Sixteenth-Note':
+			elif ob_prediction == 'Sixteenth-Note':
 				SOL[i].duration = .125
 				data['note'] = 5
 				data['pitch'] = SOL[i].run
 				data['length'] = .125
-			elif ob_prediction[0] == 'Eighth-Note':
+			elif ob_prediction == 'Eighth-Note':
 				SOL[i].duration = .5
 				data['note'] = 1
 				data['pitch'] = SOL[i].run
 				data['length'] = .5
-			elif ob_prediction[0] == 'Quarter-Note':
+			elif ob_prediction == 'Quarter-Note':
 				SOL[i].duration = 1
 				data['note'] = 2
 				data['pitch'] = SOL[i].run
 				data['length'] = 1
-			elif ob_prediction[0] == 'Half-Note':
+			elif ob_prediction == 'Half-Note':
 				SOL[i].durationn = 2
 				data['note'] = 3
 				data['pitch'] = SOL[i].run
 				data['length'] = 2
-			elif ob_prediction[0] == 'Whole-Note':
+			elif ob_prediction == 'Whole-Note':
 				SOL[i].duration = 4
 				data['note'] = 8
 				data['pitch'] = SOL[i].run
 				data['length'] = 4
-			elif ob_prediction[0] == 'Eighth-Rest':
+			elif ob_prediction == 'Eighth-Rest':
 				SOL[i].rest = .5
 				data['note'] = 9
 				data['pitch'] = SOL[i].run
 				data['length'] = .5
-			elif ob_prediction[0] == 'Quarter-Rest':
+			elif ob_prediction == 'Quarter-Rest':
 				SOL[i].rest = 1
 				data['note'] = 10
 				data['pitch'] = SOL[i].run
 				data['length'] = 1
-			elif ob_prediction[0] == 'Whole-Half-Rest':
+			elif ob_prediction == 'Whole-Half-Rest':
 				SOL[i].rest = 2
 				data['note'] = 11
 				data['pitch'] = SOL[i].run
 				data['length'] = 2
-			elif ob_prediction[0] == 'Sharp':
+			elif ob_prediction == 'Sharp':
 				SOL[i].accidental = 1
 				data['note'] = 13
 				data['pitch'] = SOL[i].run
 				data['length'] = 0
-			elif ob_prediction[0] == 'Flat':
+			elif ob_prediction == 'Flat':
 				SOL[i].accidental = 2
 				data['note'] = 14
 				data['pitch'] = SOL[i].run
