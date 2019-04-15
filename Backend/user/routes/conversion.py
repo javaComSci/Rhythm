@@ -42,6 +42,10 @@ def conv(filepaths):
 	cclef = False
 	fclef = False
 
+	gclefcount = 0
+	cclefcount = 0
+	fclefcount = 0
+
 	for i in range(len(SOL)):
 		print("I", i)
 		n_arr = partition.SO_to_array(SOL[i])
@@ -52,7 +56,7 @@ def conv(filepaths):
 
 
 		ob_prediction = neuralNet.predict(flat_arr)
-		print("THE PREDICTION RECIEVED IS")
+		print("THE PREDICTION RECIEVED IS", ob_prediction)
 		# im = im.reshape((70,50)) * 255
 		if ob_prediction == None or len(ob_prediction) == 0:
 			ob_prediction = "DEFAULT"
@@ -71,18 +75,21 @@ def conv(filepaths):
 			data['pitch'] = 1
 			data['length'] = 0
 			gclef = True
+			gclefcount += 1
 		elif ob_prediction[0] == 'CClef':
 			SOL[i].clef = 2
 			data['note'] = 6
 			data['pitch'] = 1
 			data['length'] = 0
 			cclef = True
+			cclefcount += 1
 		elif ob_prediction[0] == 'FClef':
 			SOL[i].clef = 3
 			data['note'] = 7
 			data['pitch'] = 1
 			data['length'] = 0
 			fclef = True
+			fclefcount += 1
 		elif ob_prediction[0] == 'Sixteenth-Note':
 			SOL[i].duration = .125
 			data['note'] = 5
@@ -144,15 +151,16 @@ def conv(filepaths):
 
 		# print("DATA", data)
 
-	if gclef == True and fclef == True:
+	if gclef == True and fclef == True and math.abs(fclefcount - gclefcount) <= 3:
 		bigData['clef'] = 1
-	elif gclef == True:
+	elif gclef == True and gclefcount - (fclefcount + cclefcount) >= 2:
 		bigData['clef'] = 0
-	elif fclef == True:
+	elif fclef == True and fclefcount - (cclefcount + gclefcount) >= 2:
 		bigData['clef'] = 2
-	elif cclef == True:
+	elif cclef == True and cclefcount - (gclefcount + fclefcount) >= 2:
 		bigData['clef'] = 3
-
+	else:
+		bigData['clef'] = 0
 
 	# print("BIG DATA", bigData)
 	print("before write")
