@@ -343,7 +343,7 @@ class MIDImaker:
 		for json_str in json_arr:
 			self.SOLset.append(self.JSON_string_to_SOL(json_str))
 
-		self.convert_to_MIDI(len(json_arr), instruments, start_times)
+		self.convert_to_MIDI(tracks = len(json_arr), instruments = instruments, start_times = start_times)
 
 		self.MIDI_to_file("{}.mid".format(sheet_id))
 
