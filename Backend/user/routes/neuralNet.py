@@ -9,6 +9,7 @@ from keras.layers import Dense, Dropout
 from keras.models import load_model
 import math
 import os
+import gc
 from noteNeuralNet import predictNote
 from clefNeuralNet import predictClef
 from realNoteNeuralNet import predictRealNote
@@ -1110,9 +1111,11 @@ def checkPredictions(testingInput, testingOut):
 # @return - prediction for given note
 # Does the prediction for the given notes
 def predict(testingIn):
+        
 	# reset the tensorflow graph
 	tf.reset_default_graph()
-
+        tf.keras.backend.clear_session()
+    
 	# create a graph for the general prediction: NOTE or CLEF?
 	generalPredGraph = Graph()
 
@@ -1128,6 +1131,9 @@ def predict(testingIn):
 
 			# do the prediction with the general model
 			generalPredictions = model.predict(testingIn)
+                        
+                        # delete the variable after used
+                        del model
 
 			# actual value of the predictions
 			overallPredictions = -np.ones((testingIn.shape[0],1))
@@ -1164,6 +1170,8 @@ def predict(testingIn):
 
 							#load clef model
 							model = load_model("/home/Rhythm/Backend/user/routes/clef_model.h5")
+                                                            
+                                                        del model
 
 							# do the predictions with the clef model
 							predictions = model.predict(testingIn)
@@ -1180,9 +1188,10 @@ def predict(testingIn):
 								stringPredictions.append('FClef')
 
 							return stringPredictions, testingIn
-
+                                                
+                                                tf.keras.backend.clear_session()
 						session2.close()
-
+                                                gc.collect()
 				else:
 
 					# find the general note - REAL NOTE, REST, EXTRA?
@@ -1199,6 +1208,8 @@ def predict(testingIn):
 
 							# do the predictions on the notes model
 							predictions = model.predict(testingIn)
+
+                                                        del model
 
 							notePrediction = np.argmax(predictions[i])
 							print("Note Prediction", predictions, notePrediction)
@@ -1217,8 +1228,11 @@ def predict(testingIn):
 
 											#load extras model
 											model = load_model("/home/Rhythm/Backend/user/routes/extras_model.h5")
+                                                                                    
 
 											predictions = model.predict(testingIn)
+
+                                                                                        del model
 
 											extraPrediction = np.argmax(predictions[i])
 											print("Extras Prediction", predictions)
@@ -1229,9 +1243,9 @@ def predict(testingIn):
 												stringPredictions.append('Sharp')
 
 											return stringPredictions, testingIn
-
+                                                                                tf.keras.backend.clear_session()
 										session4.close()
-							
+							                        gc.collect()
 							# real note
 							elif notePrediction == 1:
 
@@ -1244,11 +1258,16 @@ def predict(testingIn):
 
 									with session5.as_default():
 
+
 										#load model real note model
 										model = load_model("/home/Rhythm/Backend/user/routes/real_note_model.h5")
+                                                                                    
 
 										predictions = model.predict(testingIn)
 	
+
+                                                                                del model
+
 										realNotePrediction = np.argmax(predictions[i])
 										print("Real Note Prediction", predictions)
 
@@ -1264,9 +1283,9 @@ def predict(testingIn):
 											stringPredictions.append('Whole-Note')
 
 										return stringPredictions, testingIn
-
+                                                                        tf.keras.clear_session()
 									session5.close()
-
+                                                                        gc.collect()
 							# rest 
 							elif notePrediction == 2:
 
@@ -1283,6 +1302,8 @@ def predict(testingIn):
 
 										predictions = model.predict(testingIn)
 	
+                                                                                del model
+
 										restPrediction = np.argmax(predictions[i])
 										print("Rest Prediction", predictions)
 
@@ -1294,18 +1315,22 @@ def predict(testingIn):
 											stringPredictions.append('Whole-Half-Rest')
 
 										return stringPredictions, testingIn
-
+                                                                        tf.keras.backend.clear_session()
 									session6.close()
-									
-							session3.close()
+									gc.collect()
+							tf.keras.backend.clear_session()
+                                                        session3.close()
+                                                        gc.collect()
 
 		session1.close()
-
-
-
+                tf.reset_default_graph()
+                tf.keras.backend.clear_session()
+                gc.collect()
 
 if __name__ == '__main__':
-	predict([[234,234]], [[345,456]])
+        for i in range(24):
+	    predict(np.ones((1, 3500)))
+            gc.collect()
 	# trainingIn, trainingOut, testingIn, testingOut = getData()
 
 	# trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut)
