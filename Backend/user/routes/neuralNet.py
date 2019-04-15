@@ -19,8 +19,8 @@ os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 
 # load all translations
-translations = np.load('/home/Rhythm/Backend/user/routes/translationsWithLines.npy')
-# translations = np.load('translationsWithLines.npy')
+# translations = np.load('/home/Rhythm/Backend/user/routes/translationsWithLines.npy')
+translations = np.load('translationsWithLines.npy')
 translations = translations.item()
 
 # create the inversion of the translations for value by key
@@ -51,18 +51,18 @@ print("TRANLSATIONS INVERSE", translationsInverse)
 
 # @return - 2d numpy arrays with training and testing data 
 # Loads the data from the numpy files
-# def getData():
-# 	# data with lines
-# 	trainingIn = np.load('/home/Rhythm/Backend/user/routes/trainingInWithLines.npy')
-# 	trainingOut = np.load('/home/Rhythm/Backend/user/routes/trainingOutWithLines.npy')
-# 	testingIn = np.load('/home/Rhythm/Backend/user/routes/testingInWithLines.npy')
-# 	testingOut = np.load('/home/Rhythm/Backend/user/routes/testingOutWithLines.npy')
+def getData():
+	# data with lines
+	trainingIn = np.load('trainingInWithLines.npy')
+	trainingOut = np.load('trainingOutWithLines.npy')
+	testingIn = np.load('testingInWithLines.npy')
+	testingOut = np.load('testingOutWithLines.npy')
 
-# 	# print("TRAINING IN")
-# 	# for i in testingIn[0]:
-# 		# print(i)
+	# print("TRAINING IN")
+	# for i in testingIn[0]:
+		# print(i)
 
-# 	return trainingIn, trainingOut, testingIn, testingOut
+	return trainingIn, trainingOut, testingIn, testingOut
 
 
 
@@ -605,7 +605,7 @@ def trainExtrasNN(trainingIn, trainingOut, testingIn, testingOut):
 # @return - void
 # Tests the accuracy of the neural network trained with sharps/falts
 def testExtrasNN(testingIn, testingOut):
-	model = load_model('/home/Rhythm/Backend/user/routes/extras_model.h5')
+	model = load_model('extras_model.h5')
 
 	sharp = translationsInverse["Sharp"]
 	flat = translationsInverse["Flat"]
@@ -927,7 +927,7 @@ def trainRealNoteNN(trainingIn, trainingOut, testingIn, testingOut):
 # @return - void
 # Tests the accuracy of the real note network trained with the real notes
 def testRealNoteNN(testingIn, testingOut):
-	model = load_model('/home/Rhythm/Backend/user/routes/real_note_model.h5')
+	model = load_model('real_note_model.h5')
 
 	# get the inverse translations
 	sixteenthNote = translationsInverse["Sixteenth-Note"]
@@ -980,22 +980,22 @@ def testRealNoteNN(testingIn, testingOut):
 		print("Prediction:", overallPredictions[i], "True Label", realNoteTestingOut[i])
 
 		# showing the incorrect image
-		if i % 1 == 0 and overallPredictions[i] != realNoteTestingOut[i]:
-			testing = realNoteTestingIn[i]
-			testing = testing * 255
-			testing = testing.reshape(70, 50)
-			img = Image.fromarray(testing)
-			img.show()
-			break
-
-		# show the example of the image and the value wanted
-		# if i % 50 == 0 and overallPredictions[i] == realNoteTestingOut[i]:
-		# 	print("Prediction:", overallPredictions[i], "True Label", realNoteTestingOut[i])
+		# if i % 1 == 0 and overallPredictions[i] != realNoteTestingOut[i]:
 		# 	testing = realNoteTestingIn[i]
 		# 	testing = testing * 255
 		# 	testing = testing.reshape(70, 50)
 		# 	img = Image.fromarray(testing)
 		# 	img.show()
+		# 	break
+
+		# show the example of the image and the value wanted
+		if i % 50 == 0 and overallPredictions[i] == realNoteTestingOut[i]:
+			print("Prediction:", overallPredictions[i], "True Label", realNoteTestingOut[i])
+			testing = realNoteTestingIn[i]
+			testing = testing * 255
+			testing = testing.reshape(70, 50)
+			img = Image.fromarray(testing)
+			img.show()
 			
 
 	print("Accuracy on real note testing data:", (np.sum(overallPredictions == realNoteTestingOut)+0.0)/len(realNoteTestingOut))
@@ -1122,29 +1122,29 @@ class Model:
 
 
 # load up all the models
-modelGeneral = Model('/home/Rhythm/Backend/user/routes/general_model.h5')
+# modelGeneral = Model('/home/Rhythm/Backend/user/routes/general_model.h5')
 
-modelClef = Model("/home/Rhythm/Backend/user/routes/clef_model.h5")
+# modelClef = Model("/home/Rhythm/Backend/user/routes/clef_model.h5")
 
-modelNotes = Model("/home/Rhythm/Backend/user/routes/notes_model.h5")
+# modelNotes = Model("/home/Rhythm/Backend/user/routes/notes_model.h5")
 
-modelExtras = Model("/home/Rhythm/Backend/user/routes/extras_model.h5")
+# modelExtras = Model("/home/Rhythm/Backend/user/routes/extras_model.h5")
 
-modelRealNotes = Model("/home/Rhythm/Backend/user/routes/real_note_model.h5")
+# modelRealNotes = Model("/home/Rhythm/Backend/user/routes/real_note_model.h5")
 
-modelRests = Model("/home/Rhythm/Backend/user/routes/rest_model.h5")
+# modelRests = Model("/home/Rhythm/Backend/user/routes/rest_model.h5")
 
-# modelGeneral = Model('general_model.h5')
+modelGeneral = Model('general_model.h5')
 
-# modelClef = Model("clef_model.h5")
+modelClef = Model("clef_model.h5")
 
-# modelNotes = Model("notes_model.h5")
+modelNotes = Model("notes_model.h5")
 
-# modelExtras = Model("extras_model.h5")
+modelExtras = Model("extras_model.h5")
 
-# modelRealNotes = Model("real_note_model.h5")
+modelRealNotes = Model("real_note_model.h5")
 
-# modelRests = Model("rest_model.h5")
+modelRests = Model("rest_model.h5")
 
 # @testingInput - 2d numpy array of testing input
 # @return - prediction for given note
@@ -1474,14 +1474,14 @@ def predict(testingIn):
 #                 gc.collect()
 
 if __name__ == '__main__':
-	for i in range(240):
-		data = np.random.randint(255, size = 3500)
-		# print("DATA", data)
-		# data = np.zeros((1, 3500))
-		predict(np.resize(data, (1, 3500)))
-		gc.collect()
+	# for i in range(240):
+	# 	data = np.random.randint(255, size = 3500)
+	# 	# print("DATA", data)
+	# 	# data = np.zeros((1, 3500))
+	# 	predict(np.resize(data, (1, 3500)))
+	# 	gc.collect()
 
-	# trainingIn, trainingOut, testingIn, testingOut = getData()
+	trainingIn, trainingOut, testingIn, testingOut = getData()
 
 	# trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testGeneralNN(testingIn, testingOut)
@@ -1501,4 +1501,4 @@ if __name__ == '__main__':
 	# trainExtrasNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testExtrasNN(testingIn, testingOut)
 
-	# checkPredictions(testingIn, testingOut)
+	checkPredictions(testingIn, testingOut)
