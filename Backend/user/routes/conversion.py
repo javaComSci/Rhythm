@@ -25,8 +25,8 @@ def conv(filepaths):
 			if file_path[i] == '/':
 				break
 
-	sheet_id = file_path[i] + sheet_id
-	count = 1
+		sheet_id = file_path[i] + sheet_id
+		count = 1
 
 	print("SHEET ID", sheet_id)
 	print("FILE PATH", file_path)
