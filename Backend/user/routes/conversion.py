@@ -21,12 +21,12 @@ def conv(filepaths):
 	for file_path in filepaths:
 		if count == 0:
 			indy = file_path.find('-')
-		for i in range(indy-1, 0, -1):
-			if file_path[i] == '/':
-				break
+			for i in range(indy-1, 0, -1):
+				if file_path[i] == '/':
+					break
 
-		sheet_id = file_path[i] + sheet_id
-		count = 1
+				sheet_id = file_path[i] + sheet_id
+			count = 1
 
 	print("SHEET ID", sheet_id)
 	print("FILE PATH", file_path)
