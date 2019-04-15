@@ -443,6 +443,42 @@ def check_object_area(ob):
 	# 	return True
 	return False
 
+def check_center(ob):
+	ob_arr = SO_to_array(ob)
+
+	min_row = max(0,int(ob_arr.shape[0]/2)-3)
+	max_row = min(ob_arr.shape[0], int(ob_arr.shape[0]/2)+4)
+
+	for i in range(min_row, max_row):
+		for j in range(ob_arr.shape[1]):
+			if ob_arr[i][j] == 0:
+				return False
+
+	return True
+
+def check_edges(ob):
+	ob_arr = SO_to_array(ob)
+
+	min_top = 0
+	max_top = min(ob_arr.shape[0], 5)
+
+	for i in range(min_top, max_top):
+		for j in range(ob_arr.shape[1]):
+			if ob_arr[i][j] == 0:
+				return False
+
+	min_bot = max(0,ob_arr.shape[0]-5)
+	max_bot = ob_arr.shape[0]
+
+	for i in range(min_bot, max_bot):
+		for j in range(ob_arr.shape[1]):
+			if ob_arr[i][j] == 0:
+				return False
+
+	return True
+
+
+
 # @mask - Contains labels for identifying which pixels belong to which objects
 # @SOL - List of sheet list objects
 # @return - void
@@ -456,8 +492,9 @@ def prune_objects(mask, SOL):
 		ch = check_height(SOL[ob])
 		ca = check_area(SOL[ob])
 		coa = check_object_area(SOL[ob])
-		prune =  cw or ch or ca or coa
-
+		cc = check_center(SOL[ob])
+		ce = check_edges(SOL[ob])
+		prune =  cw or ch or ca or coa or cc or ce
 		if prune:
 			cv2.imwrite("{}{}ob_{}{}{}{}.jpg".format("ExamplePredictions/prunePredictions/",SOL[ob].R1,cw,ch,ca,coa), SO_to_array(SOL[ob]))
 
@@ -592,8 +629,8 @@ def full_partition(path):
 
 	#group runs by measures, add in-between rows for runs
 	staff_lines = augment_runs(pruned_runs)
-	del pruned_runs
-	gc.collect()
+	# del pruned_runs
+	# gc.collect()
 
 	#print "Completed 'run segmenting'"
 
@@ -605,9 +642,9 @@ def full_partition(path):
 	#remove runs in the image
 	remove_runs_and_fill(im_bw, runs)
 
-	del runs
-	del dividers
-	gc.collect()
+	# del runs
+	# del dividers
+	# gc.collect()
 	#print "Completed 'divider segmenting'"
 
 	#Thickens the iamge around black pixels
@@ -615,13 +652,14 @@ def full_partition(path):
 
 	#locate objects in the image
 	mask, SOL = locate_objects(thick_mask)
-	del thick_mask
-	gc.collect()
+
+	# del thick_mask
+	# gc.collect()
 
 	mask, SOL = de_thicken(mask,SOL,im_bw)
 	#print "Completed 'object location'"
-	del im_bw
-	gc.collect()
+	# del im_bw
+	# gc.collect()
 
 	#locate row and staff lines
 	locate_note_run(SOL, staff_lines)
@@ -631,8 +669,8 @@ def full_partition(path):
 
 	img_shape = mask.shape
 
-	del mask
-	gc.collect()
+	# del mask
+	# gc.collect()
 
 	return SOL, img_shape, staff_lines
 
@@ -832,7 +870,7 @@ def sort_SOL(SOL):
 
 
 if __name__ == "__main__":
-	SOL, shape, sl = full_partition("ExamplePredictions/DATA/s1.jpg")
+	SOL, shape, sl = full_partition("ExamplePredictions/DATA/s2.jpg")
 	print_objects(shape,SOL,sl,path="ExamplePredictions/predictions",staff_lines=True)
 
 
