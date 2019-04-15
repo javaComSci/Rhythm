@@ -10,28 +10,28 @@ import sendToCloud
 # from .. import MySQL
 
 def conv(filepaths):
-    print("IN CONVERSION")
+	print("IN CONVERSION")
 	bigData = {}
 	bigData['clef'] = 1
 	bigData['notes'] = []
-        
-    count = 0
-    sheet_id = ""
+	    
+	count = 0
+	sheet_id = ""
 	for file_path in filepaths:
-        if count == 0:
-        indy = file_path.find('-')
-        for i in range(indy-1, 0, -1):
-            if file_path[i] == '/':
-                break
+	    if count == 0:
+	    indy = file_path.find('-')
+	    for i in range(indy-1, 0, -1):
+	        if file_path[i] == '/':
+	            break
 
 	sheet_id = file_path[i] + sheet_id
 	count = 1
 
-    print("SHEET ID", sheet_id)
-    print("FILE PATH", file_path)
-                
+	print("SHEET ID", sheet_id)
+	print("FILE PATH", file_path)
+	            
 	SOL, shape, sl = partition.full_partition(file_path)
-    print("AFTER PARITIOTN")
+	print("AFTER PARITIOTN")
 	ob_counter = 0
 
 	#partition.print_objects(mask, SOL, staff_lines, "ExamplePredictions/predictions/")
@@ -153,13 +153,13 @@ def conv(filepaths):
 			bigData['clef'] = 3
 
 	#print("BIG DATA", bigData)
-    print("before write")
+	print("before write")
 	jsonData = json.dumps(bigData)
 
 
 	with open('{}.txt'.format(sheet_id), 'w') as outfile:  
 		json.dump(jsonData, outfile)
-        print("AFTER TEH WROTE")
+	    print("AFTER TEH WROTE")
 
 	sendToCloud.cloud(jsonData,sheet_id)
 
