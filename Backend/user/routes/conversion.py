@@ -144,14 +144,15 @@ def conv(filepaths):
 
 		# print("DATA", data)
 
-		if gclef == True and fclef == True:
-			bigData['clef'] = 1
-		elif gclef == True:
-			bigData['clef'] = 0
-		elif fclef == True:
-			bigData['clef'] = 2
-		elif cclef == True:
-			bigData['clef'] = 3
+	if gclef == True and fclef == True:
+		bigData['clef'] = 1
+	elif gclef == True:
+		bigData['clef'] = 0
+	elif fclef == True:
+		bigData['clef'] = 2
+	elif cclef == True:
+		bigData['clef'] = 3
+
 
 	# print("BIG DATA", bigData)
 	print("before write")
