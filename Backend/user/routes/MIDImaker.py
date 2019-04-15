@@ -340,14 +340,12 @@ class MIDImaker:
 
 	def jsons_to_MIDI(self, json_arr, sheet_id, instruments=["Piano"], start_times=[1]):
 
-		MM = MIDImaker()
-
 		for json_str in json_arr:
-			MM.SOLset.append(MM.JSON_string_to_SOL(json_str))
+			self.SOLset.append(self.JSON_string_to_SOL(json_str))
 
-		MM.convert_to_MIDI(len(json_arr), instruments, start_times)
+		self.convert_to_MIDI(len(json_arr), instruments, start_times)
 
-		MM.MIDI_to_file("{}.mid".format(sheet_id))
+		self.MIDI_to_file("{}.mid".format(sheet_id))
 
 	#Writes MIDI file to disk
 	def MIDI_to_file(self, filepath):
