@@ -20,6 +20,12 @@ def addSheetFile():
     # MySQLConnect.runQuery("SELECT file FROM sheet_music WHERE sheet_id=%s", (15))
     return 'addFile'
 
+def addSheetJSON():
+    jsonFILE = request.files['file']
+    sheetID = request.form['sheet_id']
+    MySQLConnect.runQuery("UPDATE sheet_music set song_json=%s where sheet_id=%s", (jsonFILE.read(), sheetID))
+    return 'addsheetfile'
+
 def duplicateSheet():
     content = request.json
     MySQLConnect.runQuery("INSERT INTO sheet_music(file,composition_id,name) SELECT file, %s, name from `sheet_music` where sheet_id=%s", (content['comp_id'], content['sheet_id']))
