@@ -5,6 +5,7 @@ from flask import Flask, render_template, json, url_for, send_file
 # Importing a MySQL helper
 import pymysql
 import subprocess
+from user.routes import conversion
 import os
 import shlex
 import io
@@ -193,11 +194,22 @@ def insert(table, query, value):
     cursor.execute(sql)
     db.commit()
     cursor.close()
-    db.close()
+    db.close()g
     return
 
 def getSong(sheet_id):
     # print os.path.abspath(os.curdir)
+
+    db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
+    cursor = db.cursor()
+    cursor.execute('SELECT song_json FROM sheet_music where sheet_id=%s', (sheet_id,))
+    db.commit()
+    song_json = cursor.fetchone()
+    cursor.close()
+    db.close()
+
+    
+
     subprocess.call(shlex.split('/home/ubuntu/Rhythm/Backend/MidiConversion/ConvertToMP3.sh '+sheet_id+'.mid'))
     flPath = '/home/ubuntu/Rhythm/Backend/MidiConversion/'+sheet_id+'.mp3'
     return send_file(flPath, as_attachment=True,attachment_filename=sheet_id+".mp3",mimetype="audio/mpeg")
