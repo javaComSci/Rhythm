@@ -19,8 +19,8 @@ os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 
 # load all translations
-# translations = np.load('/home/Rhythm/Backend/user/routes/translationsWithLines.npy')
-translations = np.load('translationsWithLines.npy')
+translations = np.load('/home/Rhythm/Backend/user/routes/translationsWithLines.npy')
+# translations = np.load('translationsWithLines.npy')
 translations = translations.item()
 
 # create the inversion of the translations for value by key
@@ -1084,14 +1084,14 @@ def checkPredictions(testingInput, testingOut):
 	incorrect = 0
 	correct = 0
 
-	for t in range(0, testingInput.shape[0], 30):
+	for t in range(0, testingInput.shape[0], 600):
 
 		test = testingInput[t].reshape((1, 3500))
 		prediction = predict(test)
 
-		print("PREDICTION: ", prediction[0][0], "ACTUAL:", stringOutputs[t])
+		print("PREDICTION: ", prediction[0], prediction, prediction[0], "ACTUAL:", stringOutputs[t])
 
-		if prediction[0] == stringOutputs[t] and t % 60 == 0:
+		if prediction[0] == stringOutputs[t] and t % 6000 == 0:
 			testing = testingInput[t]
 			testing = testing * 255
 			testing = testing.reshape(70, 50)
@@ -1100,6 +1100,7 @@ def checkPredictions(testingInput, testingOut):
 
 		if prediction[0] == stringOutputs[t]:
 			correct += 1
+			print("CORRECT")
 		else:
 			incorrect += 1
 
@@ -1122,29 +1123,29 @@ class Model:
 
 
 # load up all the models
-# modelGeneral = Model('/home/Rhythm/Backend/user/routes/general_model.h5')
+modelGeneral = Model('/home/Rhythm/Backend/user/routes/general_model.h5')
 
-# modelClef = Model("/home/Rhythm/Backend/user/routes/clef_model.h5")
+modelClef = Model("/home/Rhythm/Backend/user/routes/clef_model.h5")
 
-# modelNotes = Model("/home/Rhythm/Backend/user/routes/notes_model.h5")
+modelNotes = Model("/home/Rhythm/Backend/user/routes/notes_model.h5")
 
-# modelExtras = Model("/home/Rhythm/Backend/user/routes/extras_model.h5")
+modelExtras = Model("/home/Rhythm/Backend/user/routes/extras_model.h5")
 
-# modelRealNotes = Model("/home/Rhythm/Backend/user/routes/real_note_model.h5")
+modelRealNotes = Model("/home/Rhythm/Backend/user/routes/real_note_model.h5")
 
-# modelRests = Model("/home/Rhythm/Backend/user/routes/rest_model.h5")
+modelRests = Model("/home/Rhythm/Backend/user/routes/rest_model.h5")
 
-modelGeneral = Model('general_model.h5')
+# modelGeneral = Model('general_model.h5')
 
-modelClef = Model("clef_model.h5")
+# modelClef = Model("clef_model.h5")
 
-modelNotes = Model("notes_model.h5")
+# modelNotes = Model("notes_model.h5")
 
-modelExtras = Model("extras_model.h5")
+# modelExtras = Model("extras_model.h5")
 
-modelRealNotes = Model("real_note_model.h5")
+# modelRealNotes = Model("real_note_model.h5")
 
-modelRests = Model("rest_model.h5")
+# modelRests = Model("rest_model.h5")
 
 # @testingInput - 2d numpy array of testing input
 # @return - prediction for given note
@@ -1481,7 +1482,7 @@ if __name__ == '__main__':
 	# 	predict(np.resize(data, (1, 3500)))
 	# 	gc.collect()
 
-	trainingIn, trainingOut, testingIn, testingOut = getData()
+	# trainingIn, trainingOut, testingIn, testingOut = getData()
 
 	# trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testGeneralNN(testingIn, testingOut)
@@ -1501,4 +1502,4 @@ if __name__ == '__main__':
 	# trainExtrasNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testExtrasNN(testingIn, testingOut)
 
-	checkPredictions(testingIn, testingOut)
+	# checkPredictions(testingIn, testingOut)
