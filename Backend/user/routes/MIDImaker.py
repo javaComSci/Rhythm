@@ -300,7 +300,7 @@ class MIDImaker:
 		#New sheet object list
 		SOL = []
 
-		music_sheet = json.load(json_string)
+		music_sheet = json.loads(json_string)
 
 		for ob in music_sheet['notes']:
 			new_ob = partition.sheet_object((-1,-1),-1)
