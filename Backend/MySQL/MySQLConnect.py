@@ -213,7 +213,8 @@ def getSong(sheet_id):
     makermidi.jsons_to_MIDI([song_json[0]], sheet_id, ["Piano"], [1])
 
     subprocess.call(shlex.split('/home/Rhythm/Backend/MidiConversion/ConvertToMP3.sh '+sheet_id+'.mid'))
-    flPath = '/home/Rhythm/Backend/MidiConversion/'+sheet_id+'.mp3'
+    flPath = '/home/Rhythm/Backend/'+sheet_id+'.mp3'
+    print 'FLPATH: ' + flPath
     return send_file(flPath, as_attachment=True,attachment_filename=sheet_id+".mp3",mimetype="audio/mpeg")
     '''db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
     cursor = db.cursor()

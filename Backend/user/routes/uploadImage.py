@@ -48,5 +48,8 @@ def cameraPipeline():
 	if flag == True:
 	    jsonName = conv(imgs, Xs, Ys, widths, heights)
 	    imgs = []
-
-	return 'cameraPipeline'
+        filee = open("/home/Rhythm/Backend/"+jsonName)
+        fileee = json.load(filee)
+        filee.close()
+        return fileee
+       # return "{}"

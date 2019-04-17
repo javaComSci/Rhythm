@@ -11,12 +11,15 @@ import pymysql
     return lastrowid
 '''
 
-json_data = {"server": "ec2-18-237-79-152.us-west-2.compute.amazonaws.com","username": "server-api","password": "Pigsdontlikeeagles1"}
+json_data = {"server": "localhost","username": "root","password": "Pigsdontlikeeagles1"}
 
 def cloud(sheetFile, sheetID):
 	db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
-	cursor = db.cursor()
-	cursor.execute("UPDATE sheet_music SET file=%s WHERE sheet_id=%s", (sheetFile, sheetID))
+	print 'made it HERE'
+        print 'sheet id' + sheetID
+        print 'jsoon:'+sheetFile
+        cursor = db.cursor()
+	cursor.execute("UPDATE sheet_music SET song_json=%s WHERE sheet_id=%s", (sheetFile, sheetID))
 	db.commit()
 	lastrowid = cursor.lastrowid
 	cursor.close()

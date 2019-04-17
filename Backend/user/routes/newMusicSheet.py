@@ -21,9 +21,9 @@ def addSheetFile():
     return 'addFile'
 
 def addSheetJSON():
-    jsonFILE = request.files['file']
+    jsonFILE = request.form['file']
     sheetID = request.form['sheet_id']
-    MySQLConnect.runQuery("UPDATE sheet_music set song_json=%s where sheet_id=%s", (jsonFILE.read(), sheetID))
+    MySQLConnect.runQuery("UPDATE sheet_music set song_json=%s where sheet_id=%s", (jsonFILE, sheetID))
     return 'addsheetfile'
 
 def duplicateSheet():
