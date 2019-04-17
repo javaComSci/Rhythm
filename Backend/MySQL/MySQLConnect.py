@@ -209,7 +209,7 @@ def getSong(sheet_id):
     db.close()
     # def jsons_to_MIDI(self, json_arr, sheet_id, instruments=["Piano"], start_times=[1]):
     makermidi = MIDImaker()
-    print 'TYPE of THING' + str(type(song_json))
+    #print 'TYPE of THING' + str(type(song_json))
     makermidi.jsons_to_MIDI([song_json[0]], sheet_id, ["Piano"], [1])
 
     subprocess.call(shlex.split('/home/Rhythm/Backend/MidiConversion/ConvertToMP3.sh '+sheet_id+'.mid'))
