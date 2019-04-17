@@ -707,10 +707,13 @@ def exportPDF(mail, app):
     msg = Message(messageTitle, sender = content['email'], recipients = [content['email']])
     msg.body = "Here is your requested music in pdf version."
 
+    flag = False
+
     for sheet_id in content['sheet_ids']:
         information = MySQLConnect.findSheetBySheetID("sheet_music", int(sheet_id))
 
-        if information == 'None':
+        if information == None or len(information) == 0:
+            flag = True
             continue
 
         print(information)
@@ -733,11 +736,15 @@ def exportPDF(mail, app):
         pdfNames = pdfPipeline(sheet_id, notes)
 
         print("THE NAME OF THE PDF", pdfNames)
-        # if multiple pdfs are created, then send each one of them
-        for pdfName in pdfNames:
-            with app.open_resource('convertedData/' + pdfName) as fp:
-                msg.attach(name + '-' + pdfName, "application/pdf", fp.read())
-
+        # if multiple pdfs are created, then send each one of them and they exist
+        if len(pdfNames) > 0:
+            for pdfName in pdfNames:
+                with app.open_resource('convertedData/' + pdfName) as fp:
+                    msg.attach(name + '-' + pdfName, "application/pdf", fp.read())
+                app.close_resource('convertedData/' + pdfName)
     mail.send(msg)
 
-    return 'sent'
+    if flag == True:
+        return 'Some Sheets Missing'
+
+    return 'Sent All Successfully'

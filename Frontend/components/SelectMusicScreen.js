@@ -14,7 +14,7 @@ class SelectMusicScreen extends React.Component {
 		if(clefData) {
 			clefData = clefData['clef'];
 		} else {
-			clefData = 0;
+			clefData = 3;
 		}
 		console.log("AFTER", clefData)
 

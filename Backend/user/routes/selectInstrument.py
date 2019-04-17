@@ -13,12 +13,13 @@ def selectMusic():
     if type(instrument) == int:
     	MySQLConnect.updateInstrumentById('sheet_music', info['sheet_id'], 'Piano')
     	return 'false'
-    	
+
     validInstruments = ['Piano', 'Harp', 'Violin', 'Flute', 'Tuba', 'Guitar', 'Cello', 'Bass', 'Trombone', 'Viola']
     if instrument not in validInstruments:
     	print("HERE")
     	info['instrument'] = 'Piano'
     	instrument = info['instrument']
+    
     
     MySQLConnect.updateInstrumentById('sheet_music', info['sheet_id'], info['instrument'])
 

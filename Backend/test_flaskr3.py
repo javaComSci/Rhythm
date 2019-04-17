@@ -44,4 +44,26 @@ class TestApi(unittest.TestCase):
             decodedData = response.data
           assert decodedData == 'false'
 
+  def test_D_exportPDF(self):
+      with app.test_client() as client:
+          response=client.post('/createPDF',
+                     data=json.dumps(dict(sheet_ids=['222'], email='iramanat@purdue.edu')),
+                     content_type='application/json')
+          if not isinstance(response.data, str): 
+            decodedData = response.data.decode('utf-8')
+          else:
+            decodedData = response.data
+          assert decodedData == 'Sent All Successfully'
+
+  def test_E_exportPDF(self):
+      with app.test_client() as client:
+          response=client.post('/createPDF',
+                     data=json.dumps(dict(sheet_ids=['89090'], email='iramanat@purdue.edu')),
+                     content_type='application/json')
+          if not isinstance(response.data, str): 
+            decodedData = response.data.decode('utf-8')
+          else:
+            decodedData = response.data
+          assert decodedData == 'Some Sheets Missing'
+
 
