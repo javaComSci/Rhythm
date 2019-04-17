@@ -755,7 +755,8 @@ def exportPDF(mail, app):
         print(information)
     
         # has the actual information in the file
-        file = information[0][1]
+        file1 = information[0][4]
+        # file1 = information['notes']
 
         # has the file name
         name = information[0][3]
@@ -769,7 +770,7 @@ def exportPDF(mail, app):
         # file.close()
 
         # call to create the pdf for that image
-        pdfNames = pdfPipeline(sheet_id, notes)
+        pdfNames = pdfPipeline(sheet_id, file1)
 
         print("THE NAME OF THE PDF", pdfNames)
         # if multiple pdfs are created, then send each one of them and they exist
