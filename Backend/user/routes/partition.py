@@ -578,7 +578,7 @@ def SO_to_array(ob, resize=True):
 # @return - 2d mask array, and a list of the sheet objects
 #	fully performs tha object partion steps, returning the mask of the objects and the 
 #	list of the objects
-def full_partition(path):
+def full_partition(path, x=0, y=0, b_height=0, b_width=0):
 	#load image as grayscale
 	print("BEFORE LOAD")
 	im_gray =  cv2.imread(path, cv2.IMREAD_GRAYSCALE)
@@ -595,86 +595,89 @@ def full_partition(path):
 	(thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 	#print "Completed 'image load'"
 
+	if (im_bw.shape[0] < im_bw.shape[1]):
+		im_bw = rotate_scale(im_bw, b_height, b_width, x, y)
+
 	#cv2.imwrite("{}FullImage_binary.jpg".format(path), im_bw)
 
 	#resize image if it is too large
 	# if (im_bw.shape[0] > 2000 and im_bw.shape[1] > 2000):
 	# 	im_bw = cv2.resize(im_bw, (1500, 1500)) 
 
-	start_time_1 = time.time() ##
+	#start_time_1 = time.time() ##
 	#locate runs in the image
-	start_time = time.time()
+	#start_time = time.time()
 	runs = locate_run_blocks(im_bw)
-	print("11_Time: {}".format(time.time() - start_time))
+	#print("11_Time: {}".format(time.time() - start_time))
 
-	start_time = time.time()
+	#start_time = time.time()
 	#merge runs into pruned format
 	pruned_runs = prune_runs(runs)
-	print("12_Time: {}".format(time.time() - start_time))
+	#print("12_Time: {}".format(time.time() - start_time))
 
 
-	start_time = time.time()
+	#start_time = time.time()
 	#group runs by measures, add in-between rows for runs
 	staff_lines = augment_runs(pruned_runs)
-	print("13_Time: {}".format(time.time() - start_time))
+	#print("13_Time: {}".format(time.time() - start_time))
 	# del pruned_runs
 	# gc.collect()
 
 	#print "Completed 'run segmenting'"
 
-	start_time = time.time()
+	#start_time = time.time()
 	#locate dividers in the image
 	dividers = locate_vertical_dividers(im_bw)
-	print("14_Time: {}".format(time.time() - start_time))
+	#print("14_Time: {}".format(time.time() - start_time))
 
-	start_time = time.time()
+	#start_time = time.time()
 	#remove dividers in the image
 	remove_vertical_dividers_and_fill(im_bw, dividers)
-	print("15_Time: {}".format(time.time() - start_time))
+	#print("15_Time: {}".format(time.time() - start_time))
 
-	start_time = time.time()
+	#start_time = time.time()
 	#remove runs in the image
 	remove_runs_and_fill(im_bw, runs)
-	print("16_Time: {}".format(time.time() - start_time))
+	#print("16_Time: {}".format(time.time() - start_time))
 
-	print("1_Time: {}".format(time.time() - start_time_1))
+	#print("1_Time: {}".format(time.time() - start_time_1))
 	# del runs
 	# del dividers
 	# gc.collect()
 	#print "Completed 'divider segmenting'"
 
-	start_time = time.time()
+	#start_time = time.time()
 	#Thickens the iamge around black pixels
 	thick_mask = thickener(im_bw)
 
-	start_time = time.time()
+	#start_time = time.time()
 	#locate objects in the image
 	mask, SOL = locate_objects(thick_mask)
 
-	print("2_Time: {}".format(time.time() - start_time))
+	#print("2_Time: {}".format(time.time() - start_time))
 
 	# del thick_mask
 	# gc.collect()
 
-	start_time = time.time()
+	#start_time = time.time()
 	mask, SOL = de_thicken(mask,SOL,im_bw)
 
-	print("3_Time: {}".format(time.time() - start_time))
+	#print("3_Time: {}".format(time.time() - start_time))
 	#print "Completed 'object location'"
 	# del im_bw
 	# gc.collect()
 
-	start_time = time.time()
+	#start_time = time.time()
 	#locate row and staff lines
 	locate_note_run(SOL, staff_lines)
 
-	print("4_Time: {}".format(time.time() - start_time))
+	#print("4_Time: {}".format(time.time() - start_time))
 
-	start_time = time.time()
+	#start_time = time.time()
 	#sort SOL
 	sort_SOL(SOL)
 
-	print("5_Time: {}".format(time.time() - start_time))
+	#print("5_Time: {}".format(time.time() - start_time))
 
 	img_shape = mask.shape
 
@@ -877,13 +880,27 @@ def closest_row(er, staff_lines):
 def sort_SOL(SOL):
 	SOL.sort(key = lambda ob: (ob.staff_line, ob.C1))
 
+def rotate_scale(image, bh=0, bw=0, x=0, y=0):
+	np.rot90(image, 3)
+
+	new_img = np.ones((bh,bw))
+
+	offset_h = image.shape
+
+	for r in range(bh):
+		for c in range(bw):
+			new_img[r][c] = image[y + r][x + c]
+
+	return new_img
+
+
 
 if __name__ == "__main__":
 	start_time = time.time()
-	SOL, shape, sl = full_partition("ExamplePredictions/DATA/s1.jpg")
+	SOL, shape, sl = full_partition("ExamplePredictions/DATA/s5.jpg")
 	print("Total_Time: {}".format(time.time() - start_time))
 
-	print_objects(shape,SOL,sl,path="ExamplePredictions/predictions",staff_lines=True)
+	print_objects(shape,SOL,sl,path="ExamplePredictions/predictions",staff_lines=False)
 
 
 
