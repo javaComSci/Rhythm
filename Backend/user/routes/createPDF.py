@@ -420,7 +420,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
                     # check if there is note there
 
                         # need to shift everything up first so that the bottom of the note is first touching the top of the line
-                        pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0]
+                        pixelRow = staffLinesStartingPos[k-1] - imgNoteResized.shape[0] 
 
                         # need to shift the note down for the pitch
                         pixelRow = pixelRow + (note['pitch'] * 25)
@@ -755,7 +755,7 @@ def exportPDF(mail, app):
         print(information)
     
         # has the actual information in the file
-        file1 = information[0][4]
+        file1 = json.loads(information[0][4].decode('string-escape').strip('"'))
         # file1 = information['notes']
 
         # has the file name
