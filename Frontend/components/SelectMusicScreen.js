@@ -9,9 +9,14 @@ class SelectMusicScreen extends React.Component {
 		super(props);
 
 		let clefData = this.props.navigation.getParam('file');
-		clefData = clefData['clef'];
-		console.log("CLEF INTO");
+		console.log("CLEF DATA")
 		console.log(clefData)
+		if(clefData) {
+			clefData = clefData['clef'];
+		} else {
+			clefData = 0;
+		}
+		console.log("AFTER", clefData)
 
 
 		this.state = {
@@ -29,7 +34,7 @@ class SelectMusicScreen extends React.Component {
 				['Trombone', 'Viola'],
 			],
 			sheet_id: this.props.navigation.getParam('sheet_id'),
-			clefInfo: clefData ? Integer.parseInt(clefData) : 0
+			clefInfo: clefData ? parseInt(clefData) : 0
 		};
 
 	}
@@ -52,6 +57,11 @@ class SelectMusicScreen extends React.Component {
                 	'sheet_id': this.state.sheet_id,
                 }),
             }).then((res) => {
+            	console.log("In choosen")
+            	let refreshFunction = this.props.navigation.getParam('refresh');
+            	refreshFunction();
+            	console.log("THE REFRESHER")
+            	console.log(refreshFunction)
                 this.props.navigation.navigate('ViewCompScreen')
             }).catch((res) => {
                 console.log("err", res)

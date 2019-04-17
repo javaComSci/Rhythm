@@ -19,6 +19,20 @@ var SheetScreenTemplate = function () {
         sheet_ids.push(this.state.sheet_music[i].getID());
     }
 
+
+    onPressHandlerForInstrument = (item) => {
+        console.log("ON PRESS HANDLER")
+        console.log(this.refreshFunction)
+        console.log(item.getTitle())
+        this.props.navigation.navigate('SelectMusicScreen', { refresh: this.refreshFunction, title: item.getTitle(), sheet_id: item.getID(), file: item.getFile()});
+    }
+
+                                //     <TouchableOpacity
+                                //     onPress={(e) => {
+                                //         this.props.navigation.navigate('SelectMusicScreen', { title: item.getTitle(), sheet_id: item.getID(), file: item.getFile() })
+                                //     }}
+                                // >
+
     return (
         <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
             <View style={styles.container}>
@@ -97,9 +111,7 @@ var SheetScreenTemplate = function () {
                                 </View>
 
                                 <TouchableOpacity
-                                    onPress={(e) => {
-                                        this.props.navigation.navigate('SelectMusicScreen', { title: item.getTitle(), sheet_id: item.getID(), file: item.getFile() })
-                                    }}
+                                    onPress={(e) => onPressHandlerForInstrument(item)}
                                 >
                                     <Text style={{ color: 'black', backgroundColor: 'white', borderRadius: 2, borderWidth: 3, borderColor: 'black', fontSize: 20 }}> {item.getInstrument() ? item.getInstrument() : "Piano"} </Text>
                                 </TouchableOpacity>
