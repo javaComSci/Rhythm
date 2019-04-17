@@ -347,6 +347,8 @@ class MIDImaker:
 
 		self.MIDI_to_file("{}.mid".format(sheet_id))
 
+		return sheet_id
+
 	#Writes MIDI file to disk
 	def MIDI_to_file(self, filepath):
 		with open(filepath, "wb") as op:
