@@ -87,8 +87,9 @@ class CameraExample extends React.Component {
                     'compID': this.props.target[0][0] ? this.props.target[0][0] : 0,
                   }),
               }).then((res) => {
-                  console.log("I WORKED!???\n" + res)
-                  that.props.dispatchPlaceJSON(res);
+                  console.log("I WORKED!???\n")
+                  console.log(res._bodyText);
+                  that.props.dispatchPlaceJSON(res._bodyText);
               }).catch((res) => {
                   console.log("err", res)
               });

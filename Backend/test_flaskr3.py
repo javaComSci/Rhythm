@@ -16,7 +16,7 @@ class TestApi(unittest.TestCase):
           response=client.post('/selectInstrument',
                      data=json.dumps(dict(sheet_id=247, instrument='Violin')),
                      content_type='application/json')
-          if not isinstance(response.data, str): 
+          if not isinstance(response.data, str):
             decodedData = response.data.decode('utf-8')
           else:
             decodedData = response.data
@@ -27,7 +27,7 @@ class TestApi(unittest.TestCase):
           response=client.post('/selectInstrument',
                      data=json.dumps(dict(sheet_id=247, instrument='NONEXISTANTINSTRUMENT')),
                      content_type='application/json')
-          if not isinstance(response.data, str): 
+          if not isinstance(response.data, str):
             decodedData = response.data.decode('utf-8')
           else:
             decodedData = response.data
@@ -38,7 +38,7 @@ class TestApi(unittest.TestCase):
           response=client.post('/selectInstrument',
                      data=json.dumps(dict(sheet_id=247, instrument=65456)),
                      content_type='application/json')
-          if not isinstance(response.data, str): 
+          if not isinstance(response.data, str):
             decodedData = response.data.decode('utf-8')
           else:
             decodedData = response.data
@@ -47,9 +47,9 @@ class TestApi(unittest.TestCase):
   def test_D_exportPDF(self):
       with app.test_client() as client:
           response=client.post('/createPDF',
-                     data=json.dumps(dict(sheet_ids=['222'], email='iramanat@purdue.edu')),
+                     data=json.dumps(dict(sheet_ids=['222'], email='iramanatt12@purdue.edu')),
                      content_type='application/json')
-          if not isinstance(response.data, str): 
+          if not isinstance(response.data, str):
             decodedData = response.data.decode('utf-8')
           else:
             decodedData = response.data
@@ -58,12 +58,16 @@ class TestApi(unittest.TestCase):
   def test_E_exportPDF(self):
       with app.test_client() as client:
           response=client.post('/createPDF',
-                     data=json.dumps(dict(sheet_ids=['89090'], email='iramanat@purdue.edu')),
+                     data=json.dumps(dict(sheet_ids=['89090'], email='iramanatt12@purdue.edu')),
                      content_type='application/json')
-          if not isinstance(response.data, str): 
+          if not isinstance(response.data, str):
             decodedData = response.data.decode('utf-8')
           else:
             decodedData = response.data
           assert decodedData == 'Some Sheets Missing'
 
-
+  def test_F_MitiCreation(self):
+      with app.test_client() as client:
+          response=client.post('/getSong',
+                     data=json.dumps(dict({"clef" : 0, "notes": [{"note": 4, "length": 1, "ptich": 0}]}, 98765)),
+                     content_type='application/json')

@@ -49,7 +49,7 @@ print("TRANLSATIONS INVERSE", translationsInverse)
 	# 		- flat
 
 
-# @return - 2d numpy arrays with training and testing data 
+# @return - 2d numpy arrays with training and testing data
 # Loads the data from the numpy files
 def getData():
 	# data with lines
@@ -77,7 +77,7 @@ def trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut):
 	# modify the labels for clefs, notes, and times for training data
 	for t in range(0, len(trainingOut)):
 		output = trainingOut[t][0]
-		
+
 		translation = translations[output]
 		if translation == 'CClef' or translation == 'GClef' or translation == 'FClef':
 			# for clef
@@ -90,7 +90,7 @@ def trainGeneralNN(trainingIn, trainingOut, testingIn, testingOut):
 	# modify the labels for clefs, notes, and times for testing data
 	for t in range(0, len(testingOut)):
 		output = testingOut[t][0]
-		
+
 		translation = translations[output]
 		if translation == 'CClef' or translation == 'GClef' or translation == 'FClef':
 			# for clef
@@ -137,7 +137,7 @@ def testGeneralNN(testingIn, testingOut):
 	# modify the labels for clefs, notes, and times for testing data
 	for t in range(0, len(testingOut)):
 		output = testingOut[t][0]
-		
+
 		translation = translations[output]
 		if translation == 'CClef' or translation == 'GClef' or translation == 'FClef':
 			# for clef
@@ -259,7 +259,7 @@ def trainClefNN(trainingIn, trainingOut, testingIn, testingOut):
 	# print("TESTING", clefTestingIn.shape, clefTestingIn, clefTestingOut, clefTestingOut.shape)
 
 	print("SHAPES", clefTestingIn.shape, clefTestingOut.shape, clefTrainingIn.shape, clefTrainingOut.shape)
-	
+
 
 	# setup layers for hyperparameter tuning
 	layersForTraining = [ [[50, 'relu'], [20, 'relu'], [3, 'softmax'] ],
@@ -341,7 +341,7 @@ def testClefNN(testingIn, testingOut):
 			testing = testing.reshape(70, 50)
 			img = Image.fromarray(testing)
 			img.show()
-			
+
 
 	print("Accuracy on clef testing data:", (np.sum(overallPredictions == clefTestingOut)+0.0)/len(clefTestingOut))
 
@@ -354,12 +354,12 @@ def testClefNN(testingIn, testingOut):
 # @return - void
 # Trains neural network with notes, sharp/flat, rests
 def trainNoteNN(trainingIn, trainingOut, testingIn, testingOut):
-	# just need the notes and need to separate by the different notes there are 
+	# just need the notes and need to separate by the different notes there are
 
 	# modify the labels for notes, sharp/flat, and rests in all training data first
 	for t in range(0, len(trainingOut)):
 		output = trainingOut[t][0]
-		
+
 		translation = translations[output]
 		if translation == 'Flat' or translation == 'Sharp':
 			# for sharp/flat
@@ -374,7 +374,7 @@ def trainNoteNN(trainingIn, trainingOut, testingIn, testingOut):
 	# modify the labels for notes, sharp/flat, and rests in all training data first
 	for t in range(0, len(testingOut)):
 		output = testingOut[t][0]
-		
+
 		translation = translations[output]
 		if translation == 'Flat' or translation == 'Sharp':
 			# for sharp/flat
@@ -432,7 +432,7 @@ def trainNoteNN(trainingIn, trainingOut, testingIn, testingOut):
 
 
 	print("SHAPES", notesTestingIn.shape, notesTestingOut.shape, notesTrainingIn.shape, notesTrainingOut.shape)
-	
+
 
 	# setup layers for hyperparameter tuning
 	layersForTraining = [ [[50, 'relu'], [20, 'relu'], [3, 'softmax'] ],
@@ -461,7 +461,7 @@ def testNoteNN(testingIn, testingOut):
 	# modify the labels for notes, sharp/flat, and rests in all training data first
 	for t in range(0, len(testingOut)):
 		output = testingOut[t][0]
-		
+
 		translation = translations[output]
 		if translation == 'Flat' or translation == 'Sharp':
 			# for sharp/flat
@@ -521,7 +521,7 @@ def testNoteNN(testingIn, testingOut):
 		# 	testing = testing.reshape(70, 50)
 		# 	img = Image.fromarray(testing)
 		# 	img.show()
-			
+
 
 	print("Accuracy on notes testing data:", (np.sum(overallPredictions == notesTestingOut)+0.0)/len(notesTestingOut))
 
@@ -582,7 +582,7 @@ def trainExtrasNN(trainingIn, trainingOut, testingIn, testingOut):
 
 
 	print("SHAPES", extraTestingIn.shape, extraTestingOut.shape, extraTrainingIn.shape, extraTrainingOut.shape)
-	
+
 
 	# setup layers for hyperparameter tuning
 	layersForTraining = [ [[50, 'relu'], [20, 'relu'], [2, 'softmax'] ],
@@ -656,7 +656,7 @@ def testExtrasNN(testingIn, testingOut):
 			testing = testing.reshape(70, 50)
 			img = Image.fromarray(testing)
 			img.show()
-			
+
 
 	print("Accuracy on extras testing data:", (np.sum(overallPredictions == extraTestingOut)+0.0)/len(extraTestingOut))
 
@@ -729,7 +729,7 @@ def trainRestNN(trainingIn, trainingOut, testingIn, testingOut):
 
 
 	print("SHAPES", restTestingIn.shape, restTestingOut.shape, restTrainingIn.shape, restTrainingOut.shape)
-	
+
 
 	# setup layers for hyperparameter tuning
 	layersForTraining = [ [[50, 'relu'], [20, 'relu'], [3, 'softmax'] ],
@@ -810,7 +810,7 @@ def testRestNN(testingIn, testingOut):
 			testing = testing.reshape(70, 50)
 			img = Image.fromarray(testing)
 			img.show()
-			
+
 
 	print("Accuracy on real note testing data:", (np.sum(overallPredictions == restTestingOut)+0.0)/len(restTestingOut))
 
@@ -906,7 +906,7 @@ def trainRealNoteNN(trainingIn, trainingOut, testingIn, testingOut):
 	# print("TESTING", clefTestingIn.shape, clefTestingIn, clefTestingOut, clefTestingOut.shape)
 
 	print("SHAPES", realNoteTestingIn.shape, realNoteTestingOut.shape, realNoteTrainingIn.shape, realNoteTrainingOut.shape)
-	
+
 
 	# setup layers for hyperparameter tuning
 	layersForTraining = [ [[50, 'relu'], [20, 'relu'], [5, 'softmax'] ],
@@ -996,7 +996,7 @@ def testRealNoteNN(testingIn, testingOut):
 			testing = testing.reshape(70, 50)
 			img = Image.fromarray(testing)
 			img.show()
-			
+
 
 	print("Accuracy on real note testing data:", (np.sum(overallPredictions == realNoteTestingOut)+0.0)/len(realNoteTestingOut))
 
@@ -1046,7 +1046,7 @@ def hyperparameterTuning(trainingIn, trainingOut, testingIn, testingOut, modelsI
 	modelCount = 0
 	# go through all models to be trained with
 	for modelInfo in modelsInfo:
-		
+
 		# create and traing a model
 		model = trainModel(trainingIn, trainingOut, modelInfo, optInfo, lossInfo, epochs)
 
@@ -1151,7 +1151,7 @@ modelRests = Model("/home/Rhythm/Backend/user/routes/rest_model.h5")
 # @return - prediction for given note
 # Does the prediction for the given notes
 def predict(testingIn):
-    
+
 	# do the prediction with the general model
 	generalPredictions = modelGeneral.predict(testingIn)
 
@@ -1258,11 +1258,11 @@ def predict(testingIn):
 # # @return - prediction for given note
 # # Does the prediction for the given notes
 # def predict(testingIn):
-        
+
 # 	# reset the tensorflow graph
 # 	tf.reset_default_graph()
 #         tf.keras.backend.clear_session()
-    
+
 # 	# create a graph for the general prediction: NOTE or CLEF?
 # 	generalPredGraph = Graph()
 
@@ -1278,7 +1278,7 @@ def predict(testingIn):
 
 # 			# do the prediction with the general model
 # 			generalPredictions = model.predict(testingIn)
-                        
+
 #                         # delete the variable after used
 #                         del model
 
@@ -1317,7 +1317,7 @@ def predict(testingIn):
 
 # 							#load clef model
 # 							model = load_model("/home/Rhythm/Backend/user/routes/clef_model.h5")
-                                                            
+
 #                                                         del model
 
 # 							# do the predictions with the clef model
@@ -1335,7 +1335,7 @@ def predict(testingIn):
 # 								stringPredictions.append('FClef')
 
 # 							return stringPredictions, testingIn
-                                                
+
 #                                                 tf.keras.backend.clear_session()
 # 						session2.close()
 #                                                 gc.collect()
@@ -1375,7 +1375,7 @@ def predict(testingIn):
 
 # 											#load extras model
 # 											model = load_model("/home/Rhythm/Backend/user/routes/extras_model.h5")
-                                                                                    
+
 
 # 											predictions = model.predict(testingIn)
 
@@ -1408,10 +1408,10 @@ def predict(testingIn):
 
 # 										#load model real note model
 # 										model = load_model("/home/Rhythm/Backend/user/routes/real_note_model.h5")
-                                                                                    
+
 
 # 										predictions = model.predict(testingIn)
-	
+
 
 #                                                                                 del model
 
@@ -1433,7 +1433,7 @@ def predict(testingIn):
 #                                                                         tf.keras.clear_session()
 # 									session5.close()
 #                                                                         gc.collect()
-# 							# rest 
+# 							# rest
 # 							elif notePrediction == 2:
 
 # 								# rest - EIGHTH, QUARTER, WHOLE?
@@ -1448,7 +1448,7 @@ def predict(testingIn):
 # 										model = load_model("/home/Rhythm/Backend/user/routes/rest_model.h5")
 
 # 										predictions = model.predict(testingIn)
-	
+
 #                                                                                 del model
 
 # 										restPrediction = np.argmax(predictions[i])
@@ -1502,4 +1502,4 @@ if __name__ == '__main__':
 	# trainExtrasNN(trainingIn, trainingOut, testingIn, testingOut)
 	# testExtrasNN(testingIn, testingOut)
 
-	# checkPredictions(testingIn, testingOut)
+	checkPredictions(testingIn, testingOut)
