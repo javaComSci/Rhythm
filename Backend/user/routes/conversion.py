@@ -11,7 +11,7 @@ import math
 # from .. import MySQL
 
 
-def conv(filepaths):
+def conv(filepaths, widths, heights):
 	print("IN CONVERSION")
 	bigData = {}
 	bigData['clef'] = 1
@@ -19,7 +19,8 @@ def conv(filepaths):
 
 	count = 0
 	sheet_id = ""
-	for file_path in filepaths:
+	for k in len(filepaths):
+		filepath = filepaths[k]
 		if count == 0:
 			indy = file_path.find('-')
 			for i in range(indy-1, 0, -1):
@@ -32,7 +33,7 @@ def conv(filepaths):
 		print("SHEET ID", sheet_id)
 		print("FILE PATH", file_path)
 		            
-		SOL, shape, sl = partition.full_partition(file_path)
+		SOL, shape, sl = partition.full_partition(file_path, widths[k], heights[k])
 		print("AFTER PARITIOTN")
 		ob_counter = 0
 

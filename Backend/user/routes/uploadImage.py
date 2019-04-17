@@ -8,6 +8,8 @@ from conversion import conv
 # from NotesRecognization.conversion import conv
 
 imgs = []
+widths = []
+heights = []
 
 def cameraPipeline():
 	
@@ -18,12 +20,16 @@ def cameraPipeline():
 	flag = content['final'] 
 	sheetID = content['sheetID']
 	compID = content['compID']
+	boxHeight = content['boxHeight']
+	boxWidth - content['boxWidth']
 
-        filename = '/home/Rhythm/Backend/user/routes/convertedData/{}-{}.jpg'.format(sheetID, compID)
-        global imgs
-        imgs.append(filename)
-            # Send to richard
-
+	filename = '/home/Rhythm/Backend/user/routes/convertedData/{}-{}.jpg'.format(sheetID, compID)
+	global imgs
+	imgs.append(filename)
+	global widths
+	imgs.append(boxWidth)
+	global heights
+	imgs.append(boxHeight)
 
 	# filePathsToConvert = []
 
@@ -38,7 +44,7 @@ def cameraPipeline():
 
 	# check if all images have been recieved
 	if flag == True:
-	    jsonName = conv(imgs)
+	    jsonName = conv(imgs, widths, heights)
 	    imgs = []
 
 	return 'cameraPipeline'

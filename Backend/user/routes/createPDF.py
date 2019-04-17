@@ -1,5 +1,5 @@
 from flask import Flask, render_template, json, url_for, request, jsonify
-# from MySQL import MySQLConnect
+from MySQL import MySQLConnect
 from flask_mail import Mail, Message
 import random
 import os
@@ -761,12 +761,12 @@ def exportPDF(mail, app):
         name = information[0][3]
 
         # need to change this to be the name of the converted file
-        # pdfNames = pdfPipeline(sheet_id, file)
+        pdfNames = pdfPipeline(sheet_id, file)
 
         # json for testing purpose
-        file = open('./MusicSheet1.json')
-        notes = json.load(file)
-        file.close()
+        # file = open('./MusicSheet1.json')
+        # notes = json.load(file)
+        # file.close()
 
         # call to create the pdf for that image
         pdfNames = pdfPipeline(sheet_id, notes)
@@ -777,7 +777,7 @@ def exportPDF(mail, app):
             for pdfName in pdfNames:
                 with app.open_resource('convertedData/' + pdfName) as fp:
                     msg.attach(name + '-' + pdfName, "application/pdf", fp.read())
-                app.close_resource('convertedData/' + pdfName)
+                # app.close_resource('convertedData/' + pdfName)
     mail.send(msg)
 
     if flag == True:
@@ -792,4 +792,4 @@ def testing():
     file.close()
     pdfNames = pdfPipeline(222, notes)
 
-testing()
+# testing()
