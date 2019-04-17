@@ -87,6 +87,8 @@ class CameraExample extends React.Component {
                     'compID': this.props.target[0][0] ? this.props.target[0][0] : 0,
                     'boxWeight': SCREEN_WIDTH - SCREEN_WIDTH/25 - SCREEN_WIDTH/25,
                     'boxHeight': SCREEN_HEIGHT - SCREEN_HEIGHT/6.5 - (2 * SCREEN_HEIGHT/6.5),
+                    'startX': X,
+                    'startY': Y,
                   }),
               }).then((res) => {
                   console.log("I WORKED!???\n")

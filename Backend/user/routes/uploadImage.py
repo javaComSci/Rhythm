@@ -10,6 +10,8 @@ from conversion import conv
 imgs = []
 widths = []
 heights = []
+Xs = []
+Ys = []
 
 def cameraPipeline():
 	
@@ -24,12 +26,12 @@ def cameraPipeline():
 	boxWidth - content['boxWidth']
 
 	filename = '/home/Rhythm/Backend/user/routes/convertedData/{}-{}.jpg'.format(sheetID, compID)
-	global imgs
+	global imgs, widths, heights, Xs, Ys
 	imgs.append(filename)
-	global widths
 	imgs.append(boxWidth)
-	global heights
 	imgs.append(boxHeight)
+	imgs.append(Xs)
+	imgs.append(Ys)
 
 	# filePathsToConvert = []
 
@@ -44,7 +46,7 @@ def cameraPipeline():
 
 	# check if all images have been recieved
 	if flag == True:
-	    jsonName = conv(imgs, widths, heights)
+	    jsonName = conv(imgs, Xs, Ys, widths, heights)
 	    imgs = []
 
 	return 'cameraPipeline'
