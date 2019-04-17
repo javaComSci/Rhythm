@@ -85,10 +85,15 @@ class CameraExample extends React.Component {
                     'final': fl,
                     'sheetID': this.props.target[0][1] ? this.props.target[0][1] : 0,
                     'compID': this.props.target[0][0] ? this.props.target[0][0] : 0,
+                    'boxWeight': SCREEN_WIDTH - SCREEN_WIDTH/25 - SCREEN_WIDTH/25,
+                    'boxHeight': SCREEN_HEIGHT - SCREEN_HEIGHT/6.5 - (2 * SCREEN_HEIGHT/6.5),
+                    'startX': X,
+                    'startY': Y,
                   }),
               }).then((res) => {
-                  console.log("I WORKED!???\n" + res)
-                  that.props.dispatchPlaceJSON(res);
+                  console.log("I WORKED!???\n")
+                  console.log(res._bodyText);
+                  that.props.dispatchPlaceJSON(res._bodyText);
               }).catch((res) => {
                   console.log("err", res)
               });

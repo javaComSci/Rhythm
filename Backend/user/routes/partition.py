@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import gc
+import time
 
 #allows creating individual objects found on a piece of sheet music
 class sheet_object:
@@ -60,14 +61,16 @@ class sheet_object:
 # @return - list of rows that contain run blocks
 #	return a list of rows that have runs in them
 def locate_run_blocks(image):
-	runs = []
+	runs = set()
+
+	imr = image.shape[0]
+	imc = image.shape[1]
 
 	#For evert row in the image
-	for row in range(image.shape[0]):
+	for row in range(imr):
 
 		minRow = max(0, row-1)
-		maxRow = min(row+1,image.shape[0]-1)
-
+		maxRow = min(row+1,imr-1)
 		currRow = row
 
 		#Checks total number of pixels found in a given stretch of a row
@@ -77,42 +80,29 @@ def locate_run_blocks(image):
 		black_flag = False
 
 		#For every column in the image
-		for col in range(image.shape[1]):
-
+		for col in range(imc):
+			#print(type(image[currRow,col]))
 			#If the pixel is black, increase pixel sum if last pixel was black, otherwise set flag
-			if image[row][col] == 0:
-				if black_flag:
-					pixel_sum += 1
-				else:
-					black_flag = True
-					pixel_sum += 1
-			elif image[minRow][col] == 0:
-				if black_flag:
-					pixel_sum += 1
-				else:
-					black_flag = True
-					pixel_sum += 1
-			elif image[maxRow][col] == 0:
-				if black_flag:
-					pixel_sum += 1
-				else:
-					black_flag = True
-					pixel_sum += 1
+			if not int(image[currRow,col]) or not int(image[maxRow,col]) or not int(image[minRow,col]):
+				pixel_sum += 1
 			else:
-				pixel_sum = 0;
-				black_flag = False
-
-			#If the pixel sum is greater than 10% of the image length, consider it a run
+				#If the pixel sum is greater than 10% of the image length, consider it a run
 			# and add it to a list of rows to be removed
-			if pixel_sum / (image.shape[1] * 1.00) >= 0.1:
-				if row not in runs:
-					runs.append(row)
-				if minRow not in runs:
-					runs.append(minRow)
-				if maxRow not in runs:
-					runs.append(maxRow)
+				if pixel_sum / (imc * 1.00) >= 0.1:
+					runs.add(row)
+					runs.add(minRow)
+					runs.add(maxRow)
+				pixel_sum = 0
+				black_flag = False
+		
 
-	return runs
+				# if row not in runs:
+				# 	runs.append(row)
+				# if minRow not in runs:
+				# 	runs.append(minRow)
+				# if maxRow not in runs:
+				# 	runs.append(maxRow)
+	return list(runs)
 
 # @image - 2d numpy array
 # @runs - list of row locations for runs
@@ -121,66 +111,56 @@ def locate_run_blocks(image):
 def remove_runs_and_fill(image, runs):
 	for row in runs:
 		for col in range(image.shape[1]):
-			if row > 0 and image[row-1][col] == 255:
+			if row > 0 and image[row-1,col] == 255:
 				image[row][col] = 255
 
 # @image - 2d numpy array
 # @return - list of columns that contain vertical dividers
 #	returns a list of the columns that contain vertical dividers in the image
 def locate_vertical_dividers(image):
-	dividers = []
+	runs = set()
 
-	#For every column in the image
-	for col in range(image.shape[1]):
+	imr = image.shape[0]
+	imc = image.shape[1]
 
-		minCol = max(0, col-2)
-		maxCol = min(col+2,image.shape[1]-1)
+	#For evert row in the image
+	for col in range(imc):
 
-		#Sum of pixels found in a given column stretch
+		minCol = max(0, col-1)
+		maxCol = min(col+1,imc-1)
+		currCol = col
+
+		#Checks total number of pixels found in a given stretch of a row
 		pixel_sum = 0
 
-		#if Last seen pixel was an object
+		#If that last seen pixel was an object
 		black_flag = False
 
-		#For every row in the image
-		for row in range(image.shape[0]):
-
+		#For every column in the image
+		for row in range(imr):
+			#print(type(image[currRow,col]))
 			#If the pixel is black, increase pixel sum if last pixel was black, otherwise set flag
-			if image[row][col] == 0:
-				if black_flag:
-					pixel_sum += 1
-				else:
-					black_flag = True
-					pixel_sum += 1
-			elif image[row][minCol] == 0:
-				if black_flag:
-					pixel_sum += 1
-				else:
-					black_flag = True
-					pixel_sum += 1
-			elif image[row][maxCol] == 0:
-				if black_flag:
-					pixel_sum += 1
-				else:
-					black_flag = True
-					pixel_sum += 1
+			if not int(image[row,currCol]) or not int(image[row,maxCol]) or not int(image[row,minCol]):
+				pixel_sum += 1
 			else:
-				pixel_sum = 0;
-				black_flag = False
-
-
-			#If the pixel sum is greater than 10% of the image length, consider it a run
+				#If the pixel sum is greater than 10% of the image length, consider it a run
 			# and add it to a list of rows to be removed
-			if pixel_sum / (image.shape[0] * 1.00) >= 0.1:
-				for c in range(minCol, maxCol+1):
-					if c not in dividers:
-						dividers.append(c)
-				# if minCol not in dividers:
-				# 	dividers.append(minCol)
-				# if maxCol not in dividers:
-				# 	dividers.append(maxCol)
+				if pixel_sum / (imc * 1.00) >= 0.1:
+					runs.add(col)
+					runs.add(minCol)
+					runs.add(maxCol)
 
-	return dividers
+				pixel_sum = 0
+				black_flag = False
+		
+
+				# if row not in runs:
+				# 	runs.append(row)
+				# if minRow not in runs:
+				# 	runs.append(minRow)
+				# if maxRow not in runs:
+				# 	runs.append(maxRow)
+	return list(runs)
 
 # @image - 2d numpy array
 # @dividers - list of column indices
@@ -190,7 +170,7 @@ def remove_vertical_dividers_and_fill(image, dividers):
 	#For every column in dividers, remove column if pixel to left of black pixel isn't black
 	for col in dividers:
 		for row in range(image.shape[0]):
-			if col > 0 and image[row][col-1] == 255:
+			if col > 0 and image[row,col-1] == 255:
 				image[row][col] = 255
 
 #DEPRECATED
@@ -217,7 +197,7 @@ def locate_objects_DEP(image):
 #	Helper function which recursively locates all new objects
 def locate_object_recur_DEP(image,mask,row,col,object_count):
 
-	if image[row][col] == 255 or mask[row][col] != 0:
+	if image[row,col] == 255 or mask[row][col] != 0:
 			return
 
 	mask[row][col] = object_count
@@ -250,7 +230,7 @@ def locate_objects(image):
 	for row in range(image.shape[0]):
 		for col in range(image.shape[1]):
 			#If pixel is black
-			if image[row][col] == 0:
+			if not image[row,col]:
 				#Look for surrounding pixels to see if urrent pixel is part of
 				# an already discovered object
 				ob_num = scan_unidentified_pixel(image,mask,row,col)
@@ -304,9 +284,9 @@ def scan_unidentified_pixel(image,mask,row,col):
 	for i in range(startRow, endRow):
 		for j in range(startCol, endCol):
 			#If pixel is not the unlabeled pixel, and it is labeled in the mask
-			if (i != row or j != col) and mask[i][j] != 0:
+			if (i != row or j != col) and mask[i,j] != 0:
 				#Return object number noted in the mask
-				return mask[i][j]
+				return mask[i,j]
 
 	#If no mask values were found, return -1, indicating this is a new object
 	return -1
@@ -324,14 +304,14 @@ def scan_identified_pixel(mask,row,col):
 	endCol = min(mask.shape[1], col+3)
 
 	#label of current pixel
-	o1 = mask[row][col]
+	o1 = mask[row,col]
 
 	#check bounds around o1
 	for i in range(startRow, endRow):
 		for j in range(startCol, endCol):
 			#If found a different object label, return both labels
-			if mask[i][j] != 0 and mask[i][j] != o1:
-				return o1, mask[i][j]
+			if mask[i,j] != 0 and mask[i,j] != o1:
+				return o1, mask[i,j]
 
 	return o1, o1
 
@@ -395,7 +375,7 @@ def merge_touching_objects(mask,SOL):
 	#for every pixel in mask
 	for row in range(mask.shape[0]):
 		for col in range(mask.shape[1]):
-			if mask[row][col] != 0:
+			if mask[row,col] != 0:
 
 				#scan around mask[row][col] to see if is touching a different object
 				o1,o2 = scan_identified_pixel(mask,row,col)
@@ -598,7 +578,7 @@ def SO_to_array(ob, resize=True):
 # @return - 2d mask array, and a list of the sheet objects
 #	fully performs tha object partion steps, returning the mask of the objects and the 
 #	list of the objects
-def full_partition(path):
+def full_partition(path, x=0, y=0, b_height=0, b_width=0):
 	#load image as grayscale
 	print("BEFORE LOAD")
 	im_gray =  cv2.imread(path, cv2.IMREAD_GRAYSCALE)
@@ -615,57 +595,89 @@ def full_partition(path):
 	(thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 	#print "Completed 'image load'"
 
+	if (im_bw.shape[0] < im_bw.shape[1]):
+		im_bw = rotate_scale(im_bw, b_height, b_width, x, y)
+
 	#cv2.imwrite("{}FullImage_binary.jpg".format(path), im_bw)
 
 	#resize image if it is too large
 	# if (im_bw.shape[0] > 2000 and im_bw.shape[1] > 2000):
 	# 	im_bw = cv2.resize(im_bw, (1500, 1500)) 
 
+	#start_time_1 = time.time() ##
 	#locate runs in the image
+	#start_time = time.time()
 	runs = locate_run_blocks(im_bw)
+	#print("11_Time: {}".format(time.time() - start_time))
 
+	#start_time = time.time()
 	#merge runs into pruned format
 	pruned_runs = prune_runs(runs)
+	#print("12_Time: {}".format(time.time() - start_time))
 
+
+	#start_time = time.time()
 	#group runs by measures, add in-between rows for runs
 	staff_lines = augment_runs(pruned_runs)
+	#print("13_Time: {}".format(time.time() - start_time))
 	# del pruned_runs
 	# gc.collect()
 
 	#print "Completed 'run segmenting'"
 
+	#start_time = time.time()
 	#locate dividers in the image
 	dividers = locate_vertical_dividers(im_bw)
+	#print("14_Time: {}".format(time.time() - start_time))
 
+	#start_time = time.time()
 	#remove dividers in the image
 	remove_vertical_dividers_and_fill(im_bw, dividers)
+	#print("15_Time: {}".format(time.time() - start_time))
+
+	#start_time = time.time()
 	#remove runs in the image
 	remove_runs_and_fill(im_bw, runs)
+	#print("16_Time: {}".format(time.time() - start_time))
 
+	#print("1_Time: {}".format(time.time() - start_time_1))
 	# del runs
 	# del dividers
 	# gc.collect()
 	#print "Completed 'divider segmenting'"
 
+	#start_time = time.time()
 	#Thickens the iamge around black pixels
 	thick_mask = thickener(im_bw)
 
+	#start_time = time.time()
 	#locate objects in the image
 	mask, SOL = locate_objects(thick_mask)
+
+	#print("2_Time: {}".format(time.time() - start_time))
 
 	# del thick_mask
 	# gc.collect()
 
+	#start_time = time.time()
 	mask, SOL = de_thicken(mask,SOL,im_bw)
+
+	#print("3_Time: {}".format(time.time() - start_time))
 	#print "Completed 'object location'"
 	# del im_bw
 	# gc.collect()
 
+	#start_time = time.time()
 	#locate row and staff lines
 	locate_note_run(SOL, staff_lines)
 
+	#print("4_Time: {}".format(time.time() - start_time))
+
+	#start_time = time.time()
 	#sort SOL
 	sort_SOL(SOL)
+
+	#print("5_Time: {}".format(time.time() - start_time))
 
 	img_shape = mask.shape
 
@@ -683,7 +695,7 @@ def thickener(im_bw):
 
 	for row in range(im_bw.shape[0]):
 		for col in range(im_bw.shape[1]):
-			if im_bw[row][col] == 0:
+			if im_bw[row,col] == 0:
 				expand_pixel(thick_mask, row, col)
 
 	return thick_mask
@@ -691,7 +703,7 @@ def thickener(im_bw):
 def de_thicken(mask, SOL, im_bw):
 	for ob in SOL:
 		for p in ob.pixel_list:
-			if im_bw[p[0]][p[1]] == 255:
+			if im_bw[p[0],p[1]] == 255:
 				mask[p[0]][p[1]] = 0
 				ob.remove_pixel(p)
 
@@ -868,10 +880,27 @@ def closest_row(er, staff_lines):
 def sort_SOL(SOL):
 	SOL.sort(key = lambda ob: (ob.staff_line, ob.C1))
 
+def rotate_scale(image, bh=0, bw=0, x=0, y=0):
+	np.rot90(image, 3)
+
+	new_img = np.ones((bh,bw))
+
+	offset_h = image.shape
+
+	for r in range(bh):
+		for c in range(bw):
+			new_img[r][c] = image[y + r][x + c]
+
+	return new_img
+
+
 
 if __name__ == "__main__":
-	SOL, shape, sl = full_partition("ExamplePredictions/DATA/s2.jpg")
-	print_objects(shape,SOL,sl,path="ExamplePredictions/predictions",staff_lines=True)
+	start_time = time.time()
+	SOL, shape, sl = full_partition("ExamplePredictions/DATA/s5.jpg")
+	print("Total_Time: {}".format(time.time() - start_time))
+
+	print_objects(shape,SOL,sl,path="ExamplePredictions/predictions",staff_lines=False)
 
 
 

@@ -30,12 +30,6 @@ function nav(state = initialNavState, action) {
 
 const initalRegisterState = { isRegistered: false, id: "26342", compositions: [], target: [], };
 
-function placeJson(state, action){
-  if (action.type == 'PLACE_JSON') {
-    return { ...state, file: action.filejsoninfo };
-  }
-}
-
 function containsComp(obj, list) {
     for (var i = 0; i < list.length; i++) {
         if (list[i].key == obj.key)
@@ -45,6 +39,11 @@ function containsComp(obj, list) {
 }
 
 function auth(state = initalRegisterState, action) {
+    console.log("ACTION")
+    console.log(action)
+    console.log("STATE")
+    console.log(state)
+    console.log("FIlE JSON INFO!!")
     switch (action.type) {
         case 'ADD_EMAIL':
             return { ...state, isRegistered: action.email }; //duplicate
@@ -60,6 +59,8 @@ function auth(state = initalRegisterState, action) {
                 return {
                     ...state, target: [action.target]
                 }
+        case 'PLACE_JSON':
+                return { ...state, file: action.filejsoninfo };
         default:
             return state;
     }
