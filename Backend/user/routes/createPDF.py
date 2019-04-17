@@ -1,5 +1,5 @@
 from flask import Flask, render_template, json, url_for, request, jsonify
-from MySQL import MySQLConnect
+# from MySQL import MySQLConnect
 from flask_mail import Mail, Message
 import random
 import os
@@ -42,7 +42,7 @@ def getNoteType(note, pitch, length):
         noteType = 'quarter'
     elif note == 3:
         noteType = 'half'
-    elif note == 4:
+    elif note == 8:
         noteType = 'whole'
     elif note == 9 and length == .5:
         noteType = 'eighthrest'
@@ -63,7 +63,7 @@ def getNoteType(note, pitch, length):
 def createTitle(sheetid):
     # total size needed for numpy array, which is A4 size
     # 5900 is the ideal space for a single page
-    notesArr = np.ones((5350 * 3, 4550))
+    notesArr = np.ones((5350 * 2, 4550))
 
     for i in range(1125, 3375):
         for j in range(4):
@@ -82,7 +82,8 @@ def createLines(notesArr, notes):
 
     # find total duration of notes
     for note in notes['notes']:
-        duration += note['length']
+        if note['note'] <= 14:
+            duration += note['length']
 
     # find number of measures needed
     measures = int(math.ceil(duration/4))
@@ -253,9 +254,9 @@ def placeClefs(notesData, notesArr, staffLinesStartingPos):
 
     elif notesData['clef'] == 3:
         # just alto clef
-
+        print("DOING THE CCLEF")
         # convert c clef to numpy arrays and make them with correct size
-        imgBass = cv2.imread('./assets/cclef.png', cv2.IMREAD_GRAYSCALE)
+        imgAlto = cv2.imread('./assets/cclef.jpg', cv2.IMREAD_GRAYSCALE)
         (thresh, imgAltoBW) = cv2.threshold(imgAlto, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
         imgAltoResized = cv2.resize(imgAltoBW, (200, 250))
 
@@ -319,6 +320,10 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
         # get the note type and get the corresponding file
         noteType = getNoteType(note['note'], note['pitch'], note['length'])
+
+        if noteType == 'gclef' or noteType == 'cclef' or noteType == 'fclef' or noteType == False:
+            continue
+
         noteFile = './assets/' + noteType + '.jpg'
         imgNote = cv2.imread(noteFile, cv2.IMREAD_GRAYSCALE)
         (thresh, imgNoteBW) = cv2.threshold(imgNote, 128, 255, cv2.THRESH_BINARY)
@@ -334,6 +339,11 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
         if noteType == 'sixteenth':
             print("sixteenth")
 
+            if note['pitch'] == 10 or  note['pitch'] == 11 or note['pitch'] == 12:
+                for i in range(staffLinesStartingPos[k] + 245, staffLinesStartingPos[k] + 250):
+                    for j in range(currColumn + 25, currColumn + 90):
+                        notesArr[i][j] = 0
+
             # through the row
             for i in range(imgNoteResized.shape[0]):
 
@@ -344,7 +354,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
                     # check if there is note there
 
                         # need to shift everything up first so that the bottom of the note is first touching the top of the line
-                        pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0]
+                        pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0] + 20
 
                         # need to shift the note down for the pitch
                         pixelRow = pixelRow + (note['pitch'] * 25)
@@ -362,6 +372,11 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
         elif noteType == 'eighth':
             print("eighth")
+            # below the given lines so need to add in a new line
+            if note['pitch'] == 10 or  note['pitch'] == 11 or note['pitch'] == 12:
+                for i in range(staffLinesStartingPos[k] + 245, staffLinesStartingPos[k] + 250):
+                    for j in range(currColumn + 25, currColumn + 90):
+                        notesArr[i][j] = 0
             # through the row
             for i in range(imgNoteResized.shape[0]):
 
@@ -370,7 +385,6 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
                     if imgNoteResized[i][j] == 0:
                     # check if there is note there
-                        print("STAFF LINE START", k, staffLinesStartingPos, "REIZED", imgNoteResized.shape[0])
                         # need to shift everything up first so that the bottom of the note is first touching the top of the line
                         pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0]
 
@@ -389,6 +403,12 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
             durationCount += note['length']
 
         elif noteType == 'quarter':
+            # below the given lines so need to add in a new line
+            if note['pitch'] == 10 or note['pitch'] == 11 or note['pitch'] == 12:
+                for i in range(staffLinesStartingPos[k] + 245, staffLinesStartingPos[k] + 250):
+                    for j in range(currColumn + 10, currColumn + 130):
+                        notesArr[i][j] = 0
+
             print("quarter")
             # through the row
             for i in range(imgNoteResized.shape[0]):
@@ -418,6 +438,13 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
         elif noteType == 'half':
             print("half")
+
+            # below the given lines so need to add in a new line
+            if note['pitch'] == 10 or note['pitch'] == 11 or note['pitch'] == 12:
+                for i in range(staffLinesStartingPos[k] + 245, staffLinesStartingPos[k] + 250):
+                    for j in range(currColumn + 10, currColumn + 130):
+                        notesArr[i][j] = 0
+
             # through the row
             for i in range(imgNoteResized.shape[0]):
 
@@ -439,7 +466,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
                         notesArr[pixelRow + i][pixelCol] = 0
 
             # move the column position for spacing after the note
-            currColumn = currColumn + imgNoteResized.shape[1] + 320
+            currColumn = currColumn + imgNoteResized.shape[1] + 300
 
              # add to the duration of the notes
             durationCount += note['length']
@@ -449,6 +476,10 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
             imgNoteResized = cv2.resize(imgNoteResized, (250, 200))
 
             print("whole")
+            if note['pitch'] == 10 or note['pitch'] == 11 or note['pitch'] == 12:
+                for i in range(staffLinesStartingPos[k] + 245, staffLinesStartingPos[k] + 250):
+                    for j in range(currColumn + 70, currColumn + 160):
+                        notesArr[i][j] = 0
             # through the row
             for i in range(imgNoteResized.shape[0]):
 
@@ -459,7 +490,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
                     # check if there is note there
 
                         # need to shift everything up first so that the bottom of the note is first touching the top of the line
-                        pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0]
+                        pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0] + 55
 
                         # need to shift the note down for the pitch
                         pixelRow = pixelRow + (note['pitch'] * 25)
@@ -504,7 +535,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
             # currColumn = currColumn + 10
 
         elif noteType == 'flat':
-            print("falt")
+            print("flat")
             imgNoteResized = cv2.resize(imgNoteResized, (70, 70))
 
             # through the row
@@ -532,6 +563,9 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
         elif noteType == 'eighthrest' or noteType == 'quarterrest':
             print("rest-eighth")
+            if noteType == 'eighthrest':
+                imgNoteResized = cv2.resize(imgNoteResized, (100, 150))
+
             # through the row
             for i in range(imgNoteResized.shape[0]):
 
@@ -541,7 +575,6 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
                     if imgNoteResized[i][j] == 0:
                         # need to shift everything up first so that the bottom of the note is first touching the top of the line
                         pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0]
-
                         # need to shift the note down for the pitch
                         pixelRow = pixelRow + 200
 
@@ -632,7 +665,8 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
             
 
     print("THIS IS IN THE NOTES ARRAY PRINTING\n\n\n\n")
-    # cv2.imwrite("notes.jpg", notesArr)
+    cv2.imwrite("./notes.jpg", notesArr)
+    print("AFTER THE WRITE")
 
     return notesArr
 
@@ -660,7 +694,7 @@ def pdfPipeline(sheetId, fileInfo):
     pdfNames = []
 
     #break up the image into many images
-    for i in range(5):
+    for i in range(2):
         # save the image in a jpg
         jpgName = "./convertedData/" + str(sheetId) + "number" + str(i) + ".jpg"
 
@@ -671,10 +705,13 @@ def pdfPipeline(sheetId, fileInfo):
         exist = False
 
         # check if there are any notes in this or not
-        for j in range(miniNotes.shape[0]):
-            for k in range(miniNotes.shape[1]):
-                if miniNotes[j][k] == 0:
-                    exist = True
+        # check if not all of them are not white
+        if np.all(miniNotes == 255) == False:
+            exist = True
+        # for j in range(miniNotes.shape[0]):
+        #     for k in range(miniNotes.shape[1]):
+        #         if miniNotes[j][k] == 0:
+        #             exist = True
 
         # means that there are no black pixels and it is okay to do that
         if exist == False:
@@ -695,7 +732,6 @@ def pdfPipeline(sheetId, fileInfo):
         pdfNames.append(str(sheetId) + ":Page-" + str(i + 1) + '.pdf')
     
     return pdfNames
-
 
 
 # https://pythonhosted.org/Flask-Mail/
@@ -748,3 +784,12 @@ def exportPDF(mail, app):
         return 'Some Sheets Missing'
 
     return 'Sent All Successfully'
+
+
+def testing():
+    file = open('./MusicSheet5.json')
+    notes = json.load(file)
+    file.close()
+    pdfNames = pdfPipeline(222, notes)
+
+testing()

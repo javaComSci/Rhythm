@@ -94,10 +94,10 @@ def conv(filepaths):
 				fclef = True
 				fclefcount += 1
 			elif ob_prediction[0] == 'Sixteenth-Note':
-				SOL[i].duration = .125
+				SOL[i].duration = .25
 				data['note'] = 5
 				data['pitch'] = SOL[i].run
-				data['length'] = .125
+				data['length'] = .25
 			elif ob_prediction[0] == 'Eighth-Note':
 				SOL[i].duration = .5
 				data['note'] = 1
