@@ -264,8 +264,10 @@ def createPDF():
 @app.route('/selectInstrument', methods=['POST'])
 def selectInstrument():
     # print "Selected Instrument!"
-    return selectInstruments.selectMusic()
-
+    if request.method == 'POST':
+        return selectInstruments.selectMusic()
+    else:
+        return '\n\nDEBUG: Should not see this: app.py\n\n'
 
 
 @app.route('/checkKey', methods=['POST'])

@@ -254,6 +254,15 @@ class ViewCompScreen extends React.Component {
         });
     }
 
+    refreshFunction = () => {
+        console.log("REFRESHING")
+        // for (let i = 0; i < this.state.sheet_music.length; i++) {
+        //     let inst = this.state.sheet_music[i].getInstrument()
+        //     console.log("ISNT", inst)
+        // }
+        this.getInfo();
+    }
+
     render() {
         if (this.state.deleteCompo) {
             return (
@@ -270,8 +279,11 @@ class ViewCompScreen extends React.Component {
                 NewSheetTemplate.call(this)
             );
         }
+        // console.log("RERENDERING IN TEH VIEW COMP!")
+        // console.log(this.props.navigation)
         return (
             SheetScreenTemplate.call(this)
+            // <SheetScreenTemplate navigation={this.props.navigation}/>
         );
     }
 };
