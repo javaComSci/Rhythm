@@ -63,7 +63,7 @@ def getNoteType(note, pitch, length):
 def createTitle(sheetid):
     # total size needed for numpy array, which is A4 size
     # 5900 is the ideal space for a single page
-    notesArr = np.ones((5350 * 2, 4550))
+    notesArr = np.ones((5350 * 2, 4550)) * 255
 
     for i in range(1125, 3375):
         for j in range(4):
@@ -121,7 +121,7 @@ def createLines(notesArr, notes):
         row = row + 200
 
 
-    notesArr = notesArr * 255
+    # notesArr = notesArr * 255
     # cv2.imwrite("lines.jpg", notesArr)
 
     return notesArr, staffLinesStartingPos
