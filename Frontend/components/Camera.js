@@ -71,9 +71,9 @@ class CameraExample extends React.Component {
           this.setState({ flag: false })
         }
         console.log(uri);
-          let isfinal = false;
-          // for(let i = 0; i < pictureData.lengh; i++){
-          const that = this;
+        let isfinal = false;
+        // for(let i = 0; i < pictureData.lengh; i++){
+        const that = this;
             fetch('http://68.183.140.180:5000/uploadImage', {
                   method: 'POST',
                   headers: {
@@ -83,12 +83,12 @@ class CameraExample extends React.Component {
                   body: JSON.stringify({
                     'img_data': uri,
                     'final': fl,
-                    'sheetID': this.props.target[0][1] ? this.props.target[0][1] : 0,
-                    'compID': this.props.target[0][0] ? this.props.target[0][0] : 0,
+                    'sheetID': that.props.target[0][1] ? that.props.target[0][1] : 0,
+                    'compID': that.props.target[0][0] ? that.props.target[0][0] : 0,
                     'boxWeight': SCREEN_WIDTH - SCREEN_WIDTH/25 - SCREEN_WIDTH/25,
                     'boxHeight': SCREEN_HEIGHT - SCREEN_HEIGHT/6.5 - (2 * SCREEN_HEIGHT/6.5),
-                    'startX': X,
-                    'startY': Y,
+                    'X': SCREEN_WIDTH/25,
+                    'Y': SCREEN_HEIGHT/6.5,
                   }),
               }).then((res) => {
                   console.log("I WORKED!???\n")
@@ -99,11 +99,12 @@ class CameraExample extends React.Component {
               });
         // }
 
-        photo.exif.Orientation = 1;
+       photo.exif.Orientation = 1;
        console.log("I TOOOK A PHOTO!!!")
        });
+
        if(fl){
-         this.props.navigation.navigate('Home');
+         that.props.navigation.navigate('Home');
        }
 
      }
