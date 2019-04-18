@@ -199,19 +199,24 @@ def insert(table, query, value):
 
 def getSong(sheet_id):
     # print os.path.abspath(os.curdir)
-
+    print 'get song route'
     db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
     cursor = db.cursor()
-    cursor.execute('SELECT song_json FROM sheet_music where sheet_id=%s', (sheet_id,))
+    cursor.execute('SELECT song_json, instrument, tempo FROM sheet_music where sheet_id=%s', (sheet_id,))
     db.commit()
+
     song_json = cursor.fetchone()
+    print("segrio " , type(song_json))
+    if song_json is None:
+        print("IN THE JSPN")
+        return "False"
     cursor.close()
     db.close()
     # def jsons_to_MIDI(self, json_arr, sheet_id, instruments=["Piano"], start_times=[1]):
     makermidi = MIDImaker()
     #print 'TYPE of THING' + str(type(song_json))
-    makermidi.jsons_to_MIDI([song_json[0]], sheet_id, ["Piano"], [1])
-
+    sheetIdRet = makermidi.jsons_to_MIDI([song_json[0]], sheet_id, song_json[1], [1], tempos=[song_json[2]])
+    print 'tempo: ', song_json[2]
     subprocess.call(shlex.split('/home/Rhythm/Backend/MidiConversion/ConvertToMP3.sh '+sheet_id+'.mid'))
     flPath = '/home/Rhythm/Backend/'+sheet_id+'.mp3'
     print 'FLPATH: ' + flPath
@@ -234,10 +239,15 @@ def getCompSong(comp_id):
     instrumentsToUse = []
     tempo = [80]
     for i in song_json:
-        songsToUse.append(i[0])
-        instrumentsToUse.append(i[1])
-        tempo[0] = i[2]
-
+        if (i[0]):
+            songsToUse.append(i[0])
+            if (i[1]):
+                instrumentsToUse.append(i[1])
+            else:
+                instrumentsToUse.append("Piano")
+            tempo[0] = i[2]
+    print songsToUse
+    print instrumentsToUse
     cursor.close()
     db.close()
     #def jsons_to_MIDI(self, songsToUse, comp_id, instruments=instrumentsToUse, start_times=[1], tempo=tempo):
