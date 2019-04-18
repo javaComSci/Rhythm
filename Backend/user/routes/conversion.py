@@ -32,12 +32,12 @@ def conv(filepaths, X, Y, widths, heights):
 
 		print("SHEET ID", sheet_id)
 		print("FILE PATH", file_path)
-		            
+
 		SOL, shape, sl = partition.full_partition(file_path, X[k], Y[k], widths[k], heights[k])
 		print("AFTER PARITIOTN")
 		ob_counter = 0
 
-		# partition.print_objects(mask, SOL, staff_lines, "ExamplePredictions/predictions/")
+		partition.print_objects(shape, SOL, sl, "home/Rhythm/Backend/user/routes/convertedData/")
 		# cv2.imwrite("ExamplePredictions/predictions/full_img.jpg", mask)
 
 		gclef = False
@@ -59,7 +59,7 @@ def conv(filepaths, X, Y, widths, heights):
 
 			ob_prediction = neuralNet.predict(flat_arr)
 			print("THE PREDICTION RECIEVED IS", ob_prediction)
-			
+
 			if ob_prediction == None or len(ob_prediction) == 0:
 				ob_prediction = "DEFAULT"
 
@@ -173,7 +173,7 @@ def conv(filepaths, X, Y, widths, heights):
 	jsonData = json.dumps(bigData)
 
 
-	with open('{}.txt'.format(sheet_id), 'w') as outfile:  
+	with open('{}.txt'.format(sheet_id), 'w') as outfile:
 		json.dump(jsonData, outfile)
 		print("AFTER TEH WROTE")
 
@@ -189,6 +189,3 @@ def conv(filepaths, X, Y, widths, heights):
 	# MF.MIDI_to_file(filepath="twinkle.mid")
 
 # conv(["ExamplePredictions/DATA/file19.jpg"])
-
-
-
