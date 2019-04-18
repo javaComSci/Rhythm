@@ -208,7 +208,10 @@ def getInfoBySheet():
 @app.route("/getSong", methods=["GET"])
 def getSong():
     if request.method == 'GET':
-        return getInfos.getSong(request.args.get('sheetid'))
+        if (request.args.get('sheetid')):
+            return getInfos.getSong(request.args.get('sheetid'))
+        if (request.args.get('compid')):
+            return getInfos.getCompSong(request.args.get('compid'))
     else:
         return 'no'
 
