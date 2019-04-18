@@ -20,7 +20,7 @@ def cameraPipeline():
 	if 'img_data' not in content.keys():
 		return 'No image given'
 
-	if 'sheet_id' not in content.keys():
+	if 'sheetID' not in content.keys():
 		return 'Not valid sheet id'
 
 	# img data as an array with all the filepaths

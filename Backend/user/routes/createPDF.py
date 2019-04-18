@@ -321,7 +321,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
         # get the note type and get the corresponding file
         noteType = getNoteType(note['note'], note['pitch'], note['length'])
 
-        if noteType == 'gclef' or noteType == 'cclef' or noteType == 'fclef' or noteType == False:
+        if noteType == 'gclef' or noteType == 'cclef' or noteType == 'fclef' or noteType == False or k == len(staffLinesStartingPos):
             continue
 
         noteFile = './assets/' + noteType + '.jpg'
@@ -748,8 +748,10 @@ def exportPDF(mail, app):
     for sheet_id in content['sheet_ids']:
         information = MySQLConnect.findSheetBySheetID("sheet_music", int(sheet_id))
 
-        if information is None or len(information) == 0 or information[0][1] is None:
+        if information is None or len(information) == 0:
             flag = True
+            continue
+        if information[0][1] is None:
             continue
 
         print(information)
