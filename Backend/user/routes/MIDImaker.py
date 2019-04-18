@@ -338,12 +338,15 @@ class MIDImaker:
 
 		return SOL
 
-	def jsons_to_MIDI(self, json_arr, sheet_id, instruments=["Piano"], start_times=[1]):
+	def jsons_to_MIDI(self, json_arr, sheet_id, instruments=["Piano"], start_times=[1], tempos=[80]):
 
 		for json_str in json_arr:
+			if type(json_str) == None:
+				continue
+				
 			self.SOLset.append(self.JSON_string_to_SOL(json_str))
 
-		self.convert_to_MIDI(tracks = len(json_arr), instruments = instruments, start_times = start_times)
+		self.convert_to_MIDI(tracks = len(json_arr), instruments = instruments, start_times = start_times, tempos=tempos)
 
 		self.MIDI_to_file("{}.mid".format(sheet_id))
 

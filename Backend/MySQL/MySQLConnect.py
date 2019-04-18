@@ -220,19 +220,32 @@ def getSong(sheet_id):
 def getCompSong(comp_id):
     db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
     cursor = db.cursor()
-    cursor.execute('SELECT song_json FROM sheet_music where composition_id=%s', (comp_id,))
+    cursor.execute('SELECT song_json, instrument, tempo FROM sheet_music where composition_id=%s', (comp_id,))
     db.commit()
     song_json = cursor.fetchall()
+    '''
+        song_json = tuple ( tuple (song_json, instrument, tempo) )
+        song_json[0] = (song_json, instrument, tempo)
+        song_json[0][0] = song_json
+    '''
     print 'SONG JSON: '
     print song_json
+    songsToUse = []
+    instrumentsToUse = []
+    tempo = [80]
+    for i in song_json:
+        songsToUse.append(i[0])
+        instrumentsToUse.append(i[1])
+        tempo[0] = i[2]
+
     cursor.close()
     db.close()
-    # def jsons_to_MIDI(self, json_arr, sheet_id, instruments=["Piano"], start_times=[1]):
-    # makermidi = MIDImaker()
+    #def jsons_to_MIDI(self, songsToUse, comp_id, instruments=instrumentsToUse, start_times=[1], tempo=tempo):
+    makermidi = MIDImaker()
     #print 'TYPE of THING' + str(type(song_json))
-    # makermidi.jsons_to_MIDI([song_json[0]], sheet_id, ["Piano"], [1])
+    makermidi.jsons_to_MIDI(songsToUse, comp_id, instrumentsToUse, start_times=[1], tempo=tempo)
 
-    # subprocess.call(shlex.split('/home/Rhythm/Backend/MidiConversion/ConvertToMP3.sh '+sheet_id+'.mid'))
+    subprocess.call(shlex.split('/home/Rhythm/Backend/MidiConversion/ConvertToMP3.sh '+sheet_id+'.mid'))
     flPath = '/home/Rhythm/Backend/'+comp_id+'.mp3'
     # print 'FLPATH: ' + flPath
     return 'getCompSong'
