@@ -71,3 +71,25 @@ class TestApi(unittest.TestCase):
           response=client.post('/getSong',
                      data=json.dumps(dict({"clef" : 0, "notes": [{"note": 4, "length": 1, "ptich": 0}]}, 98765)),
                      content_type='application/json')
+
+  def test_G_sendingImage(self):
+      with app.test_client() as client:
+          response=client.post('/uploadImage',
+                     data=json.dumps(dict(img_data='ka09', compID=1231, final=False, boxHeight=70, boxWidth=500, X=0, Y=0)),
+                     content_type='application/json')
+          if not isinstance(response.data, str):
+            decodedData = response.data.decode('utf-8')
+          else:
+            decodedData = response.data
+          assert decodedData == 'Not valid sheet id'
+
+  def test_H_sendingImage(self):
+      with app.test_client() as client:
+          response=client.post('/uploadImage',
+                     data=json.dumps(dict(sheetID=90112, compID=1231, boxHeight=70, boxWidth=50, final=True, X=0, Y=0)),
+                     content_type='application/json')
+          if not isinstance(response.data, str):
+            decodedData = response.data.decode('utf-8')
+          else:
+            decodedData = response.data
+          assert decodedData == 'No image given'
