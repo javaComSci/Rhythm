@@ -243,9 +243,9 @@ def getCompSong(comp_id):
     #def jsons_to_MIDI(self, songsToUse, comp_id, instruments=instrumentsToUse, start_times=[1], tempo=tempo):
     makermidi = MIDImaker()
     #print 'TYPE of THING' + str(type(song_json))
-    makermidi.jsons_to_MIDI(songsToUse, comp_id, instrumentsToUse, start_times=[1], tempo=tempo)
+    makermidi.jsons_to_MIDI(songsToUse, comp_id, instrumentsToUse, start_times=[1], tempos=tempo)
 
-    subprocess.call(shlex.split('/home/Rhythm/Backend/MidiConversion/ConvertToMP3.sh '+sheet_id+'.mid'))
+    subprocess.call(shlex.split('/home/Rhythm/Backend/MidiConversion/ConvertToMP3.sh '+comp_id+'.mid'))
     flPath = '/home/Rhythm/Backend/'+comp_id+'.mp3'
     # print 'FLPATH: ' + flPath
     return 'getCompSong'
