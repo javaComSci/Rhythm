@@ -420,7 +420,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
                     # check if there is note there
 
                         # need to shift everything up first so that the bottom of the note is first touching the top of the line
-                        pixelRow = staffLinesStartingPos[k-1] - imgNoteResized.shape[0] 
+                        pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0] 
 
                         # need to shift the note down for the pitch
                         pixelRow = pixelRow + (note['pitch'] * 25)
@@ -748,15 +748,30 @@ def exportPDF(mail, app):
     for sheet_id in content['sheet_ids']:
         information = MySQLConnect.findSheetBySheetID("sheet_music", int(sheet_id))
 
-        if information == None or len(information) == 0:
+        if information is None or len(information) == 0 or information[0][1] is None:
             flag = True
             continue
 
         print(information)
     
         # has the actual information in the file
-        file1 = json.loads(information[0][4].decode('string-escape').strip('"'))
+        # file1 = json.loads(information[0][4].decode('string-escape').strip('"'))
+        file1 = information[0]
+        print("FILE")
+        print(file1[0], "\n\n\n1: ", file1[1], "\n\n\n2:", file1[2], "\n\n\n3:", file1[3], "\n\n\n4:", file1[4])
         # file1 = information['notes']
+
+        file1 = information[0][1]
+
+        if not isinstance(file1, str):
+            file1 = file1.decode('utf-8')
+            print("I WAS NOT A STR")
+
+        print("FILEY!!!!!1\n\n\n\n\n\n", file1)
+
+        fileInfo = json.loads(file1)
+
+        print("FILEY!!!!!1\n\n\n\n\n\n", fileInfo)
 
         # has the file name
         name = information[0][3]
@@ -770,7 +785,7 @@ def exportPDF(mail, app):
         # file.close()
 
         # call to create the pdf for that image
-        pdfNames = pdfPipeline(sheet_id, file1)
+        pdfNames = pdfPipeline(sheet_id, fileInfo)
 
         print("THE NAME OF THE PDF", pdfNames)
         # if multiple pdfs are created, then send each one of them and they exist
