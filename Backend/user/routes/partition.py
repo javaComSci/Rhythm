@@ -898,13 +898,13 @@ def rotate_scale(image, bh=0, bw=0, x=0, y=0, r=False):
 	if r:
 		np.rot90(image, 3)
 
-	start_w = int(image.shape[0] / 25) - 1
-	start_h = int(image.shape[1] / 6.50) - 1
+	start_h = int(image.shape[0] / 25) - 1
+	start_w = int(image.shape[1] / 6.50) - 1
 
-	w = int(image.shape[0] - (2*image.shape[0] / 25))
-	h = int(image.shape[1] - (3*image.shape[1] / 6.5))
+	h = int(image.shape[0] - (2*image.shape[0] / 25))
+	w = int(image.shape[1] - (3*image.shape[1] / 6.5))
 
-	new_img = np.ones((w,h))
+	new_img = np.ones((h,w))
 
 	print('original img {}'.format(image.shape))
 	print('new img {}'.format(new_img.shape))
