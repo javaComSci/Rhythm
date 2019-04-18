@@ -216,16 +216,27 @@ def getSong(sheet_id):
     flPath = '/home/Rhythm/Backend/'+sheet_id+'.mp3'
     print 'FLPATH: ' + flPath
     return send_file(flPath, as_attachment=True,attachment_filename=sheet_id+".mp3",mimetype="audio/mpeg")
-    '''db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
+
+def getCompSong(comp_id):
+    db = pymysql.connect(json_data['server'], json_data['username'], json_data['password'], "Rhythm")
     cursor = db.cursor()
-    cursor.execute("SELECT file FROM sheet_music WHERE sheet_id=%s", (sheet_id))
-    data = cursor.fetchone()
-    blob = data[0]
-    buffer = io.BytesIO()
-    buffer.write(blob)
-    buffer.seek(0)
-    return send_file(buffer, as_attachment=True,attachment_filename=sheet_id+".mp3",mimetype="audio/mpeg")
-    '''
+    cursor.execute('SELECT song_json FROM sheet_music where composition_id=%s', (comp_id,))
+    db.commit()
+    song_json = cursor.fetchall()
+    print 'SONG JSON: '
+    print song_json
+    cursor.close()
+    db.close()
+    # def jsons_to_MIDI(self, json_arr, sheet_id, instruments=["Piano"], start_times=[1]):
+    # makermidi = MIDImaker()
+    #print 'TYPE of THING' + str(type(song_json))
+    # makermidi.jsons_to_MIDI([song_json[0]], sheet_id, ["Piano"], [1])
+
+    # subprocess.call(shlex.split('/home/Rhythm/Backend/MidiConversion/ConvertToMP3.sh '+sheet_id+'.mid'))
+    flPath = '/home/Rhythm/Backend/'+comp_id+'.mp3'
+    # print 'FLPATH: ' + flPath
+    return 'getCompSong'
+    return send_file(flPath, as_attachment=True,attachment_filename=comp_id+".mp3",mimetype="audio/mpeg")
 
 def jsonToCloud(data):
 	print("DATA", data)
