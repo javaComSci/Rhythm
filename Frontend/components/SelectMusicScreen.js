@@ -14,7 +14,7 @@ class SelectMusicScreen extends React.Component {
 		if(clefData) {
 			clefData = clefData['clef'];
 		} else {
-			clefData = 3;
+			clefData = 2;
 		}
 		console.log("AFTER", clefData)
 
@@ -25,10 +25,10 @@ class SelectMusicScreen extends React.Component {
 			],
 			tableDataTreble: [
 				['Violin', 'Flute'],
-				['Tuba', 'Guitar'],
+				['Piano', 'Guitar'],
 			],
 			tableDataBass: [
-				['Cello', 'Bass'],
+				['Bass', 'Piano'],
 			],
 			tableDataAlto: [
 				['Trombone', 'Viola'],

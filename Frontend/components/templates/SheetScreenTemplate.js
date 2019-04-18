@@ -21,9 +21,11 @@ var SheetScreenTemplate = function () {
 
 
     onPressHandlerForInstrument = (item) => {
-        console.log("ON PRESS HANDLER")
-        console.log(this.refreshFunction)
-        console.log(item.getTitle())
+        console.log("ON PRESS HANDLER CLIKED\n\n\n\n\n")
+        console.log("ITEM")
+        console.log(item)
+        console.log("\n\n\n\n\n\n")
+        console.log(item.getFile())
         this.props.navigation.navigate('SelectMusicScreen', { refresh: this.refreshFunction, title: item.getTitle(), sheet_id: item.getID(), file: item.getFile()});
     }
 

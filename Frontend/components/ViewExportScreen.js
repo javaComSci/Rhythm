@@ -6,6 +6,7 @@ import { Button, Header } from 'react-native-elements';
 import PinchZoomView from 'react-native-pinch-zoom-view';
 
 var styles = require('../style')
+var background = require('../assets/backgroundImage.png')
 
 class ViewExportScreen extends React.Component{
 
@@ -50,7 +51,7 @@ class ViewExportScreen extends React.Component{
 	render() {
 
 		return (
-			  <ImageBackground style={{ width: '100%', height: '100%' }}>
+			  <ImageBackground source={background} style={{ width: '100%', height: '100%' }}>
 	            <View>
 	                <View></View>
 	                <View>

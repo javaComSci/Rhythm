@@ -598,8 +598,6 @@ class EditMusicScreen extends React.Component {
       }
       console.log("ReRendering main\n");
     }
-
-    // console.log(NotesListByMeasure.props.note);
     // totalBeats = 0;
     backButton = require('../assets/back.png')
     let mesureLength = SCREEN_WIDTH / 10;
