@@ -80,7 +80,7 @@ class MIDIob:
 				time = time + 1
 				# time = time + ob.rest
 
-				
+
 			# time += 1
 
 
@@ -210,11 +210,11 @@ class MIDImaker:
 		self.set_start_times(start_times, tracks)
 		self.set_tempos(tempos, tracks)
 
-		MIDI_File = MIDIFile(2, adjust_origin=False)
-
+		MIDI_File = MIDIFile(tracks, adjust_origin=False)
+                print len(self.SOLset)
 		#for every track of the Midi File
 		for t in range(tracks):
-
+                        print 'T,instruments,tempos: %s, %s, %s', (t, instr, tempos)
 			MIDI_File.addTempo(t,0,tempos[t]) #Adds tempo t
 			MIDI_File.addProgramChange(t,0,0,instr[t]) #sets instrument for tempo t
 
@@ -343,13 +343,14 @@ class MIDImaker:
 		for json_str in json_arr:
 			if type(json_str) == None:
 				continue
-				
+
 			self.SOLset.append(self.JSON_string_to_SOL(json_str))
 
 		self.convert_to_MIDI(tracks = len(json_arr), instruments = instruments, start_times = start_times, tempos=tempos)
 
 		self.MIDI_to_file("{}.mid".format(sheet_id))
 
+		print("ShEET ID IN ThE JsON toS HPSLDKFSJ", sheet_id)
 		return sheet_id
 
 	#Writes MIDI file to disk
@@ -369,12 +370,3 @@ def test1():
 	MM.MIDI_to_file("first_test.mid")
 
 # test1()
-
-
-
-
-
-
-
-
-
