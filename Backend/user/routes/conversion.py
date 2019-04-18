@@ -13,25 +13,30 @@ import math
 
 def conv(filepaths, X, Y, widths, heights):
 	print("IN CONVERSION")
+	print(filepaths)
 	bigData = {}
 	bigData['clef'] = 1
 	bigData['notes'] = []
 
 	count = 0
 	sheet_id = ""
-	for k in len(filepaths):
-		filepath = filepaths[k]
+	file_path = None
+	print("FILEPATHS {}".format(filepaths))
+	for k in range(len(filepaths)):
+		file_path = filepaths[k]
+
 		if count == 0:
+			print("in the thing that does the stuffg when the vbar is 0")
 			indy = file_path.find('-')
 			for i in range(indy-1, 0, -1):
 				if file_path[i] == '/':
 					break
-
 				sheet_id = file_path[i] + sheet_id
+				print("incrementing sheet_id")
 			count = 1
 
 		print("SHEET ID", sheet_id)
-		print("FILE PATH", file_path)
+		# print("FILE PATH", file_path)
 
 		SOL, shape, sl = partition.full_partition(file_path, X[k], Y[k], widths[k], heights[k])
 		print("AFTER PARITIOTN")

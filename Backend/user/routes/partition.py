@@ -94,7 +94,7 @@ def locate_run_blocks(image):
 					runs.add(maxRow)
 				pixel_sum = 0
 				black_flag = False
-		
+
 
 				# if row not in runs:
 				# 	runs.append(row)
@@ -152,7 +152,7 @@ def locate_vertical_dividers(image):
 
 				pixel_sum = 0
 				black_flag = False
-		
+
 
 				# if row not in runs:
 				# 	runs.append(row)
@@ -379,7 +379,7 @@ def merge_touching_objects(mask,SOL):
 
 				#scan around mask[row][col] to see if is touching a different object
 				o1,o2 = scan_identified_pixel(mask,row,col)
-				
+
 				#if o1 != o2, touching objects have been located
 				if o1 != o2:
 
@@ -545,7 +545,7 @@ def SO_to_array(ob, resize=True):
 
 		if resize:
 			shift = int((70/50) * (ob.C2 - ob.C1 + 1) - (ob.R2 - ob.R1 + 1))
-		
+
 		if shift < 1:
 			shift = 0
 
@@ -567,16 +567,16 @@ def SO_to_array(ob, resize=True):
 
 		#Set pixel value to black in corresponding pixel
 		n_arr[p[0] - ob.R1 + Rcenter][p[1] - ob.C1 + Ccenter] = 0
-		
+
 	#Resize array to 70x50 if it was a custom size array
 	if flag:
-		n_arr = cv2.resize(n_arr, (50, 70)) 
+		n_arr = cv2.resize(n_arr, (50, 70))
 
 	return n_arr
 
 # @path - path to music sheet jpg
 # @return - 2d mask array, and a list of the sheet objects
-#	fully performs tha object partion steps, returning the mask of the objects and the 
+#	fully performs tha object partion steps, returning the mask of the objects and the
 #	list of the objects
 def full_partition(path, x=0, y=0, b_height=0, b_width=0):
 	#load image as grayscale
@@ -584,7 +584,7 @@ def full_partition(path, x=0, y=0, b_height=0, b_width=0):
 	im_gray =  cv2.imread(path, cv2.IMREAD_GRAYSCALE)
 
 	#cv2.imwrite("{}starter.jpg".format(path), im_gray)
-	    
+
 	if (type(im_gray) == None):
 		print("IN THE EXCEPTION")
 		raise Exception("IMAGE LOAD FAIL")
@@ -595,14 +595,27 @@ def full_partition(path, x=0, y=0, b_height=0, b_width=0):
 	(thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 	#print "Completed 'image load'"
 
+	print("pre rotate abount to print")
+
+	cv2.imwrite("/home/Rhythm/Backend/user/routes/pre_rotate.jpg", im_bw)
+
+
 	if (im_bw.shape[0] < im_bw.shape[1]):
-		im_bw = rotate_scale(im_bw, b_height, b_width, x, y)
+		im_bw = rotate_scale(im_bw, int(b_height), int(b_width), int(x), int(y), r=True)
+	else:
+		im_bw = rotate_scale(im_bw,int(b_height), int(b_width), int(x), int(y), r=False)
+
+	print("post rotate abount to print")
+
+	cv2.imwrite("/home/Rhythm/Backend/user/routes/post_rotate.jpg", im_bw)
+
+	print('completed image rotate and write')
 
 	#cv2.imwrite("{}FullImage_binary.jpg".format(path), im_bw)
 
 	#resize image if it is too large
 	# if (im_bw.shape[0] > 2000 and im_bw.shape[1] > 2000):
-	# 	im_bw = cv2.resize(im_bw, (1500, 1500)) 
+	# 	im_bw = cv2.resize(im_bw, (1500, 1500))
 
 	#start_time_1 = time.time() ##
 	#locate runs in the image
@@ -677,6 +690,7 @@ def full_partition(path, x=0, y=0, b_height=0, b_width=0):
 	#sort SOL
 	sort_SOL(SOL)
 
+	print('almost done with the ol-partitionator 5000')
 	#print("5_Time: {}".format(time.time() - start_time))
 
 	img_shape = mask.shape
@@ -749,7 +763,7 @@ def augment_runs(pr):
 		staff_lines[sl].insert(0,staff_lines[sl][0] - avg_dist)
 		staff_lines[sl].append(staff_lines[sl][len(staff_lines[sl]) - 1] + avg_dist)
 
-		#add rows between each previous row of staff line 
+		#add rows between each previous row of staff line
 		list_len = len(staff_lines[sl])
 		for d in range(1, list_len):
 			# value of new row
@@ -880,17 +894,25 @@ def closest_row(er, staff_lines):
 def sort_SOL(SOL):
 	SOL.sort(key = lambda ob: (ob.staff_line, ob.C1))
 
-def rotate_scale(image, bh=0, bw=0, x=0, y=0):
-	np.rot90(image, 3)
+def rotate_scale(image, bh=0, bw=0, x=0, y=0, r=False):
+	if r:
+		np.rot90(image, 3)
 
-	new_img = np.ones((bh,bw))
+	start_w = int(image.shape[0] / 25) - 1
+	start_h = int(image.shape[1] / 6.50) - 1
 
-	offset_h = image.shape
+	w = int(image.shape[0] - (2*image.shape[0] / 25))
+	h = int(image.shape[1] - (3*image.shape[1] / 6.5))
 
-	for r in range(bh):
-		for c in range(bw):
-			new_img[r][c] = image[y + r][x + c]
+	new_img = np.ones((w,h))
 
+	print('original img {}'.format(image.shape))
+	print('new img {}'.format(new_img.shape))
+	for r in range(h):
+		for c in range(w):
+			new_img[r][c] = image[start_h + r][start_w + c]
+
+	print (new_img)
 	return new_img
 
 
@@ -901,6 +923,3 @@ if __name__ == "__main__":
 	print("Total_Time: {}".format(time.time() - start_time))
 
 	print_objects(shape,SOL,sl,path="ExamplePredictions/predictions",staff_lines=False)
-
-
-
