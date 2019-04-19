@@ -32,7 +32,7 @@ var NewSheetTemplate = function () {
                     <View style={styles.footer}></View>
                     <View style={styles.footer}>
                         <TouchableOpacity onPress={() => this.setState({ newCompo: false })} style={styles.navButton}>
-                            <Text style={{ color: '#f19393', fontWeight: 'bold', fontSize: 40 }}> Back </Text>
+                            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 40 }}> Back </Text>
                         </TouchableOpacity>
                     </View>
                 </View>
