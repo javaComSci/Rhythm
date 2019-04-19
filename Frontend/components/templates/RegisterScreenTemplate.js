@@ -26,8 +26,8 @@ var RegisterScreenTemplate = function () {
                             style={{
                                 width: '90%',
                                 height: 40,
-                                color: '#f19393',
-                                borderColor: '#f19393',
+                                color: 'black',
+                                borderColor: 'black',
                                 borderWidth: 1,
                                 fontWeight: 'bold',
                             }}
