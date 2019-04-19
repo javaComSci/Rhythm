@@ -215,6 +215,10 @@ def getSong(sheet_id):
     # def jsons_to_MIDI(self, json_arr, sheet_id, instruments=["Piano"], start_times=[1]):
     makermidi = MIDImaker()
     #print 'TYPE of THING' + str(type(song_json))
+    if song_json[1]:
+        inst = song_json[1]
+    else:
+        inst = 'Piano'
     sheetIdRet = makermidi.jsons_to_MIDI([song_json[0]], sheet_id, [song_json[1]], [1], tempos=[song_json[2]])
     print 'tempo: ', song_json[2]
     subprocess.call(shlex.split('/home/Rhythm/Backend/MidiConversion/ConvertToMP3.sh '+sheet_id+'.mid'))

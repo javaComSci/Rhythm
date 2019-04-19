@@ -26,6 +26,7 @@ def getInfoSheet():
 
 def getSong(sheet_id):
     songFile = MySQLConnect.getSong(sheet_id)
+    print("PRINT GET sOng\n\n\n\n\n\n\n", sheet_id)
     return songFile
 
 def getCompSong(comp_id):

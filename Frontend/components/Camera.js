@@ -85,7 +85,7 @@ class CameraExample extends React.Component {
                     'final': fl,
                     'sheetID': that.props.target[0][1] ? that.props.target[0][1] : 0,
                     'compID': that.props.target[0][0] ? that.props.target[0][0] : 0,
-                    'boxWeight': SCREEN_WIDTH - SCREEN_WIDTH/25 - SCREEN_WIDTH/25,
+                    'boxWidth': SCREEN_WIDTH - SCREEN_WIDTH/25 - SCREEN_WIDTH/25,
                     'boxHeight': SCREEN_HEIGHT - SCREEN_HEIGHT/6.5 - (2 * SCREEN_HEIGHT/6.5),
                     'X': SCREEN_WIDTH/25,
                     'Y': SCREEN_HEIGHT/6.5,

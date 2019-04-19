@@ -3,7 +3,7 @@ from MySQL import MySQLConnect
 import base64
 import random
 import sys
-# from conversion import conv
+from conversion import conv
 
 # from NotesRecognization.conversion import conv
 
@@ -42,7 +42,7 @@ def cameraPipeline():
 	global imgs, widths, heights, Xs, Ys
 	if img_data is not None:
 		print("THE DATA IS NOT NONE")
-		imgs.append(img_data)
+		imgs.append(filename)
 		widths.append(boxWidth)
 		heights.append(boxHeight)
 		Xs.append(X)
