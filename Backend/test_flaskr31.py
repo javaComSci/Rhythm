@@ -79,7 +79,7 @@ class TestApi(unittest.TestCase):
             decodedData = response.data
           assert decodedData == 'No image given'
 
-    def test_M_sendingImageExtended(self):
+    def test_M_setAuthor(self):
       with app.test_client() as client:
           response=client.post('/setAuthor',
                      data=json.dumps(dict(author = "Steven", sheet_id= 248)),
