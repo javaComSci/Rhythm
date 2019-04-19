@@ -108,7 +108,7 @@ class ViewCompScreen extends React.Component {
             }),
         }).then((res) => {
             res.text().then(function (res) {
-                this.getInfo()
+                that.getInfo()
             })
                 .catch((err) => {
                     console.log("err", err)
@@ -144,7 +144,6 @@ class ViewCompScreen extends React.Component {
 
     async playSong(sheet_id) {
         console.log("sheet id", sheet_id)
-        await Audio.setIsEnabledAsync(true);
         const soundObject = new Audio.Sound();
         try {
             console.log("in try")
@@ -160,7 +159,6 @@ class ViewCompScreen extends React.Component {
     }
 
     async playComp(comp_id) {
-        await Audio.setIsEnabledAsync(true);
         const soundObject = new Audio.Sound();
         try {
             await soundObject.loadAsync({ uri: 'http://68.183.140.180:5000/getSong?compid=' + comp_id });
