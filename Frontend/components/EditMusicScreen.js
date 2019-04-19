@@ -543,7 +543,7 @@ class EditMusicScreen extends React.Component {
     let baseCleff = [];
     let altoCleff = [];
     let currentCleff = troubleCleff;
-    let titles = NoteSVG[sampleJson.notes[0].note].title;
+    let titles = "troubleCleff";
     // console.log("First Note is: " + titles);
     for (let i = 0; i < sampleJson.notes.length; i++) {
       if(NoteSVG[sampleJson.notes[i].note].title == "troubleCleff"){
