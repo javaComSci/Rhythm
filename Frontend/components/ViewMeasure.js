@@ -284,6 +284,7 @@ class ViewMeasure extends React.Component {
     for (let i = 0; i < 5; i++) {
       newLines.push(
         <Line
+            key={keyvalue++}
             x1={SCREEN_WIDTH/10}
             y1={SCREEN_HEIGHT/3.5 + (i * SCREEN_HEIGHT/25)}
             x2={9*SCREEN_WIDTH/10}
@@ -296,6 +297,7 @@ class ViewMeasure extends React.Component {
       for (let i = 0; i < 2; i++) {
         newLines.push(
           <Line
+              key={keyvalue++}
               x1={SCREEN_WIDTH/10 + (i * (8 * SCREEN_WIDTH/10))}
               y1={SCREEN_HEIGHT/3.51}
               x2={SCREEN_WIDTH/10  + (i * (8 * SCREEN_WIDTH/10))}
@@ -575,14 +577,14 @@ class ViewMeasure extends React.Component {
             autoAdjustY = .0013;
           }
           ret.push(
-            <View style={{position: 'absolute', top: drags[i][0], left: drags[i][1]}}>
+            <View key={keyvalue++} style={{position: 'absolute', top: drags[i][0], left: drags[i][1]}}>
               <Animated.View
                   {...panHandlers[i].panHandlers}
                   style={[this.state.panLayouts[i].getLayout(),
                   {backgroundColor: 'transparent', width: CIRCLE_RADIUS, height: CIRCLE_RADIUS, borderRadius: CIRCLE_RADIUS}]}
                   >
                   <Svg height="100%"  width="100%">
-                    <Path x={[CIRCLE_RADIUS/2.8 + (NoteSVG[drags[i][2]].adjustX) + autoAdjustX*SCREEN_WIDTH].join(' ')} y={([CIRCLE_RADIUS/1.3 + (NoteSVG[drags[i][2]].adjustY) + autoAdjustY*SCREEN_HEIGHT].join(' '))} transform={['scale(', NoteSVG[drags[i][2]].scale1 * 1.2, NoteSVG[drags[i][2]].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[drags[i][2]].data].join(' ')}/>
+                    <Path key={keyvalue++} x={[CIRCLE_RADIUS/2.8 + (NoteSVG[drags[i][2]].adjustX) + autoAdjustX*SCREEN_WIDTH].join(' ')} y={([CIRCLE_RADIUS/1.3 + (NoteSVG[drags[i][2]].adjustY) + autoAdjustY*SCREEN_HEIGHT].join(' '))} transform={['scale(', NoteSVG[drags[i][2]].scale1 * 1.2, NoteSVG[drags[i][2]].scale2 * 1.2, ')'].join(' ')} d={[NoteSVG[drags[i][2]].data].join(' ')}/>
                   </Svg>
               </Animated.View>
             </View>
