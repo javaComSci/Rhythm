@@ -60,6 +60,7 @@ class Composition {
 class ViewCompScreen extends React.Component {
     constructor(props) {
         super(props);
+        this.audioObject = new Audio.Sound()
         console.log("props,", props);
         this.sheetList = [];
         this.compList = this.props.compositions.map(composition => ({ value: composition.key, label: composition.title, color: "red" }));
@@ -141,17 +142,28 @@ class ViewCompScreen extends React.Component {
     }
 
     async playSong(sheet_id) {
+        console.log("sheet id", sheet_id)
         await Audio.setIsEnabledAsync(true);
         const soundObject = new Audio.Sound();
         try {
+            console.log("in try")
             await soundObject.loadAsync({ uri: 'http://68.183.140.180:5000/getSong?sheetid=' + sheet_id });
+            console.log("toasty")
             await soundObject.playAsync();
             // Your sound is playing!
         } catch (error) {
             // An error occurred!
+            console.log(error)
             Alert.alert("No song")
         }
     }
+
+    async handlePlaybackStatusUpdate(sound, playbackStatus) {
+        if (playbackStatus.didJustFinish) {
+          await sound.stopAsync();
+          await sound.unloadAsync();
+        }
+      }
 
     getInfo = function () {
         const that = this; // a reference to the previous value of "this" is required as there is a context change going into the promise of the fetch
