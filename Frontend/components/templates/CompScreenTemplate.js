@@ -17,7 +17,7 @@ var CompScreenTemplate = function () {
                         // edit title
                         // duplicate composition
                         this.duplicateComposition(inputText)
-                        this.setState({ isDialogVisible: false})
+                        this.setState({ isDialogVisible: false })
                     }}
                     closeDialog={() => { this.setState({ isDialogVisible: false, toEdit: '' }) }}>
                 </DialogInput>
@@ -25,7 +25,7 @@ var CompScreenTemplate = function () {
                     <Text style={{ color: 'black', fontWeight: 'bold', fontSize: 40 }}> COMPOSITIONS </Text>
                     <View style={styles.lineBreak} />
                 </View>
-                <View style={{height: 100}}>
+                <View style={{ height: 100 }}>
                     <View style={styles.operatorContainer}>
                         <TouchableOpacity
                             onPress={() => this.createComposition()}
@@ -57,6 +57,13 @@ var CompScreenTemplate = function () {
                                     })
                                 }}>
                                 <Text style={{ color: 'black', fontSize: 40 }}>{item.getTitle()}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.sheetItem}
+                                onPress={(e) => {
+                                    this.playSong(item.getID())
+                                }}>
+                                <Text style={{ color: 'black', fontSize: 40 }}> > </Text>
                             </TouchableOpacity>
                             <View style={styles.lineBreak} />
                         </View>}

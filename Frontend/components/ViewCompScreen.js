@@ -80,8 +80,64 @@ class ViewCompScreen extends React.Component {
             author: "",
             description: "",
             isDialogVisible: false,
+            isAuthorDialogVisible: false,
+            isTempoDialogVisible: false,
             toEdit: '',
+            newAuthor: '',
+            newTempo: 0,
         }
+    }
+
+    setTempo = function () {
+
+    }
+
+    setAuthor = function (sheetID, author) {
+        const that = this; // a reference to the previous value of "this" is required as there is a context change going into the promise of the fetch
+        fetch('http://68.183.140.180:5000/setAuthor', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'sheet_id': sheetID,
+                'author': author
+            }),
+        }).then((res) => {
+            res.text().then(function (res) {
+                this.getInfo()
+            })
+                .catch((err) => {
+                    console.log("err", err)
+                })
+        }).catch((res) => {
+            console.log("err", res)
+        });
+    }
+
+    setTempo = function (sheetID, tempo) {
+        const that = this; // a reference to the previous value of "this" is required as there is a context change going into the promise of the fetch
+        fetch('http://68.183.140.180:5000/setTempo', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'sheet_id': sheetID,
+                'tempo': tempo
+            }),
+        }).then((res) => {
+            res.text().then(function (res) {
+                this.getInfo()
+            })
+                .catch((err) => {
+                    console.log("err", err)
+                })
+        }).catch((res) => {
+            console.log("err", res)
+        });
     }
 
     async playSong(sheet_id) {
@@ -135,7 +191,7 @@ class ViewCompScreen extends React.Component {
             cameFromCamera: this.props.navigation.getParam('cameFromCamera', false)
         }, () => {
             if (this.state.cameFromCamera) {
-                this.props.navigation.setParams({'compositionID': this.props.navigation.getParam('composition')})
+                this.props.navigation.setParams({ 'compositionID': this.props.navigation.getParam('composition') })
                 this.state.newCompo = true;
             }
         })
