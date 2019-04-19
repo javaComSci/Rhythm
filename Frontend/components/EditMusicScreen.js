@@ -93,6 +93,7 @@ class EditMusicScreen extends React.Component {
 
   constructor(props) {
     super(props);
+    firstRender = 1;
     // troubleCleffSplit  = [];
     // troubleCleff = [];
     console.log("Constructor");
@@ -104,13 +105,25 @@ class EditMusicScreen extends React.Component {
     sampleJson = props.navigation.getParam('file')
     sheet_id = props.navigation.getParam('sheet_id')
     console.log("sheet_id = " + sheet_id);
-    fetch("http://68.183.140.180:5000/getInfoBySheetID", {"table": "sheet_music","id": sheet_id}).then(result => {
-        result.text().then(res => {
-            console.log("res", res)
-        }).catch(err => {
-            console.log("err", err)
-        })
-    });
+    // fetch("http://68.183.140.180:5000/getInfoBySheetID",
+    // {
+    //   method: 'POST',
+    //   headers: {
+    //       Accept: 'application/json',
+    //       'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     "table": "sheet_music",
+    //     "id": sheet_id
+    //   }),
+    // }).then(result => {
+    //     result.text().then(res => {
+    //         console.log("res", res)
+    //         sampleJson = res[0][0];
+    //     }).catch(err => {
+    //         console.log("err", err)
+    //     })
+    // });
 
     console.log("This is the file being passed ");
     console.log(sampleJson);
@@ -636,7 +649,7 @@ class EditMusicScreen extends React.Component {
             console.log("camera err", err)
         })
     });
-
+    this.props.navigation.state.params.onBack();
     this.props.navigation.navigate('ViewCompScreen')
   }
 
