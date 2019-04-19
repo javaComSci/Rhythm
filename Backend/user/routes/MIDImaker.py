@@ -149,7 +149,7 @@ class MIDImaker:
 	#Adjusts instruments list to match with tracks if necessary
 	def set_instruments(self, instr, tracks):
 		#Converts instrument to corresponding MIDI number
-		instrument_dict = {"Piano":1, "Harp":47, "Violin":41, "Flute":74, "Trombone":58, "Cello":43, "Bass":44, "Guitar":25, "Tuba":59, "Viola":42}
+		instrument_dict = {"Piano":1, "Harp":47, "Violin":42, "Flute":74, "Trombone":58, "Cello":43, "Bass":44, "Guitar":25, "Tuba":59, "Viola":42}
 		instr_conv = []
 		#if there are more instrument then tracks, notify
 		if len(instr) > tracks:
@@ -340,8 +340,11 @@ class MIDImaker:
 		return SOL
 
 	def jsons_to_MIDI(self, json_arr, sheet_id, instruments=["Piano"], start_times=[1], tempos=[80]):
-		os.remove("{}.mid".format(sheet_id))
-		for json_str in json_arr:
+                try:
+                    os.remove("{}.mid".format(sheet_id))
+                except OSError:
+                    pass
+                for json_str in json_arr:
 			if type(json_str) == None:
 				continue
 

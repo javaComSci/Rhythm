@@ -47,7 +47,7 @@ class TestApi(unittest.TestCase):
   def test_D_exportPDF(self):
       with app.test_client() as client:
           response=client.post('/createPDF',
-                     data=json.dumps(dict(sheet_ids=['222'], email='iramanatt12@purdue.edu')),
+                     data=json.dumps(dict(sheet_ids=['222'], email='iramanat@purdue.edu')),
                      content_type='application/json')
           if not isinstance(response.data, str):
             decodedData = response.data.decode('utf-8')
@@ -58,7 +58,7 @@ class TestApi(unittest.TestCase):
   def test_E_exportPDF(self):
       with app.test_client() as client:
           response=client.post('/createPDF',
-                     data=json.dumps(dict(sheet_ids=['89090'], email='iramanatt12@purdue.edu')),
+                     data=json.dumps(dict(sheet_ids=['89090'], email='iramanat@purdue.edu')),
                      content_type='application/json')
           if not isinstance(response.data, str):
             decodedData = response.data.decode('utf-8')
@@ -69,7 +69,7 @@ class TestApi(unittest.TestCase):
   def test_F_sendingImage(self):
       with app.test_client() as client:
           response=client.post('/uploadImage',
-                     data=json.dumps(dict(img_data='ka09', compID=1231, final=False, boxHeight=70, boxWidth=500, X=0, Y=0)),
+                     data=json.dumps(dict(img_data='ka09', compID=1231, final=True, boxHeight=70, boxWidth=500, X=0, Y=0)),
                      content_type='application/json')
           if not isinstance(response.data, str):
             decodedData = response.data.decode('utf-8')
