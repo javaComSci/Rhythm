@@ -4,6 +4,7 @@ from midiutil import MIDIFile
 import math
 import json
 import partition
+import os
 
 class MIDIob:
 	def __init__(self, SOL):
@@ -211,10 +212,10 @@ class MIDImaker:
 		self.set_tempos(tempos, tracks)
 
 		MIDI_File = MIDIFile(tracks, adjust_origin=False)
-                print len(self.SOLset)
+        print len(self.SOLset)
 		#for every track of the Midi File
 		for t in range(tracks):
-                        print 'T,instruments,tempos: %s, %s, %s', (t, instr, tempos)
+            print('T,instruments,tempos: %s, %s, %s', (t, instr, tempos))
 			MIDI_File.addTempo(t,0,tempos[t]) #Adds tempo t
 			MIDI_File.addProgramChange(t,0,0,instr[t]) #sets instrument for tempo t
 
@@ -339,7 +340,7 @@ class MIDImaker:
 		return SOL
 
 	def jsons_to_MIDI(self, json_arr, sheet_id, instruments=["Piano"], start_times=[1], tempos=[80]):
-
+		os.remove("{}.mid".format(sheet_id))
 		for json_str in json_arr:
 			if type(json_str) == None:
 				continue
