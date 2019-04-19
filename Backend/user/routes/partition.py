@@ -597,7 +597,7 @@ def full_partition(path, x=0, y=0, b_height=0, b_width=0):
 
 	# print("pre rotate abount to print")
 
-	# cv2.imwrite("/home/Rhythm/Backend/user/routes/pre_rotate.jpg", im_bw)
+	cv2.imwrite("/home/Rhythm/Backend/user/routes/pre_rotate.jpg", im_bw)
 
 
 	# if (im_bw.shape[0] < im_bw.shape[1]):
@@ -607,7 +607,7 @@ def full_partition(path, x=0, y=0, b_height=0, b_width=0):
 
 	# print("post rotate abount to print")
 
-	# cv2.imwrite("/home/Rhythm/Backend/user/routes/post_rotate.jpg", im_bw)
+	cv2.imwrite("/home/Rhythm/Backend/user/routes/post_rotate.jpg", rotate_scale(im_bw,int(b_height), int(b_width), int(x), int(y), r=False))
 
 	# print('completed image rotate and write')
 
@@ -816,9 +816,9 @@ def prune_runs(runs):
 
 	final_runs = []
 
-	num = max(1, len(s))
 	#find average of all rows in each run
 	for s in pruned:
+		num = max(1, len(s))
 		final_runs.append(int(float(sum(s))/num))
 
 	return final_runs
