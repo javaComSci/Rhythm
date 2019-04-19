@@ -27,26 +27,11 @@ class HomeScreen extends React.Component {
     clearCache = function () {
         console.log("clearing storage");
         // clears local storage for debugging purposes
-        var formData = new FormData();
-        formData.append('sheet_id', 231);
-        formData.append('file', '{"file": "1"}');
-        const options = {
-          method: 'POST',
-          body: formData,
-          formData: formData,
-          headers: { 'Content-Type': 'multipart/form-data', 'Accept-Encoding': 'gzip, deflate', 'Cache-Control': 'no-cache' },
-        }
-        fetch("http://68.183.140.180:5000/addSheetJSON", options).then(result => {
-          result.text().then(res => {
-            console.log("camera res", res)
-          }).catch(err => {
-            console.log("camera err", err)
-          })
-        });
-        // AsyncStorage.clear().then(() => {
+
+        AsyncStorage.clear().then(() => {
         // // this.props.navigation.navigate("EditMusicScreen"); //Change this
         //   return;
-        // });
+        });
         /*
         var formData = new FormData();
         formData.append('sheet_id', 147);
