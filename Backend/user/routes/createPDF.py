@@ -89,9 +89,9 @@ def createLines(notesArr, notes):
     measures = int(math.ceil(duration/4))
 
     # find number of staff lines needed
-    staffLines = int(math.ceil(duration/16))
+    staffLines = int(math.ceil(duration/16.0))
 
-    # print("MEASURES", duration, measures, staffLines)
+    print("MEASURES", duration, measures, staffLines)
 
     # initial starting point for putting the pixels
     row = 1000
@@ -320,8 +320,8 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
         # get the note type and get the corresponding file
         noteType = getNoteType(note['note'], note['pitch'], note['length'])
-
-        if noteType == 'gclef' or noteType == 'cclef' or noteType == 'fclef' or noteType == False or k == len(staffLinesStartingPos):
+        print("K", k)
+        if noteType == 'gclef' or noteType == 'cclef' or noteType == 'fclef' or noteType == False or k >= len(staffLinesStartingPos):
             continue
 
         noteFile = './assets/' + noteType + '.jpg'
@@ -752,8 +752,8 @@ def exportPDF(mail, app):
             flag = True
             print("CONT")
             continue
-
-        if information[0][1] is None:
+            
+        if information[0][4] is None:
             print("INFO")
             continue
 
@@ -766,7 +766,7 @@ def exportPDF(mail, app):
         print(file1[0], "\n\n\n1: ", file1[1], "\n\n\n2:", file1[2], "\n\n\n3:", file1[3], "\n\n\n4:", file1[4])
         # file1 = information['notes']
 
-        file1 = information[0][1]
+        file1 = information[0][4]
 
         if not isinstance(file1, str):
             file1 = file1.decode('utf-8')
