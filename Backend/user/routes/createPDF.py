@@ -10,7 +10,7 @@ import numpy as np
 import img2pdf
 from PIL import Image
 from PIL import ImageFont
-from PIL import ImageDraw 
+from PIL import ImageDraw
 
 # boundaries for the lines
 colLeft = 200
@@ -89,9 +89,9 @@ def createLines(notesArr, notes):
     measures = int(math.ceil(duration/4))
 
     # find number of staff lines needed
-    staffLines = int(math.ceil(duration/16))
+    staffLines = int(math.ceil(duration/16.0))
 
-    # print("MEASURES", duration, measures, staffLines)
+    print("MEASURES", duration, measures, staffLines)
 
     # initial starting point for putting the pixels
     row = 1000
@@ -320,8 +320,8 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
 
         # get the note type and get the corresponding file
         noteType = getNoteType(note['note'], note['pitch'], note['length'])
-
-        if noteType == 'gclef' or noteType == 'cclef' or noteType == 'fclef' or noteType == False or k == len(staffLinesStartingPos):
+        print("K", k)
+        if noteType == 'gclef' or noteType == 'cclef' or noteType == 'fclef' or noteType == False or k >= len(staffLinesStartingPos):
             continue
 
         noteFile = './assets/' + noteType + '.jpg'
@@ -420,7 +420,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
                     # check if there is note there
 
                         # need to shift everything up first so that the bottom of the note is first touching the top of the line
-                        pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0] 
+                        pixelRow = staffLinesStartingPos[k] - imgNoteResized.shape[0]
 
                         # need to shift the note down for the pitch
                         pixelRow = pixelRow + (note['pitch'] * 25)
@@ -472,7 +472,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
             durationCount += note['length']
 
 
-        elif noteType == 'whole':   
+        elif noteType == 'whole':
             imgNoteResized = cv2.resize(imgNoteResized, (250, 200))
 
             print("whole")
@@ -662,7 +662,7 @@ def placeNotes(notesData, notesArr, staffLinesStartingPos, measureLinesStartingP
             currColumn = 450
             if noteType != 'sharp' and noteType != 'flat' and noteType != 'cclef' and noteType != 'gclef' and noteType != 'fclef':
                 k += 1
-            
+
 
     print("THIS IS IN THE NOTES ARRAY PRINTING\n\n\n\n")
     cv2.imwrite("./notes.jpg", notesArr)
@@ -730,7 +730,7 @@ def pdfPipeline(sheetId, fileInfo):
 
         # just the name of the pdf
         pdfNames.append(str(sheetId) + ":Page-" + str(i + 1) + '.pdf')
-    
+
     return pdfNames
 
 
@@ -746,16 +746,18 @@ def exportPDF(mail, app):
     flag = False
 
     for sheet_id in content['sheet_ids']:
-        information = MySQLConnect.findSheetBySheetID("sheet_music", int(sheet_id))
+        information = MySQLConnect.findSheetBySheetIDD("sheet_music", int(sheet_id))
 
         if information is None or len(information) == 0:
             flag = True
+            print("CONT")
             continue
-        if information[0][1] is None:
+        if information[0][4] is None:
+            print("INFO")
             continue
 
         print(information)
-    
+
         # has the actual information in the file
         # file1 = json.loads(information[0][4].decode('string-escape').strip('"'))
         file1 = information[0]
@@ -763,7 +765,7 @@ def exportPDF(mail, app):
         print(file1[0], "\n\n\n1: ", file1[1], "\n\n\n2:", file1[2], "\n\n\n3:", file1[3], "\n\n\n4:", file1[4])
         # file1 = information['notes']
 
-        file1 = information[0][1]
+        file1 = information[0][4]
 
         if not isinstance(file1, str):
             file1 = file1.decode('utf-8')
