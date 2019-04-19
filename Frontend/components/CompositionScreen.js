@@ -1,7 +1,8 @@
 import React from 'react';
-import { TextInput, FlatList, TouchableOpacity, Button, ScrollView, StyleSheet, Text, View, KeyboardAvoidingView, ImageBackground } from 'react-native';
+import { Alert, TextInput, FlatList, TouchableOpacity, Button, ScrollView, StyleSheet, Text, View, KeyboardAvoidingView, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
 import { Header } from 'react-navigation';
+import { Audio } from 'expo';
 import { addEmail } from '../actions/addEmail'
 import { addUser } from '../actions/addUserID';
 import { addComposition } from '../actions/addComposition';
@@ -57,6 +58,19 @@ class CompositionScreen extends React.Component {
     static navigationOptions = {
         title: 'Welcome', header: null
     };
+
+    async playSong(comp_id) {
+        await Audio.setIsEnabledAsync(true);
+        const soundObject = new Audio.Sound();
+        try {
+            await soundObject.loadAsync({ uri: 'http://68.183.140.180:5000/getSong?compid=' + comp_id });
+            await soundObject.playAsync();
+            // Your sound is playing!
+        } catch (error) {
+            // An error occurred!
+            Alert.alert("No song")
+        }
+    }
 
     getInfo = function () {
         const that = this; // a reference to the previous value of "this" is required as there is a context change going into the promise of the fetch
