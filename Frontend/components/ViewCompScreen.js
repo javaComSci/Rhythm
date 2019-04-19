@@ -64,6 +64,7 @@ class ViewCompScreen extends React.Component {
         console.log("props,", props);
         this.sheetList = [];
         this.compList = this.props.compositions.map(composition => ({ value: composition.key, label: composition.title, color: "red" }));
+        this.compID = this.props.navigation.getParam('compositionID')
         this.compList.forEach(element => {
             if (element.value == this.props.navigation.getParam('compositionID')) {
                 this.compList.splice(this.compList.indexOf(element), 1);
@@ -154,6 +155,19 @@ class ViewCompScreen extends React.Component {
         } catch (error) {
             // An error occurred!
             console.log(error)
+            Alert.alert("No song")
+        }
+    }
+
+    async playComp(comp_id) {
+        await Audio.setIsEnabledAsync(true);
+        const soundObject = new Audio.Sound();
+        try {
+            await soundObject.loadAsync({ uri: 'http://68.183.140.180:5000/getSong?compid=' + comp_id });
+            await soundObject.playAsync();
+            // Your sound is playing!
+        } catch (error) {
+            // An error occurred!
             Alert.alert("No song")
         }
     }

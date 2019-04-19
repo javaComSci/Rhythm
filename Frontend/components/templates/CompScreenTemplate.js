@@ -58,13 +58,6 @@ var CompScreenTemplate = function () {
                                 }}>
                                 <Text style={{ color: 'black', fontSize: 40 }}>{item.getTitle()}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.sheetItem}
-                                onPress={(e) => {
-                                    this.playSong(item.getID())
-                                }}>
-                                <Text style={{ color: 'black', fontSize: 40 }}> > </Text>
-                            </TouchableOpacity>
                             <View style={styles.lineBreak} />
                         </View>}
                 />

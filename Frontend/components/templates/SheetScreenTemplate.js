@@ -81,10 +81,7 @@ var SheetScreenTemplate = function () {
                             <Text style={styles.buttonText}>Duplicate</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.neutralButton}
-                            onPress={() => this.props.navigation.navigate('ViewExportScreen', {
-                                sheet_ids,
-                                email: this.props.isRegistered,
-                            })}
+                            onPress={() => this.playComp(this.compID)}
                         >
                             <Icon
                                 name="rightcircleo"
