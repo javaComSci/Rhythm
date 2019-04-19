@@ -39,3 +39,4 @@ var HomeScreenTemplate = function () {
 };
 
 export default HomeScreenTemplate;
+

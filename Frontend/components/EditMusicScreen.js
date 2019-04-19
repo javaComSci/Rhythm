@@ -93,6 +93,7 @@ class EditMusicScreen extends React.Component {
 
   constructor(props) {
     super(props);
+    firstRender = 1;
     // troubleCleffSplit  = [];
     // troubleCleff = [];
     console.log("Constructor");
@@ -104,20 +105,32 @@ class EditMusicScreen extends React.Component {
     sampleJson = props.navigation.getParam('file')
     sheet_id = props.navigation.getParam('sheet_id')
     console.log("sheet_id = " + sheet_id);
-    fetch("http://68.183.140.180:5000/getInfoBySheetID", {"table": "sheet_music","id": sheet_id}).then(result => {
-        result.text().then(res => {
-            console.log("res", res)
-        }).catch(err => {
-            console.log("err", err)
-        })
-    });
+    // fetch("http://68.183.140.180:5000/getInfoBySheetID",
+    // {
+    //   method: 'POST',
+    //   headers: {
+    //       Accept: 'application/json',
+    //       'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     "table": "sheet_music",
+    //     "id": sheet_id
+    //   }),
+    // }).then(result => {
+    //     result.text().then(res => {
+    //         console.log("res", res)
+    //         sampleJson = res[0][0];
+    //     }).catch(err => {
+    //         console.log("err", err)
+    //     })
+    // });
 
     console.log("This is the file being passed ");
     console.log(sampleJson);
     // Set it as an empty json is null;
     if (sampleJson == null) {
       sampleJson = {
-        "clef": 1,
+        "clef": 0,
         "notes":
           [
             {
@@ -530,7 +543,7 @@ class EditMusicScreen extends React.Component {
     let baseCleff = [];
     let altoCleff = [];
     let currentCleff = troubleCleff;
-    let titles = NoteSVG[sampleJson.notes[0].note].title;
+    let titles = "troubleCleff";
     // console.log("First Note is: " + titles);
     for (let i = 0; i < sampleJson.notes.length; i++) {
       if(NoteSVG[sampleJson.notes[i].note].title == "troubleCleff"){
@@ -594,7 +607,7 @@ class EditMusicScreen extends React.Component {
     console.log("TROIBLECLEFFSPLITY");
     console.log(troubleCleffSplit);
     let sendIt = {};
-    sendIt.clef = 1;
+    sendIt.clef = 0;
     sendIt.notes = [];
     for (var i = 0; i < troubleCleffSplit.length; i++) {
       for (var j = 0; j < troubleCleffSplit[i].length; j++) {
@@ -636,7 +649,7 @@ class EditMusicScreen extends React.Component {
             console.log("camera err", err)
         })
     });
-
+    this.props.navigation.state.params.onBack();
     this.props.navigation.navigate('ViewCompScreen')
   }
 

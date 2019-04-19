@@ -752,6 +752,7 @@ def exportPDF(mail, app):
             flag = True
             print("CONT")
             continue
+            
         if information[0][4] is None:
             print("INFO")
             continue
