@@ -12,6 +12,7 @@ widths = []
 heights = []
 Xs = []
 Ys = []
+c = 0
 
 def cameraPipeline():
 	print("IN CAMERA PIPELELINE!!!!!")
@@ -38,8 +39,8 @@ def cameraPipeline():
 	X = content['X']
 	Y = content['Y']
 
-	filename = '/home/Rhythm/Backend/user/routes/convertedData/{}-{}.jpg'.format(sheetID, compID)
-	global imgs, widths, heights, Xs, Ys
+	filename = '/home/Rhythm/Backend/user/routes/convertedData/{}-{}-{}.jpg'.format(sheetID, compID,c)
+	global imgs, widths, heights, Xs, Ys, c
 	if img_data is not None:
 		print("THE DATA IS NOT NONE")
 		imgs.append(filename)
@@ -62,11 +63,20 @@ def cameraPipeline():
 	if flag == True:
 		print("PUT IN THE CONVERSION AND FLAG IS TRUE")
 		jsonName = conv(imgs, Xs, Ys, widths, heights)
+		print("FEAWFDSFEWAFDSFEWASDFWAESD\n\n\n\n\n")
+		print(imgs)
 		imgs = []
+		widths = []
+		heights = []
+		Xs = []
+		Ys = []
+		c = 0
 		filee = open("/home/Rhythm/Backend/"+jsonName)
 		fileee = json.load(filee)
 		filee.close()
 		return fileee
+	else:
+		c += 1
 
 	return 'In Progress'
        # return "{}"
