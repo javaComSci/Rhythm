@@ -212,10 +212,10 @@ class MIDImaker:
 		self.set_tempos(tempos, tracks)
 
 		MIDI_File = MIDIFile(tracks, adjust_origin=False)
-        print len(self.SOLset)
+		print len(self.SOLset)
 		#for every track of the Midi File
 		for t in range(tracks):
-            print('T,instruments,tempos: %s, %s, %s', (t, instr, tempos))
+			print('T,instruments,tempos: %s, %s, %s', (t, instr, tempos))
 			MIDI_File.addTempo(t,0,tempos[t]) #Adds tempo t
 			MIDI_File.addProgramChange(t,0,0,instr[t]) #sets instrument for tempo t
 
