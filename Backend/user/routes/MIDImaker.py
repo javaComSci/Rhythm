@@ -243,7 +243,7 @@ class MIDImaker:
 				#Reset accidental to base value
 				prevAccidental = -1
 
-				if ob.duration > 0: #If the object has a note duration, add it as a note
+				if ob.duration > 0 and ob.rest != 1: #If the object has a note duration, add it as a note
 					MIDI_File.addNote(t, t, pitch, time + ob.duration, ob.duration, volume)
 					time = time + ob.duration
 				elif ob.rest > 0: #If the object has a rest duration, add it as a rest
