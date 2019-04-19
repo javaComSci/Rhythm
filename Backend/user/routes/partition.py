@@ -595,21 +595,21 @@ def full_partition(path, x=0, y=0, b_height=0, b_width=0):
 	(thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 	#print "Completed 'image load'"
 
-	print("pre rotate abount to print")
+	# print("pre rotate abount to print")
 
-	cv2.imwrite("/home/Rhythm/Backend/user/routes/pre_rotate.jpg", im_bw)
+	# cv2.imwrite("/home/Rhythm/Backend/user/routes/pre_rotate.jpg", im_bw)
 
 
-	if (im_bw.shape[0] < im_bw.shape[1]):
-		im_bw = rotate_scale(im_bw, int(b_height), int(b_width), int(x), int(y), r=True)
-	else:
-		im_bw = rotate_scale(im_bw,int(b_height), int(b_width), int(x), int(y), r=False)
+	# if (im_bw.shape[0] < im_bw.shape[1]):
+	# 	im_bw = rotate_scale(im_bw, int(b_height), int(b_width), int(x), int(y), r=True)
+	# else:
+	# 	im_bw = rotate_scale(im_bw,int(b_height), int(b_width), int(x), int(y), r=False)
 
-	print("post rotate abount to print")
+	# print("post rotate abount to print")
 
-	cv2.imwrite("/home/Rhythm/Backend/user/routes/post_rotate.jpg", im_bw)
+	# cv2.imwrite("/home/Rhythm/Backend/user/routes/post_rotate.jpg", im_bw)
 
-	print('completed image rotate and write')
+	# print('completed image rotate and write')
 
 	#cv2.imwrite("{}FullImage_binary.jpg".format(path), im_bw)
 
@@ -783,8 +783,9 @@ def average_run_distance(run_list):
 	for i in range(len(run_list)-1):
 		avg += abs(run_list[i+1] - run_list[i])
 
+	num = max(2, len(run_list))
 	#divide by number of differences
-	avg = float(avg) / (len(run_list)-1)
+	avg = float(avg) / (num-1)
 
 	return int(avg)
 
@@ -815,9 +816,10 @@ def prune_runs(runs):
 
 	final_runs = []
 
+	num = max(1, len(s))
 	#find average of all rows in each run
 	for s in pruned:
-		final_runs.append(int(float(sum(s))/len(s)))
+		final_runs.append(int(float(sum(s))/num))
 
 	return final_runs
 
