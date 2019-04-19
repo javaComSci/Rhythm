@@ -205,6 +205,13 @@ def getInfoBySheet():
     else:
         return '\n\nDEBUG: Should not see this: app.py\n\n'
 
+@app.route('/getInfoBySheetID', methods=['POST'])
+def getInfoBySheet():
+    if request.method == 'POST':
+        return getInfos.getInfoSheetbyID()
+    else:
+        return '\n\nDEBUG: Should not see this: app.py\n\n'
+
 @app.route("/getSong", methods=["GET"])
 def getSong():
     if request.method == 'GET':

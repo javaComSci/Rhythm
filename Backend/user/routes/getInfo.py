@@ -24,6 +24,13 @@ def getInfoSheet():
     results = MySQLConnect.findSheet(content['table'], content['id']);
     return jsonify(results)
 
+def getInfoSheetbyID():
+    content = request.json
+    # print 'content:', content
+    print("getInfoByEamil Route Call")
+    results = MySQLConnect.findSheetBySheetID(content['table'], content['id']);
+    return jsonify(results)
+
 def getSong(sheet_id):
     songFile = MySQLConnect.getSong(sheet_id)
     return songFile
