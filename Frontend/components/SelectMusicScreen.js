@@ -11,11 +11,12 @@ class SelectMusicScreen extends React.Component {
 		let clefData = this.props.navigation.getParam('file');
 		console.log("CLEF DATA")
 		console.log(clefData)
-		if(clefData) {
-			clefData = clefData['clef'];
-		} else {
-			clefData = 2;
-		}
+		// if(clefData) {
+		// 	clefData = clefData['clef'];
+		// } else {
+		// 	clefData = 0;
+		// }
+		clefData = 0;
 		console.log("AFTER", clefData)
 
 
