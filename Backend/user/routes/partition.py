@@ -816,10 +816,10 @@ def prune_runs(runs):
 
 	final_runs = []
 
-	num = max(1, len(s))
 	#find average of all rows in each run
 	for s in pruned:
-		final_runs.append(int(float(sum(s))/num))
+	    num = max(1, len(s))
+            final_runs.append(int(float(sum(s))/num))
 
 	return final_runs
 
