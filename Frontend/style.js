@@ -144,6 +144,16 @@ module.exports = StyleSheet.create({
         borderColor: 'white',
         borderWidth: 1,
     },
+    playButton: {
+        height: 45,
+        width: 45,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 10,
+        borderColor: 'white',
+        backgroundColor: 'black',
+        borderWidth: 1,
+    },
     lineBreak: {
         borderBottomColor: 'black',
         borderBottomWidth: 1,

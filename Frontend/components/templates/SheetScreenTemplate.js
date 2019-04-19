@@ -87,8 +87,8 @@ var SheetScreenTemplate = function () {
                             })}
                         >
                             <Icon
-                                name="mail"
-                                size={15}
+                                name="rightcircleo"
+                                size={30}
                                 color="white"
                             />
                         </TouchableOpacity>
@@ -124,13 +124,20 @@ var SheetScreenTemplate = function () {
                                     >
                                         <Text style={{ color: 'black', fontSize: 40 }}>{item.getTitle()}</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={styles.sheetItem}
+
+
+
+                                    <TouchableOpacity style={styles.playButton}
                                         onPress={(e) => {
                                             this.playSong(item.getID())
                                         }}>
-                                        <Text style={{ color: 'black', fontSize: 40 }}> > </Text>
+                                        <Icon
+                                            name="caretright"
+                                            size={15}
+                                            color="white"
+                                        />
                                     </TouchableOpacity>
+
                                 </View>
                                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'stretch' }}>
                                     <TouchableOpacity
@@ -178,3 +185,12 @@ var SheetScreenTemplate = function () {
 }
 
 export default SheetScreenTemplate;
+
+
+                                    // <TouchableOpacity
+                                    //     style={styles.sheetItem}
+                                    //     onPress={(e) => {
+                                    //         this.playSong(item.getID())
+                                    //     }}>
+                                    //     <Text style={{ color: 'black', fontSize: 40 }}> > </Text>
+                                    // </TouchableOpacity>
