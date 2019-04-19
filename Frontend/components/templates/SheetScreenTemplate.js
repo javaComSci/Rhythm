@@ -92,7 +92,8 @@ var SheetScreenTemplate = function () {
                                     <TouchableOpacity
                                         style={styles.sheetItem}
                                         onPress={(e) => {
-                                            this.props.navigation.navigate('EditMusicScreen', { title: item.getTitle(), file: item.getFile(), sheet_id: item.getID(), email: this.props.isRegistered })
+
+                                            this.props.navigation.navigate('EditMusicScreen', { title: item.getTitle(), file: item.getFile(), sheet_id: item.getID(), email: this.props.isRegistered, onBack: () => this.getInfo() })
                                         }}
                                         onLongPress={(e) => {
                                             this.setState({
