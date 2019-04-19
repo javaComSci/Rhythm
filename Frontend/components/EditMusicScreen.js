@@ -93,6 +93,8 @@ class EditMusicScreen extends React.Component {
 
   constructor(props) {
     super(props);
+    // troubleCleffSplit  = [];
+    // troubleCleff = [];
     console.log("Constructor");
     console.log(props.navigation.getParam('arr'));
     // if(this.props.navigation.getParam('arr') != undefined){
@@ -101,6 +103,15 @@ class EditMusicScreen extends React.Component {
     /* grabbing the file from the backend */
     sampleJson = props.navigation.getParam('file')
     sheet_id = props.navigation.getParam('sheet_id')
+    console.log("sheet_id = " + sheet_id);
+    fetch("http://68.183.140.180:5000/getInfoBySheetID", {"table": "sheet_music","id": sheet_id}).then(result => {
+        result.text().then(res => {
+            console.log("res", res)
+        }).catch(err => {
+            console.log("err", err)
+        })
+    });
+
     console.log("This is the file being passed ");
     console.log(sampleJson);
     // Set it as an empty json is null;
@@ -578,6 +589,58 @@ class EditMusicScreen extends React.Component {
     return x;
   }
 
+  saveToDB(){
+    const that = this;
+    console.log("TROIBLECLEFFSPLITY");
+    console.log(troubleCleffSplit);
+    let sendIt = {};
+    sendIt.clef = 1;
+    sendIt.notes = [];
+    for (var i = 0; i < troubleCleffSplit.length; i++) {
+      for (var j = 0; j < troubleCleffSplit[i].length; j++) {
+        sendIt.notes.push({"note": troubleCleffSplit[i][j].props.note, "length": troubleCleffSplit[i][j].props.length, "pitch": troubleCleffSplit[i][j].props.pitch});
+      }
+    }
+    console.log("HERE TO STAY : ");
+    console.log(sendIt);
+    console.log("sheet_id : " + sheet_id);
+    // fetch('http://68.183.140.180:5000/addSheetJSON', {
+    //       method: 'POST',
+    //       headers: {
+    //           Accept: 'application/json',
+    //           'Content-Type': 'application/json',
+    //       },
+    //       body: JSON.stringify({
+    //         'file': sendIt,
+    //         'sheet_id': sheet_id,
+    //       }),
+    //   }).then((res) => {
+    //       // that.props.dispatchPlaceJSON(res._bodyText);
+    //   }).catch((res) => {
+    //       console.log("err", res)
+    //   });
+
+    var formData = new FormData();
+    formData.append('sheet_id', sheet_id);
+    formData.append('file', JSON.stringify(sendIt));
+    const options = {
+        method: 'POST',
+        body: formData,
+        formData: formData,
+        headers: {'Content-Type':'multipart/form-data', 'Accept-Encoding': 'gzip, deflate', 'Cache-Control': 'no-cache'},
+    }
+    fetch("http://68.183.140.180:5000/addSheetJSON", options).then(result => {
+        result.text().then(res => {
+            console.log("camera res", res)
+        }).catch(err => {
+            console.log("camera err", err)
+        })
+    });
+
+    this.props.navigation.navigate('ViewCompScreen')
+  }
+
+
   render() {
     // console.log("First Render in note\n");
     keyvalue = 0;
@@ -612,7 +675,7 @@ class EditMusicScreen extends React.Component {
           barStyle="light-content" // or directly
           leftComponent={
             <Button
-              onPress={() => this.props.navigation.navigate('ViewCompScreen')}
+              onPress={() => this.saveToDB()}
               icon={
                 <Icon
                   name="left"

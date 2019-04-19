@@ -102,9 +102,10 @@ class CameraExample extends React.Component {
        photo.exif.Orientation = 1;
        console.log("I TOOOK A PHOTO!!!")
        });
-
+       console.log("BEFORE THE FLAG!!")
        if(fl){
-         that.props.navigation.navigate('Home');
+        console.log("IN THE NAVIGATE!!!!!!\n\n\n\n\n\n\n\n\n")
+         this.props.navigation.navigate('Home');
        }
 
      }
