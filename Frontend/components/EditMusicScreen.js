@@ -130,7 +130,7 @@ class EditMusicScreen extends React.Component {
     // Set it as an empty json is null;
     if (sampleJson == null) {
       sampleJson = {
-        "clef": 1,
+        "clef": 0,
         "notes":
           [
             {
@@ -607,7 +607,7 @@ class EditMusicScreen extends React.Component {
     console.log("TROIBLECLEFFSPLITY");
     console.log(troubleCleffSplit);
     let sendIt = {};
-    sendIt.clef = 1;
+    sendIt.clef = 0;
     sendIt.notes = [];
     for (var i = 0; i < troubleCleffSplit.length; i++) {
       for (var j = 0; j < troubleCleffSplit[i].length; j++) {
